@@ -198,7 +198,7 @@ def main():
         st.header("⚙️ Configuración")
         
         # URL del archivo JSON en GitHub
-        url_default = "https://raw.githubusercontent.com/tu-usuario/tu-repo/main/datos_estaciones.json"
+        url_default = "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json"
         url_github = st.text_input(
             "URL del archivo JSON en GitHub:",
             value=url_default,
