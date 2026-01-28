@@ -239,7 +239,7 @@ def main():
         st.markdown("### 🛢️ SCADA Monitor - Sistema de Monitoreo")
     
     # Cargar datos automáticamente (sin input del usuario)
-    URL_GITHUB = "https://raw.githubusercontent.com/tu-usuario/tu-repo/main/datos_estaciones.json"
+    URL_GITHUB = "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json"
     datos = cargar_datos_github(URL_GITHUB)
     
     if datos:
