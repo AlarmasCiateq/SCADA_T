@@ -41,24 +41,25 @@ st.markdown("""
         color: #000000;
     }
     
-    /* Estadísticas en la parte superior izquierda */
+    /* Estadísticas en la parte superior izquierda - más arriba */
     .stats-bar {
         position: absolute;
-        top: 15px;
+        top: 10px;
         left: 15px;
-        background: rgba(255, 255, 255, 0.92);
+        background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(10px);
-        padding: 10px 15px;
-        border-radius: 10px;
+        padding: 8px 12px;
+        border-radius: 8px;
         z-index: 1000;
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 13px;
     }
     
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(5, auto);
-        gap: 15px;
+        gap: 12px;
         align-items: center;
     }
     
@@ -67,98 +68,90 @@ st.markdown("""
     }
     
     .stat-value {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
         color: #2c3e50;
         line-height: 1.2;
     }
     
     .stat-label {
-        font-size: 10px;
+        font-size: 9px;
         color: #7f8c8d;
-        margin-top: 2px;
+        margin-top: 1px;
     }
     
-    /* Panel desplegable inferior */
+    /* Panel desplegable inferior - fondo sólido */
     div[data-testid="stExpander"] {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        background: rgba(255, 255, 255, 0.95);
+        background: white !important;  /* Fondo sólido blanco */
         border-top: 3px solid #3498db;
         z-index: 999;
-        max-height: 400px;
         margin: 0 !important;
         padding: 0 !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
     }
     
     div[data-testid="stExpander"] > div {
-        padding: 10px !important;
+        padding: 12px !important;
+        max-height: 350px;
+        overflow-y: auto;
     }
     
     /* Estilo del botón del expander */
     .streamlit-expanderHeader {
-        background: rgba(52, 152, 219, 0.9) !important;
+        background: #2c3e50 !important;
         color: white !important;
         font-weight: bold !important;
         font-size: 16px !important;
+        padding: 10px !important;
     }
     
     /* Contenido del expander */
     .station-card {
-        background: rgba(248, 249, 250, 0.9);
-        border-radius: 8px;
+        background: #f8f9fa;
+        border-radius: 6px;
         padding: 12px;
-        margin: 8px 0;
+        margin: 10px 0;
         border-left: 4px solid #3498db;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
     }
     
     .station-header {
         display: flex;
         align-items: center;
         gap: 10px;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         padding-bottom: 8px;
-        border-bottom: 1px solid #ecf0f1;
+        border-bottom: 1px solid #e9ecef;
     }
     
     .station-name {
         font-weight: bold;
         color: #2c3e50;
-        font-size: 16px;
+        font-size: 15px;
     }
     
     .station-coords {
-        color: #7f8c8d;
+        color: #6c757d;
         font-size: 12px;
         margin-left: auto;
+        font-family: monospace;
     }
     
-    /* Tres columnas para variables */
-    .vars-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-top: 8px;
-    }
-    
-    .var-column {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-    
+    /* Columnas para variables */
     .var-item {
-        background: rgba(236, 240, 241, 0.7);
-        padding: 6px 10px;
+        background: #e9ecef;
+        padding: 5px 8px;
         border-radius: 4px;
+        margin: 4px 0;
         font-size: 12px;
     }
     
     .var-label {
-        color: #7f8c8d;
+        color: #6c757d;
         font-weight: 500;
         font-size: 11px;
     }
@@ -178,7 +171,7 @@ st.markdown("""
         display: none !important;
     }
     
-    /* Ocultar info de Streamlit */
+    /* Ocultar info de Streamlit y Folium */
     .leaflet-control-attribution {
         display: none !important;
     }
@@ -193,6 +186,18 @@ st.markdown("""
     .leaflet-popup-content {
         color: #2c3e50;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* Scroll suave */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #c0c0c0;
+        border-radius: 3px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -367,16 +372,16 @@ def main():
         mapa, stats = crear_mapa(datos)
         
         if mapa:
-            # Mostrar mapa ocupando casi toda la pantalla
+            # Mostrar mapa
             st_folium(
                 mapa, 
                 width=1920,
-                height=850,  # Dejamos espacio para el expander
+                height=800,  # Dejamos 280px para el expander
                 returned_objects=[],
                 key="mapa_scada"
             )
             
-            # Estadísticas flotando en esquina superior izquierda
+            # Estadísticas flotando en esquina superior izquierda - más arriba
             st.markdown(f"""
                 <div class="stats-bar">
                     <div class="stats-grid">
@@ -404,7 +409,7 @@ def main():
                 </div>
                 """, unsafe_allow_html=True)
             
-            # Panel desplegable en la parte inferior
+            # Panel desplegable en la parte inferior - CON 3 COLUMNAS REALES
             with st.expander("📊 Ver Datos de Estaciones", expanded=False):
                 for idx, estacion in enumerate(datos['estaciones'], 1):
                     nombre = estacion.get('nombre', f'Estación {idx}')
@@ -423,38 +428,33 @@ def main():
                                 formatted_value = str(value)
                             variables.append({'label': key, 'value': formatted_value})
                     
-                    # Dividir variables en tres columnas
-                    col_count = 3
-                    vars_per_col = (len(variables) + col_count - 1) // col_count
-                    columns_data = []
-                    for i in range(col_count):
-                        start_idx = i * vars_per_col
-                        end_idx = start_idx + vars_per_col
-                        columns_data.append(variables[start_idx:end_idx])
-                    
                     # Mostrar tarjeta de estación
                     st.markdown(f"""
                         <div class="station-card">
                             <div class="station-header">
                                 <span class="station-name">{estado_icon} {nombre}</span>
-                                <span class="station-coords">📍 {lat:.5f}, {lon:.5f}</span>
+                                <span class="station-coords">{lat:.5f}, {lon:.5f}</span>
                             </div>
-                            <div class="vars-container">
+                        </div>
                     """, unsafe_allow_html=True)
                     
-                    # Mostrar tres columnas
-                    for col_vars in columns_data:
-                        st.markdown('<div class="var-column">', unsafe_allow_html=True)
-                        for var in col_vars:
-                            st.markdown(f"""
-                                <div class="var-item">
-                                    <span class="var-label">{var['label']}:</span>
-                                    <span class="var-value">{var['value']}</span>
-                                </div>
-                            """, unsafe_allow_html=True)
-                        st.markdown('</div>', unsafe_allow_html=True)
+                    # Dividir variables en 3 columnas usando Streamlit columns
+                    if variables:
+                        col1, col2, col3 = st.columns(3)
+                        cols = [col1, col2, col3]
+                        
+                        for i, var in enumerate(variables):
+                            col_idx = i % 3
+                            with cols[col_idx]:
+                                st.markdown(f"""
+                                    <div class="var-item">
+                                        <span class="var-label">{var['label']}:</span>
+                                        <span class="var-value">{var['value']}</span>
+                                    </div>
+                                """, unsafe_allow_html=True)
                     
-                    st.markdown('</div></div>', unsafe_allow_html=True)
+                    # Separador entre estaciones
+                    st.markdown("<hr style='margin: 15px 0; border: 1px solid #dee2e6;'>", unsafe_allow_html=True)
         
         # Auto-actualización silenciosa
         time.sleep(300)
