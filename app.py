@@ -57,8 +57,8 @@ st.markdown("""
     
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(5, auto);
-        gap: 15px;
+        grid-template-columns: repeat(6, auto);
+        gap: 12px;
         align-items: center;
     }
     
@@ -67,16 +67,16 @@ st.markdown("""
     }
     
     .stat-value {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
         color: #2c3e50;
         line-height: 1.2;
     }
     
     .stat-label {
-        font-size: 10px;
+        font-size: 9px;
         color: #7f8c8d;
-        margin-top: 2px;
+        margin-top: 1px;
     }
     
     /* Panel desplegable inferior - fondo sólido */
@@ -99,7 +99,7 @@ st.markdown("""
         overflow-y: auto;
     }
     
-    /* Estilo del botón del expander - AMARILLO PARA MÁXIMA VISIBILIDAD */
+    /* Estilo del botón del expander */
     .streamlit-expanderHeader {
         background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
         color: white !important;
@@ -214,8 +214,13 @@ def cargar_datos_github(url_github):
     except:
         return None
 
-# Función para crear iconos según el estado
-def crear_icono(tipo, estado):
+# Función para crear iconos según el estado y conexión
+def crear_icono(tipo, estado, en_linea):
+    # Si está fuera de línea, usar color negro
+    if en_linea == 0:
+        return folium.Icon(icon='ban', prefix='fa', color='black', icon_color='white')
+    
+    # Si está en línea, usar colores normales
     if tipo == "pozo":
         if estado == 1:
             return folium.Icon(icon='tint', prefix='fa', color='green', icon_color='white')
@@ -249,7 +254,7 @@ def crear_popup(estacion):
     """
     
     for key, value in estacion.items():
-        if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono']:
+        if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono', 'en_linea']:
             if isinstance(value, (int, float)):
                 formatted_value = f"{value:,.2f}"
             else:
@@ -315,7 +320,8 @@ def crear_mapa(datos):
         'pozos_activos': 0,
         'pozos_inactivos': 0,
         'tanques': 0,
-        'bombas_activas': 0
+        'bombas_activas': 0,
+        'fuera_linea': 0
     }
     
     # Marcadores individuales SIN cluster
@@ -326,24 +332,29 @@ def crear_mapa(datos):
             lon = estacion.get('longitud')
             tipo = estacion.get('tipo', 'otro')
             estado = estacion.get('estado_bomba', estacion.get('estado', 0))
+            en_linea = estacion.get('en_linea', 1)  # 1 = en línea, 0 = fuera de línea
             
             if lat is None or lon is None:
                 continue
             
             stats['total'] += 1
             
+            # Contar fuera de línea
+            if en_linea == 0:
+                stats['fuera_linea'] += 1
+            
             if tipo == 'pozo':
-                if estado == 1:
+                if estado == 1 and en_linea == 1:
                     stats['pozos_activos'] += 1
-                else:
+                elif en_linea == 1:
                     stats['pozos_inactivos'] += 1
             elif tipo == 'tanque':
                 stats['tanques'] += 1
             elif tipo == 'bomba':
-                if estado == 1:
+                if estado == 1 and en_linea == 1:
                     stats['bombas_activas'] += 1
             
-            icono = crear_icono(tipo, estado)
+            icono = crear_icono(tipo, estado, en_linea)
             popup = crear_popup(estacion)
             
             folium.Marker(
@@ -373,13 +384,13 @@ def main():
         mapa, stats = crear_mapa(datos)
         
         if mapa:
-            # Estadísticas flotantes en la parte superior derecha
+            # Estadísticas flotantes en la parte superior derecha - CON FUERA DE LÍNEA
             st.markdown(f"""
                 <div class="stats-bar">
                     <div class="stats-grid">
                         <div class="stat-item">
                             <div class="stat-value">📡 {stats['total']}</div>
-                            <div class="stat-label">Estaciones</div>
+                            <div class="stat-label">Total</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value" style="color: #27ae60;">🟢 {stats['pozos_activos']}</div>
@@ -392,6 +403,10 @@ def main():
                         <div class="stat-item">
                             <div class="stat-value" style="color: #3498db;">🔵 {stats['tanques']}</div>
                             <div class="stat-label">Tanques</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" style="color: #000000;">⚫ {stats['fuera_linea']}</div>
+                            <div class="stat-label">Offline</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value">🕐 {datetime.now().strftime('%H:%M:%S')}</div>
@@ -410,19 +425,22 @@ def main():
                 key="mapa_scada"
             )
             
-            # Panel desplegable en la parte inferior - CON 3 COLUMNAS REALES
+            # Panel desplegable en la parte inferior - CON 4 COLUMNAS
             with st.expander("📊 Ver Datos de Estaciones", expanded=False):
                 for idx, estacion in enumerate(datos['estaciones'], 1):
                     nombre = estacion.get('nombre', f'Estación {idx}')
                     lat = estacion.get('latitud', 'N/A')
                     lon = estacion.get('longitud', 'N/A')
                     estado = estacion.get('estado_bomba', estacion.get('estado', 0))
+                    en_linea = estacion.get('en_linea', 1)
                     estado_icon = "🟢" if estado == 1 else "🔴"
+                    if en_linea == 0:
+                        estado_icon = "⚫"
                     
                     # Crear lista de variables (excluyendo campos especiales)
                     variables = []
                     for key, value in estacion.items():
-                        if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono']:
+                        if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono', 'en_linea']:
                             if isinstance(value, (int, float)):
                                 formatted_value = f"{value:,.2f}"
                             else:
@@ -439,13 +457,13 @@ def main():
                         </div>
                     """, unsafe_allow_html=True)
                     
-                    # Dividir variables en 3 columnas usando Streamlit columns
+                    # Dividir variables en 4 columnas usando Streamlit columns
                     if variables:
-                        col1, col2, col3 = st.columns(3)
-                        cols = [col1, col2, col3]
+                        col1, col2, col3, col4 = st.columns(4)
+                        cols = [col1, col2, col3, col4]
                         
                         for i, var in enumerate(variables):
-                            col_idx = i % 3
+                            col_idx = i % 4
                             with cols[col_idx]:
                                 st.markdown(f"""
                                     <div class="var-item">
