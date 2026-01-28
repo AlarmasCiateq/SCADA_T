@@ -32,17 +32,13 @@ st.markdown("""
         padding-left: 0px;
         padding-right: 0px;
         max-width: 100%;
+        margin: 0;
     }
     
     /* Fondo del mapa */
     .stApp {
         background-color: #f8f9fa;
         color: #000000;
-    }
-    
-    /* Overlay translúcido */
-    .map-overlay {
-        position: relative;
     }
     
     /* Estadísticas en la parte superior izquierda */
@@ -83,6 +79,77 @@ st.markdown("""
         margin-top: 2px;
     }
     
+    /* Panel de datos inferior */
+    .data-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-top: 2px solid #3498db;
+        z-index: 999;
+        max-height: 250px;
+        overflow-y: auto;
+        padding: 10px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .data-panel h3 {
+        color: #2c3e50;
+        margin: 5px 0;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .station-row {
+        display: flex;
+        padding: 8px;
+        border-bottom: 1px solid #ecf0f1;
+        font-size: 12px;
+    }
+    
+    .station-name {
+        font-weight: bold;
+        color: #2c3e50;
+        min-width: 200px;
+        padding-right: 10px;
+    }
+    
+    .station-coords {
+        color: #7f8c8d;
+        min-width: 150px;
+        padding-right: 10px;
+    }
+    
+    .station-vars {
+        flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .var-item {
+        background: rgba(236, 240, 241, 0.7);
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        min-width: 120px;
+    }
+    
+    .var-label {
+        color: #7f8c8d;
+        font-weight: 500;
+    }
+    
+    .var-value {
+        color: #2c3e50;
+        font-weight: 600;
+        float: right;
+    }
+    
     /* Ocultar footer y botones */
     footer {
         display: none !important;
@@ -107,6 +174,18 @@ st.markdown("""
     .leaflet-popup-content {
         color: #2c3e50;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* Scroll suave para el panel */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #c0c0c0;
+        border-radius: 3px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -206,7 +285,7 @@ def crear_mapa(datos):
     
     centro_mapa = [sum(latitudes)/len(latitudes), sum(longitudes)/len(longitudes)]
     
-    # Mapa con estilo claro
+    # Mapa con estilo claro minimalista
     mapa = folium.Map(
         location=centro_mapa,
         zoom_start=12,
@@ -226,7 +305,7 @@ def crear_mapa(datos):
         'bombas_activas': 0
     }
     
-    # Marcadores individuales
+    # Marcadores individuales SIN cluster
     for estacion in datos['estaciones']:
         try:
             nombre = estacion.get('nombre', 'Estación')
@@ -264,9 +343,9 @@ def crear_mapa(datos):
         except:
             continue
     
-    # Ajustar zoom para mostrar todas las estaciones
+    # Ajustar zoom automáticamente para todas las estaciones
     if bounds:
-        mapa.fit_bounds(bounds, padding=(30, 30))
+        mapa.fit_bounds(bounds, padding=(50, 50))
     
     return mapa, stats
 
@@ -281,16 +360,16 @@ def main():
         mapa, stats = crear_mapa(datos)
         
         if mapa:
-            # Mostrar mapa
+            # Mostrar mapa ocupando casi toda la pantalla
             st_folium(
                 mapa, 
                 width=1920,
-                height=1080,
+                height=830,  # Dejamos espacio para el panel inferior
                 returned_objects=[],
                 key="mapa_scada"
             )
             
-            # Estadísticas en la parte superior izquierda
+            # Estadísticas flotando en esquina superior izquierda
             st.markdown(f"""
                 <div class="stats-bar">
                     <div class="stats-grid">
@@ -317,8 +396,37 @@ def main():
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
+            
+            # Panel de datos en la parte inferior
+            st.markdown('<div class="data-panel">', unsafe_allow_html=True)
+            st.markdown("### 📊 Variables de Estaciones")
+            
+            for idx, estacion in enumerate(datos['estaciones'], 1):
+                nombre = estacion.get('nombre', f'Estación {idx}')
+                lat = estacion.get('latitud', 'N/A')
+                lon = estacion.get('longitud', 'N/A')
+                estado = estacion.get('estado_bomba', estacion.get('estado', 0))
+                estado_icon = "🟢" if estado == 1 else "🔴"
+                
+                st.markdown(f'<div class="station-row">', unsafe_allow_html=True)
+                st.markdown(f'<div class="station-name">{estado_icon} {nombre}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="station-coords">📍 {lat:.5f}, {lon:.5f}</div>', unsafe_allow_html=True)
+                
+                # Variables
+                st.markdown('<div class="station-vars">', unsafe_allow_html=True)
+                for key, value in estacion.items():
+                    if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono']:
+                        if isinstance(value, (int, float)):
+                            formatted_value = f"{value:,.2f}"
+                        else:
+                            formatted_value = str(value)
+                        st.markdown(f'<div class="var-item"><span class="var-label">{key}:</span> <span class="var-value">{formatted_value}</span></div>', unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
         
-        # Auto-actualización
+        # Auto-actualización silenciosa
         time.sleep(300)
         st.cache_data.clear()
         st.rerun()
