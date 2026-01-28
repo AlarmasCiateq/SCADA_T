@@ -41,19 +41,24 @@ st.markdown("""
         color: #000000;
     }
     
-    /* Estadísticas en la parte superior */
+    /* Estadísticas flotantes en la parte superior */
     .stats-bar {
-        background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
-        padding: 10px 20px;
-        color: white;
+        position: fixed;
+        top: 10px;
+        left: 15px;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(10px);
+        padding: 10px 15px;
+        border-radius: 10px;
+        z-index: 1000;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
     
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 20px;
+        grid-template-columns: repeat(5, auto);
+        gap: 15px;
         align-items: center;
     }
     
@@ -62,15 +67,16 @@ st.markdown("""
     }
     
     .stat-value {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: bold;
-        line-height: 1.3;
+        color: #2c3e50;
+        line-height: 1.2;
     }
     
     .stat-label {
-        font-size: 11px;
-        opacity: 0.9;
-        margin-top: 3px;
+        font-size: 10px;
+        color: #7f8c8d;
+        margin-top: 2px;
     }
     
     /* Panel desplegable inferior - fondo sólido */
@@ -93,14 +99,15 @@ st.markdown("""
         overflow-y: auto;
     }
     
-    /* Estilo del botón del expander - visible y claro */
+    /* Estilo del botón del expander - color que se ve bien en blanco y gris */
     .streamlit-expanderHeader {
-        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important;
+        background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%) !important;
         color: white !important;
         font-weight: bold !important;
         font-size: 16px !important;
         padding: 12px 20px !important;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        border: 2px solid #3498db !important;
     }
     
     /* Contenido del expander */
@@ -366,7 +373,7 @@ def main():
         mapa, stats = crear_mapa(datos)
         
         if mapa:
-            # Estadísticas en la parte superior (antes del mapa)
+            # Estadísticas flotantes en la parte superior
             st.markdown(f"""
                 <div class="stats-bar">
                     <div class="stats-grid">
@@ -375,12 +382,12 @@ def main():
                             <div class="stat-label">Estaciones</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value" style="color: #2ecc71;">🟢 {stats['pozos_activos']}</div>
-                            <div class="stat-label">Pozos Activos</div>
+                            <div class="stat-value" style="color: #27ae60;">🟢 {stats['pozos_activos']}</div>
+                            <div class="stat-label">Activos</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value" style="color: #e74c3c;">🔴 {stats['pozos_inactivos']}</div>
-                            <div class="stat-label">Pozos Inactivos</div>
+                            <div class="stat-label">Inactivos</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value" style="color: #3498db;">🔵 {stats['tanques']}</div>
@@ -388,13 +395,13 @@ def main():
                         </div>
                         <div class="stat-item">
                             <div class="stat-value">🕐 {datetime.now().strftime('%H:%M:%S')}</div>
-                            <div class="stat-label">Última Actualización</div>
+                            <div class="stat-label">Actualizado</div>
                         </div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
             
-            # Mostrar mapa
+            # Mostrar mapa (empieza desde arriba)
             st_folium(
                 mapa, 
                 width=1920,
