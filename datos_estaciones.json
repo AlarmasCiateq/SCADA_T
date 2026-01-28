@@ -1,0 +1,46 @@
+{
+  "estaciones": [
+    {
+      "nombre": "Estación Pozo 1",
+      "tipo": "pozo",
+      "estado_bomba": 1,
+      "latitud": 19.283352119712312,
+      "longitud": -99.65310428742922,
+      "Presión": 2.5,
+      "Flujo Instantáneo": 10.69,
+      "Corriente Prom.": 126.40,
+      "Voltaje Prom.": 429.25,
+      "Potencia Activa": 23.14,
+      "Nivel de Agua": 85.3
+    },
+    {
+      "nombre": "Estación Pozo 2",
+      "tipo": "pozo",
+      "estado_bomba": 0,
+      "latitud": 19.285000000000000,
+      "longitud": -99.655000000000000,
+      "Presión": 0,
+      "Flujo Instantáneo": 0,
+      "Corriente Prom.": 0,
+      "Voltaje Prom.": 0,
+      "Potencia Activa": 0,
+      "Nivel de Agua": 30.1
+    },
+    {
+      "nombre": "Tanque Principal",
+      "tipo": "tanque",
+      "estado_bomba": 1,
+      "latitud": 19.287000000000000,
+      "longitud": -99.657000000000000,
+      "Capacidad": 10000,
+      "Nivel Actual": 7500,
+      "Porcentaje": 75,
+      "Temperatura": 22.5
+    }
+  ],
+  "metadata": {
+    "ultima_actualizacion": "2026-01-29T10:00:00Z",
+    "fuente": "Sistema SCADA",
+    "version": "1.0"
+  }
+}
