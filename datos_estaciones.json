@@ -1,30 +1,32 @@
 {
   "estaciones": [
     {
-      "nombre": "Estación Pozo 1",
+      "nombre": "Pozo 1 - Santa María",
       "tipo": "pozo",
       "estado_bomba": 1,
       "latitud": 19.283352119712312,
       "longitud": -99.65310428742922,
-      "Presión": 2.5,
-      "Flujo Instantáneo": 10.69,
-      "Corriente Prom.": 126.40,
-      "Voltaje Prom.": 429.25,
-      "Potencia Activa": 23.14,
-      "Nivel de Agua": 85.3
+      "Presión (bar)": 2.5,
+      "Flujo Instantáneo (L/min)": 10.69,
+      "Corriente Promedio (A)": 126.40,
+      "Voltaje Promedio (V)": 429.25,
+      "Potencia Activa (kW)": 23.14,
+      "Nivel de Agua (%)": 85.3,
+      "Temperatura (°C)": 22.5
     },
     {
-      "nombre": "Estación Pozo 2",
+      "nombre": "Pozo 2 - San Juan",
       "tipo": "pozo",
       "estado_bomba": 0,
       "latitud": 19.285000000000000,
       "longitud": -99.655000000000000,
-      "Presión": 0,
-      "Flujo Instantáneo": 0,
-      "Corriente Prom.": 0,
-      "Voltaje Prom.": 0,
-      "Potencia Activa": 0,
-      "Nivel de Agua": 30.1
+      "Presión (bar)": 0,
+      "Flujo Instantáneo (L/min)": 0,
+      "Corriente Promedio (A)": 0,
+      "Voltaje Promedio (V)": 0,
+      "Potencia Activa (kW)": 0,
+      "Nivel de Agua (%)": 30.1,
+      "Temperatura (°C)": 20.0
     },
     {
       "nombre": "Tanque Principal",
@@ -32,10 +34,23 @@
       "estado_bomba": 1,
       "latitud": 19.287000000000000,
       "longitud": -99.657000000000000,
-      "Capacidad": 10000,
-      "Nivel Actual": 7500,
-      "Porcentaje": 75,
-      "Temperatura": 22.5
+      "Capacidad Total (L)": 10000,
+      "Nivel Actual (L)": 7500,
+      "Porcentaje (%)": 75,
+      "Temperatura (°C)": 22.5,
+      "Presión (bar)": 3.2
+    },
+    {
+      "nombre": "Bomba de Transferencia",
+      "tipo": "bomba",
+      "estado_bomba": 1,
+      "latitud": 19.289000000000000,
+      "longitud": -99.659000000000000,
+      "Flujo (m³/h)": 45.5,
+      "Presión Descarga (bar)": 4.8,
+      "Potencia (kW)": 15.2,
+      "Eficiencia (%)": 82.5,
+      "Horas de Operación": 1250
     }
   ],
   "metadata": {
