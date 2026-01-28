@@ -41,25 +41,19 @@ st.markdown("""
         color: #000000;
     }
     
-    /* Estadísticas en la parte superior izquierda - más arriba */
+    /* Estadísticas en la parte superior */
     .stats-bar {
-        position: absolute;
-        top: 10px;
-        left: 15px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        padding: 8px 12px;
-        border-radius: 8px;
-        z-index: 1000;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+        background: linear-gradient(135deg, #3498db 0%, #2c3e50 100%);
+        padding: 10px 20px;
+        color: white;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 13px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
     
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(5, auto);
-        gap: 12px;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
         align-items: center;
     }
     
@@ -68,16 +62,15 @@ st.markdown("""
     }
     
     .stat-value {
-        font-size: 16px;
+        font-size: 20px;
         font-weight: bold;
-        color: #2c3e50;
-        line-height: 1.2;
+        line-height: 1.3;
     }
     
     .stat-label {
-        font-size: 9px;
-        color: #7f8c8d;
-        margin-top: 1px;
+        font-size: 11px;
+        opacity: 0.9;
+        margin-top: 3px;
     }
     
     /* Panel desplegable inferior - fondo sólido */
@@ -86,7 +79,7 @@ st.markdown("""
         bottom: 0;
         left: 0;
         right: 0;
-        background: white !important;  /* Fondo sólido blanco */
+        background: white !important;
         border-top: 3px solid #3498db;
         z-index: 999;
         margin: 0 !important;
@@ -100,13 +93,14 @@ st.markdown("""
         overflow-y: auto;
     }
     
-    /* Estilo del botón del expander */
+    /* Estilo del botón del expander - visible y claro */
     .streamlit-expanderHeader {
-        background: #2c3e50 !important;
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important;
         color: white !important;
         font-weight: bold !important;
         font-size: 16px !important;
-        padding: 10px !important;
+        padding: 12px 20px !important;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     }
     
     /* Contenido del expander */
@@ -372,16 +366,7 @@ def main():
         mapa, stats = crear_mapa(datos)
         
         if mapa:
-            # Mostrar mapa
-            st_folium(
-                mapa, 
-                width=1920,
-                height=800,  # Dejamos 280px para el expander
-                returned_objects=[],
-                key="mapa_scada"
-            )
-            
-            # Estadísticas flotando en esquina superior izquierda - más arriba
+            # Estadísticas en la parte superior (antes del mapa)
             st.markdown(f"""
                 <div class="stats-bar">
                     <div class="stats-grid">
@@ -390,12 +375,12 @@ def main():
                             <div class="stat-label">Estaciones</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value" style="color: #27ae60;">🟢 {stats['pozos_activos']}</div>
-                            <div class="stat-label">Activos</div>
+                            <div class="stat-value" style="color: #2ecc71;">🟢 {stats['pozos_activos']}</div>
+                            <div class="stat-label">Pozos Activos</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value" style="color: #e74c3c;">🔴 {stats['pozos_inactivos']}</div>
-                            <div class="stat-label">Inactivos</div>
+                            <div class="stat-label">Pozos Inactivos</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value" style="color: #3498db;">🔵 {stats['tanques']}</div>
@@ -403,11 +388,20 @@ def main():
                         </div>
                         <div class="stat-item">
                             <div class="stat-value">🕐 {datetime.now().strftime('%H:%M:%S')}</div>
-                            <div class="stat-label">Actualizado</div>
+                            <div class="stat-label">Última Actualización</div>
                         </div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
+            
+            # Mostrar mapa
+            st_folium(
+                mapa, 
+                width=1920,
+                height=800,
+                returned_objects=[],
+                key="mapa_scada"
+            )
             
             # Panel desplegable en la parte inferior - CON 3 COLUMNAS REALES
             with st.expander("📊 Ver Datos de Estaciones", expanded=False):
