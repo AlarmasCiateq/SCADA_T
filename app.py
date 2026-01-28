@@ -79,69 +79,88 @@ st.markdown("""
         margin-top: 2px;
     }
     
-    /* Panel de datos inferior */
-    .data-panel {
+    /* Panel desplegable inferior */
+    div[data-testid="stExpander"] {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
         background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-top: 2px solid #3498db;
+        border-top: 3px solid #3498db;
         z-index: 999;
-        max-height: 250px;
-        overflow-y: auto;
-        padding: 10px;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-height: 400px;
+        margin: 0 !important;
+        padding: 0 !important;
     }
     
-    .data-panel h3 {
-        color: #2c3e50;
-        margin: 5px 0;
-        font-size: 16px;
+    div[data-testid="stExpander"] > div {
+        padding: 10px !important;
+    }
+    
+    /* Estilo del botón del expander */
+    .streamlit-expanderHeader {
+        background: rgba(52, 152, 219, 0.9) !important;
+        color: white !important;
+        font-weight: bold !important;
+        font-size: 16px !important;
+    }
+    
+    /* Contenido del expander */
+    .station-card {
+        background: rgba(248, 249, 250, 0.9);
+        border-radius: 8px;
+        padding: 12px;
+        margin: 8px 0;
+        border-left: 4px solid #3498db;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    
+    .station-header {
         display: flex;
         align-items: center;
-        gap: 8px;
-    }
-    
-    .station-row {
-        display: flex;
-        padding: 8px;
+        gap: 10px;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
         border-bottom: 1px solid #ecf0f1;
-        font-size: 12px;
     }
     
     .station-name {
         font-weight: bold;
         color: #2c3e50;
-        min-width: 200px;
-        padding-right: 10px;
+        font-size: 16px;
     }
     
     .station-coords {
         color: #7f8c8d;
-        min-width: 150px;
-        padding-right: 10px;
+        font-size: 12px;
+        margin-left: auto;
     }
     
-    .station-vars {
-        flex: 1;
-        display: flex;
-        flex-wrap: wrap;
+    /* Tres columnas para variables */
+    .vars-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 10px;
+        margin-top: 8px;
+    }
+    
+    .var-column {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
     }
     
     .var-item {
         background: rgba(236, 240, 241, 0.7);
-        padding: 3px 6px;
+        padding: 6px 10px;
         border-radius: 4px;
-        font-size: 11px;
-        min-width: 120px;
+        font-size: 12px;
     }
     
     .var-label {
         color: #7f8c8d;
         font-weight: 500;
+        font-size: 11px;
     }
     
     .var-value {
@@ -174,18 +193,6 @@ st.markdown("""
     .leaflet-popup-content {
         color: #2c3e50;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    /* Scroll suave para el panel */
-    ::-webkit-scrollbar {
-        width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #c0c0c0;
-        border-radius: 3px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -364,7 +371,7 @@ def main():
             st_folium(
                 mapa, 
                 width=1920,
-                height=830,  # Dejamos espacio para el panel inferior
+                height=850,  # Dejamos espacio para el expander
                 returned_objects=[],
                 key="mapa_scada"
             )
@@ -397,34 +404,57 @@ def main():
                 </div>
                 """, unsafe_allow_html=True)
             
-            # Panel de datos en la parte inferior
-            st.markdown('<div class="data-panel">', unsafe_allow_html=True)
-            st.markdown("### 📊 Variables de Estaciones")
-            
-            for idx, estacion in enumerate(datos['estaciones'], 1):
-                nombre = estacion.get('nombre', f'Estación {idx}')
-                lat = estacion.get('latitud', 'N/A')
-                lon = estacion.get('longitud', 'N/A')
-                estado = estacion.get('estado_bomba', estacion.get('estado', 0))
-                estado_icon = "🟢" if estado == 1 else "🔴"
-                
-                st.markdown(f'<div class="station-row">', unsafe_allow_html=True)
-                st.markdown(f'<div class="station-name">{estado_icon} {nombre}</div>', unsafe_allow_html=True)
-                st.markdown(f'<div class="station-coords">📍 {lat:.5f}, {lon:.5f}</div>', unsafe_allow_html=True)
-                
-                # Variables
-                st.markdown('<div class="station-vars">', unsafe_allow_html=True)
-                for key, value in estacion.items():
-                    if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono']:
-                        if isinstance(value, (int, float)):
-                            formatted_value = f"{value:,.2f}"
-                        else:
-                            formatted_value = str(value)
-                        st.markdown(f'<div class="var-item"><span class="var-label">{key}:</span> <span class="var-value">{formatted_value}</span></div>', unsafe_allow_html=True)
-                st.markdown('</div>', unsafe_allow_html=True)
-                st.markdown('</div>', unsafe_allow_html=True)
-            
-            st.markdown('</div>', unsafe_allow_html=True)
+            # Panel desplegable en la parte inferior
+            with st.expander("📊 Ver Datos de Estaciones", expanded=False):
+                for idx, estacion in enumerate(datos['estaciones'], 1):
+                    nombre = estacion.get('nombre', f'Estación {idx}')
+                    lat = estacion.get('latitud', 'N/A')
+                    lon = estacion.get('longitud', 'N/A')
+                    estado = estacion.get('estado_bomba', estacion.get('estado', 0))
+                    estado_icon = "🟢" if estado == 1 else "🔴"
+                    
+                    # Crear lista de variables (excluyendo campos especiales)
+                    variables = []
+                    for key, value in estacion.items():
+                        if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono']:
+                            if isinstance(value, (int, float)):
+                                formatted_value = f"{value:,.2f}"
+                            else:
+                                formatted_value = str(value)
+                            variables.append({'label': key, 'value': formatted_value})
+                    
+                    # Dividir variables en tres columnas
+                    col_count = 3
+                    vars_per_col = (len(variables) + col_count - 1) // col_count
+                    columns_data = []
+                    for i in range(col_count):
+                        start_idx = i * vars_per_col
+                        end_idx = start_idx + vars_per_col
+                        columns_data.append(variables[start_idx:end_idx])
+                    
+                    # Mostrar tarjeta de estación
+                    st.markdown(f"""
+                        <div class="station-card">
+                            <div class="station-header">
+                                <span class="station-name">{estado_icon} {nombre}</span>
+                                <span class="station-coords">📍 {lat:.5f}, {lon:.5f}</span>
+                            </div>
+                            <div class="vars-container">
+                    """, unsafe_allow_html=True)
+                    
+                    # Mostrar tres columnas
+                    for col_vars in columns_data:
+                        st.markdown('<div class="var-column">', unsafe_allow_html=True)
+                        for var in col_vars:
+                            st.markdown(f"""
+                                <div class="var-item">
+                                    <span class="var-label">{var['label']}:</span>
+                                    <span class="var-value">{var['value']}</span>
+                                </div>
+                            """, unsafe_allow_html=True)
+                        st.markdown('</div>', unsafe_allow_html=True)
+                    
+                    st.markdown('</div></div>', unsafe_allow_html=True)
         
         # Auto-actualización silenciosa
         time.sleep(300)
