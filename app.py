@@ -5,8 +5,7 @@ import requests
 import json
 import time
 from datetime import datetime
-import pandas as pd
-from streamlit_folium import folium_static
+from streamlit_folium import st_folium
 
 # Configuración de la página
 st.set_page_config(
@@ -16,62 +15,83 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# CSS personalizado
+st.markdown("""
+    <style>
+    .stApp {
+        background-color: #f0f2f6;
+    }
+    .metric-card {
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # Función para cargar datos desde GitHub
 @st.cache_data(ttl=300)  # Cache por 5 minutos
 def cargar_datos_github(url_github):
     try:
-        response = requests.get(url_github)
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        response = requests.get(url_github, headers=headers, timeout=10)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:
         st.error(f"Error al cargar datos: {e}")
+        return None
+    except json.JSONDecodeError as e:
+        st.error(f"Error en el formato JSON: {e}")
         return None
 
 # Función para crear iconos según el estado
 def crear_icono(tipo, estado):
     if tipo == "pozo":
         if estado == 1:  # Encendido
-            return folium.Icon(icon='water-pump', prefix='fa', color='green', icon_color='white')
+            return folium.Icon(icon='tint', prefix='fa', color='green', icon_color='white')
         else:  # Apagado
-            return folium.Icon(icon='water-pump', prefix='fa', color='red', icon_color='white')
+            return folium.Icon(icon='tint', prefix='fa', color='red', icon_color='white')
     elif tipo == "tanque":
         if estado == 1:
-            return folium.Icon(icon='tint', prefix='fa', color='blue', icon_color='white')
+            return folium.Icon(icon='water', prefix='fa', color='blue', icon_color='white')
         else:
-            return folium.Icon(icon='tint', prefix='fa', color='gray', icon_color='white')
+            return folium.Icon(icon='water', prefix='fa', color='gray', icon_color='white')
+    elif tipo == "bomba":
+        if estado == 1:
+            return folium.Icon(icon='cog', prefix='fa', color='green', icon_color='white')
+        else:
+            return folium.Icon(icon='cog', prefix='fa', color='red', icon_color='white')
     else:
         return folium.Icon(icon='info-sign', prefix='glyphicon', color='orange')
 
-# Función para crear tooltip con información detallada
-def crear_tooltip(estacion):
-    tooltip_html = f"""
-    <div style="font-family: Arial, sans-serif; padding: 10px; min-width: 250px;">
-        <h4 style="color: #1f77b4; margin-bottom: 10px;">{estacion.get('nombre', 'Estación')}</h4>
-        <hr style="border: 1px solid #ddd; margin: 8px 0;">
-        <table style="width: 100%; font-size: 12px;">
+# Función para crear popup con información detallada
+def crear_popup(estacion):
+    popup_html = f"""
+    <div style="font-family: Arial, sans-serif; padding: 15px; min-width: 300px;">
+        <h3 style="color: #1f77b4; margin-top: 0;">{estacion.get('nombre', 'Estación')}</h3>
+        <hr style="border: 1px solid #ddd; margin: 10px 0;">
     """
     
-    # Agregar variables al tooltip
+    # Agregar variables al popup
     for key, value in estacion.items():
-        if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'icono']:
-            tooltip_html += f"""
-            <tr>
-                <td style="padding: 4px; font-weight: bold;">{key}:</td>
-                <td style="padding: 4px; text-align: right;">{value}</td>
-            </tr>
+        if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono']:
+            popup_html += f"""
+            <div style="margin: 8px 0;">
+                <strong>{key}:</strong> {value}
+            </div>
             """
     
     # Agregar fecha y hora de actualización
-    tooltip_html += f"""
-            <tr>
-                <td style="padding: 4px; font-weight: bold;">Última actualización:</td>
-                <td style="padding: 4px; text-align: right;">{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</td>
-            </tr>
-        </table>
+    popup_html += f"""
+        <hr style="border: 1px solid #ddd; margin: 10px 0;">
+        <div style="font-size: 11px; color: #666;">
+            Última actualización: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+        </div>
     </div>
     """
     
-    return folium.Tooltip(tooltip_html, sticky=True)
+    return folium.Popup(popup_html, max_width=400)
 
 # Función principal para crear el mapa
 def crear_mapa(datos):
@@ -80,8 +100,20 @@ def crear_mapa(datos):
         return None
     
     # Calcular centro del mapa
-    latitudes = [est['latitud'] for est in datos['estaciones']]
-    longitudes = [est['longitud'] for est in datos['estaciones']]
+    latitudes = []
+    longitudes = []
+    
+    for estacion in datos['estaciones']:
+        lat = estacion.get('latitud')
+        lon = estacion.get('longitud')
+        if lat is not None and lon is not None:
+            latitudes.append(lat)
+            longitudes.append(lon)
+    
+    if not latitudes or not longitudes:
+        st.error("No se encontraron coordenadas válidas")
+        return None
+    
     centro_mapa = [sum(latitudes)/len(latitudes), sum(longitudes)/len(longitudes)]
     
     # Crear mapa
@@ -89,11 +121,26 @@ def crear_mapa(datos):
         location=centro_mapa,
         zoom_start=12,
         tiles='OpenStreetMap',
-        control_scale=True
+        control_scale=True,
+        prefer_canvas=True
     )
     
     # Agregar cluster de marcadores
-    marker_cluster = MarkerCluster().add_to(mapa)
+    marker_cluster = MarkerCluster(
+        name='Estaciones',
+        overlay=True,
+        control=True,
+        icon_create_function=None
+    ).add_to(mapa)
+    
+    # Contadores para estadísticas
+    stats = {
+        'total': 0,
+        'pozos_activos': 0,
+        'pozos_inactivos': 0,
+        'tanques': 0,
+        'bombas_activas': 0
+    }
     
     # Agregar marcadores para cada estación
     for estacion in datos['estaciones']:
@@ -103,57 +150,44 @@ def crear_mapa(datos):
             lat = estacion.get('latitud')
             lon = estacion.get('longitud')
             tipo = estacion.get('tipo', 'otro')
-            estado = estacion.get('estado_bomba', 0)  # 1 = encendido, 0 = apagado
+            estado = estacion.get('estado_bomba', estacion.get('estado', 0))
             
             if lat is None or lon is None:
+                st.warning(f"Estación {nombre} sin coordenadas válidas")
                 continue
             
-            # Crear marcador con icono y tooltip
+            stats['total'] += 1
+            
+            # Actualizar estadísticas
+            if tipo == 'pozo':
+                if estado == 1:
+                    stats['pozos_activos'] += 1
+                else:
+                    stats['pozos_inactivos'] += 1
+            elif tipo == 'tanque':
+                stats['tanques'] += 1
+            elif tipo == 'bomba':
+                if estado == 1:
+                    stats['bombas_activas'] += 1
+            
+            # Crear marcador con icono y popup
             icono = crear_icono(tipo, estado)
-            tooltip = crear_tooltip(estacion)
+            popup = crear_popup(estacion)
             
             folium.Marker(
                 location=[lat, lon],
-                popup=nombre,
-                tooltip=tooltip,
+                popup=popup,
+                tooltip=nombre,
                 icon=icono
             ).add_to(marker_cluster)
             
         except Exception as e:
             st.warning(f"Error al procesar estación {estacion.get('nombre', 'Desconocida')}: {e}")
     
-    # Agregar leyenda
-    leyenda_html = '''
-    <div style="position: fixed; 
-                bottom: 50px; right: 50px; 
-                background-color: white; 
-                padding: 15px; 
-                border-radius: 5px;
-                box-shadow: 0 0 10px rgba(0,0,0,0.2);
-                z-index: 9999;">
-        <h4 style="margin: 0 0 10px 0;">Leyenda</h4>
-        <div style="display: flex; align-items: center; margin: 5px 0;">
-            <i class="fa fa-water-pump" style="color: green; font-size: 20px; margin-right: 10px;"></i>
-            <span>Pozo Encendido</span>
-        </div>
-        <div style="display: flex; align-items: center; margin: 5px 0;">
-            <i class="fa fa-water-pump" style="color: red; font-size: 20px; margin-right: 10px;"></i>
-            <span>Pozo Apagado</span>
-        </div>
-        <div style="display: flex; align-items: center; margin: 5px 0;">
-            <i class="fa fa-tint" style="color: blue; font-size: 20px; margin-right: 10px;"></i>
-            <span>Tanque Lleno</span>
-        </div>
-        <div style="display: flex; align-items: center; margin: 5px 0;">
-            <i class="fa fa-tint" style="color: gray; font-size: 20px; margin-right: 10px;"></i>
-            <span>Tanque Vacío</span>
-        </div>
-    </div>
-    '''
+    # Agregar control de capas
+    folium.LayerControl().add_to(mapa)
     
-    mapa.get_root().html.add_child(folium.Element(leyenda_html))
-    
-    return mapa
+    return mapa, stats
 
 # Interfaz principal
 def main():
@@ -173,70 +207,106 @@ def main():
         
         # Opciones de visualización
         st.subheader("📊 Opciones")
-        mostrar_datos = st.checkbox("Mostrar datos en tabla", value=True)
         auto_actualizar = st.checkbox("Auto-actualizar cada 5 minutos", value=True)
         
         # Botón de actualización manual
-        if st.button("🔄 Actualizar ahora"):
+        if st.button("🔄 Actualizar ahora", type="primary"):
             st.cache_data.clear()
             st.rerun()
+        
+        st.markdown("---")
+        st.markdown("**Instrucciones:**")
+        st.markdown("1. Sube tu archivo JSON a GitHub")
+        st.markdown("2. Copia la URL 'raw'")
+        st.markdown("3. Pégala arriba")
+        st.markdown("4. ¡Listo!")
     
     # Cargar datos
     with st.spinner("Cargando datos..."):
         datos = cargar_datos_github(url_github)
     
     if datos:
-        # Mostrar información general
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Total de Estaciones", len(datos.get('estaciones', [])))
-        with col2:
-            pozos_activos = sum(1 for e in datos['estaciones'] if e.get('tipo') == 'pozo' and e.get('estado_bomba') == 1)
-            st.metric("Pozos Activos", pozos_activos)
-        with col3:
-            ultima_actualizacion = datetime.now().strftime("%H:%M:%S")
-            st.metric("Última Actualización", ultima_actualizacion)
-        
         # Crear y mostrar mapa
-        mapa = crear_mapa(datos)
+        resultado = crear_mapa(datos)
         
-        if mapa:
-            # Mostrar mapa
-            folium_static(mapa, width=1200, height=600)
+        if resultado:
+            mapa, stats = resultado
             
-            # Mostrar datos en tabla si se selecciona
-            if mostrar_datos:
-                st.subheader("📋 Datos de Estaciones")
+            # Mostrar estadísticas
+            col1, col2, col3, col4 = st.columns(4)
+            
+            with col1:
+                st.metric("Total Estaciones", stats['total'])
+            with col2:
+                st.metric("Pozos Activos", stats['pozos_activos'], 
+                         delta=f"+{stats['pozos_activos']}" if stats['pozos_activos'] > 0 else None)
+            with col3:
+                st.metric("Tanques", stats['tanques'])
+            with col4:
+                ultima_actualizacion = datetime.now().strftime("%H:%M:%S")
+                st.metric("Última Actualización", ultima_actualizacion)
+            
+            # Mostrar mapa
+            st_folium(mapa, width=1200, height=600, returned_objects=[])
+            
+            # Mostrar datos en tabla
+            with st.expander("📋 Ver datos detallados"):
+                st.subheader("Datos de Estaciones")
                 
-                # Convertir datos a DataFrame
-                df_data = []
-                for estacion in datos['estaciones']:
-                    row = {
-                        'Nombre': estacion.get('nombre', ''),
-                        'Tipo': estacion.get('tipo', ''),
-                        'Estado': '🟢 Activo' if estacion.get('estado_bomba', 0) == 1 else '🔴 Inactivo',
-                        'Latitud': estacion.get('latitud', ''),
-                        'Longitud': estacion.get('longitud', ''),
-                    }
-                    
-                    # Agregar otras variables
-                    for key, value in estacion.items():
-                        if key not in ['nombre', 'tipo', 'estado_bomba', 'latitud', 'longitud', 'icono']:
-                            row[key] = value
-                    
-                    df_data.append(row)
-                
-                df = pd.DataFrame(df_data)
-                st.dataframe(df, use_container_width=True)
+                # Mostrar datos en formato de lista
+                for idx, estacion in enumerate(datos['estaciones'], 1):
+                    with st.container():
+                        col_a, col_b = st.columns([2, 3])
+                        
+                        with col_a:
+                            st.markdown(f"**{idx}. {estacion.get('nombre', 'Sin nombre')}**")
+                            st.markdown(f"📍 {estacion.get('latitud', 'N/A')}, {estacion.get('longitud', 'N/A')}")
+                            estado = estacion.get('estado_bomba', estacion.get('estado', 0))
+                            estado_emoji = "🟢" if estado == 1 else "🔴"
+                            st.markdown(f"{estado_emoji} {'Activo' if estado == 1 else 'Inactivo'}")
+                        
+                        with col_b:
+                            for key, value in estacion.items():
+                                if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono']:
+                                    st.text(f"{key}: {value}")
+                        
+                        st.markdown("---")
         
         # Auto-actualización
         if auto_actualizar:
-            st.info("🔄 Auto-actualización activada - La página se actualizará en 5 minutos")
-            time.sleep(300)  # 5 minutos
+            st.info(f"🔄 Auto-actualización activada - Próxima actualización en 5 minutos")
+            
+            # Crear un contador regresivo
+            countdown_placeholder = st.empty()
+            for i in range(300, 0, -1):
+                countdown_placeholder.text(f"Próxima actualización en: {i//60}:{i%60:02d}")
+                time.sleep(1)
+            
             st.cache_data.clear()
             st.rerun()
     else:
         st.error("❌ No se pudieron cargar los datos. Verifica la URL y el formato del archivo JSON.")
+        
+        # Mostrar ejemplo de formato JSON
+        with st.expander("📋 Formato JSON esperado"):
+            st.code("""
+{
+  "estaciones": [
+    {
+      "nombre": "Estación Pozo 1",
+      "tipo": "pozo",
+      "estado_bomba": 1,
+      "latitud": 19.283352119712312,
+      "longitud": -99.65310428742922,
+      "Presión": 2.5,
+      "Flujo Instantáneo": 10.69,
+      "Corriente Prom.": 126.40,
+      "Voltaje Prom.": 429.25,
+      "Potencia Activa": 23.14
+    }
+  ]
+}
+""", language="json")
 
 # Ejecutar aplicación
 if __name__ == "__main__":
