@@ -6,10 +6,10 @@ import time
 from datetime import datetime
 from streamlit_folium import st_folium
 
-# Configuración de la página - SIN NADA
+# Configuración de la página
 st.set_page_config(
     page_title="SCADA Monitor",
-    page_icon="💧",
+    page_icon="🛢️",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -17,7 +17,7 @@ st.set_page_config(
 # CSS ultra minimalista
 st.markdown("""
     <style>
-    /* Eliminar todo lo posible */
+    /* Eliminar todo */
     [data-testid="stSidebar"] {
         display: none;
     }
@@ -40,75 +40,66 @@ st.markdown("""
         color: #000000;
     }
     
-    /* Overlay translúcido sobre el mapa */
+    /* Overlay translúcido */
     .map-overlay {
         position: relative;
     }
     
-    .map-overlay::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.4);
-        pointer-events: none;
-        z-index: 1;
-    }
-    
-    /* Estadísticas en la parte inferior */
+    /* Estadísticas en la parte superior izquierda */
     .stats-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 240, 240, 0.95) 100%);
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(255, 255, 255, 0.92);
         backdrop-filter: blur(10px);
-        padding: 8px 20px;
-        border-top: 2px solid #2c3e50;
+        padding: 10px 15px;
+        border-radius: 10px;
         z-index: 1000;
-        box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
-    .stats-container {
-        display: flex;
-        justify-content: space-around;
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(5, auto);
+        gap: 15px;
         align-items: center;
-        max-width: 1920px;
-        margin: 0 auto;
     }
     
     .stat-item {
         text-align: center;
-        padding: 0 15px;
     }
     
     .stat-value {
-        font-size: 24px;
+        font-size: 18px;
         font-weight: bold;
         color: #2c3e50;
+        line-height: 1.2;
     }
     
     .stat-label {
-        font-size: 12px;
+        font-size: 10px;
         color: #7f8c8d;
         margin-top: 2px;
     }
     
-    /* Ocultar footer */
+    /* Ocultar footer y botones */
     footer {
         display: none !important;
     }
     
-    /* Ocultar botones de Streamlit */
     .stDeployButton {
+        display: none !important;
+    }
+    
+    /* Ocultar info de Streamlit */
+    .leaflet-control-attribution {
         display: none !important;
     }
     
     /* Popup estilo claro */
     .leaflet-popup-content-wrapper {
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(255, 255, 255, 0.98);
         border-radius: 8px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
@@ -200,6 +191,7 @@ def crear_mapa(datos):
     
     latitudes = []
     longitudes = []
+    bounds = []
     
     for estacion in datos['estaciones']:
         lat = estacion.get('latitud')
@@ -207,17 +199,18 @@ def crear_mapa(datos):
         if lat is not None and lon is not None:
             latitudes.append(lat)
             longitudes.append(lon)
+            bounds.append([lat, lon])
     
     if not latitudes or not longitudes:
         return None, {}
     
     centro_mapa = [sum(latitudes)/len(latitudes), sum(longitudes)/len(longitudes)]
     
-    # Mapa con estilo claro y minimalista
+    # Mapa con estilo claro
     mapa = folium.Map(
         location=centro_mapa,
         zoom_start=12,
-        tiles='CartoDB positron',  # Mapa claro minimalista
+        tiles='CartoDB positron',
         control_scale=False,
         prefer_canvas=True,
         zoom_control=True,
@@ -233,7 +226,7 @@ def crear_mapa(datos):
         'bombas_activas': 0
     }
     
-    # Marcadores individuales SIN cluster
+    # Marcadores individuales
     for estacion in datos['estaciones']:
         try:
             nombre = estacion.get('nombre', 'Estación')
@@ -271,6 +264,10 @@ def crear_mapa(datos):
         except:
             continue
     
+    # Ajustar zoom para mostrar todas las estaciones
+    if bounds:
+        mapa.fit_bounds(bounds, padding=(30, 30))
+    
     return mapa, stats
 
 # Interfaz principal
@@ -284,49 +281,49 @@ def main():
         mapa, stats = crear_mapa(datos)
         
         if mapa:
-            # Mapa en la parte superior (98% de la pantalla)
+            # Mostrar mapa
             st_folium(
                 mapa, 
                 width=1920,
-                height=1020,
+                height=1080,
                 returned_objects=[],
                 key="mapa_scada"
             )
             
-            # Estadísticas en la barra inferior (fija)
+            # Estadísticas en la parte superior izquierda
             st.markdown(f"""
                 <div class="stats-bar">
-                    <div class="stats-container">
+                    <div class="stats-grid">
                         <div class="stat-item">
-                            <div class="stat-value">{stats['total']}</div>
-                            <div class="stat-label">📡 Estaciones</div>
+                            <div class="stat-value">📡 {stats['total']}</div>
+                            <div class="stat-label">Estaciones</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value" style="color: #27ae60;">{stats['pozos_activos']}</div>
-                            <div class="stat-label">🟢 Pozos Activos</div>
+                            <div class="stat-value" style="color: #27ae60;">🟢 {stats['pozos_activos']}</div>
+                            <div class="stat-label">Activos</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value" style="color: #e74c3c;">{stats['pozos_inactivos']}</div>
-                            <div class="stat-label">🔴 Pozos Inactivos</div>
+                            <div class="stat-value" style="color: #e74c3c;">🔴 {stats['pozos_inactivos']}</div>
+                            <div class="stat-label">Inactivos</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value" style="color: #3498db;">{stats['tanques']}</div>
-                            <div class="stat-label">🔵 Tanques</div>
+                            <div class="stat-value" style="color: #3498db;">🔵 {stats['tanques']}</div>
+                            <div class="stat-label">Tanques</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value">{datetime.now().strftime('%H:%M:%S')}</div>
-                            <div class="stat-label">🕐 Última Actualización</div>
+                            <div class="stat-value">🕐 {datetime.now().strftime('%H:%M:%S')}</div>
+                            <div class="stat-label">Actualizado</div>
                         </div>
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
         
-        # Auto-actualización silenciosa
+        # Auto-actualización
         time.sleep(300)
         st.cache_data.clear()
         st.rerun()
     else:
-        # Pantalla de carga minimalista
+        # Pantalla de carga
         st.markdown("""
             <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
                         background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%); 
