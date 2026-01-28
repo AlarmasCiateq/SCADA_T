@@ -41,11 +41,11 @@ st.markdown("""
         color: #000000;
     }
     
-    /* Estadísticas flotantes en la parte superior */
+    /* Estadísticas flotantes en la parte superior derecha */
     .stats-bar {
         position: fixed;
         top: 10px;
-        left: 15px;
+        right: 15px;
         background: rgba(255, 255, 255, 0.92);
         backdrop-filter: blur(10px);
         padding: 10px 15px;
@@ -99,15 +99,15 @@ st.markdown("""
         overflow-y: auto;
     }
     
-    /* Estilo del botón del expander - color que se ve bien en blanco y gris */
+    /* Estilo del botón del expander - AMARILLO PARA MÁXIMA VISIBILIDAD */
     .streamlit-expanderHeader {
-        background: linear-gradient(135deg, #2c3e50 0%, #1a2530 100%) !important;
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
         color: white !important;
         font-weight: bold !important;
         font-size: 16px !important;
         padding: 12px 20px !important;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-        border: 2px solid #3498db !important;
+        border: 2px solid #f1c40f !important;
     }
     
     /* Contenido del expander */
@@ -373,7 +373,7 @@ def main():
         mapa, stats = crear_mapa(datos)
         
         if mapa:
-            # Estadísticas flotantes en la parte superior
+            # Estadísticas flotantes en la parte superior derecha
             st.markdown(f"""
                 <div class="stats-bar">
                     <div class="stats-grid">
