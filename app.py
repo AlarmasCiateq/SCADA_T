@@ -6,87 +6,137 @@ import time
 from datetime import datetime
 from streamlit_folium import st_folium
 
-# Configuración de la página - SIN SIDEBAR
+# Configuración de la página - SIN NADA
 st.set_page_config(
     page_title="SCADA Monitor",
-    page_icon="🛢️",
+    page_icon="💧",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# CSS para tema oscuro y pantalla completa
+# CSS ultra minimalista
 st.markdown("""
     <style>
-    /* Eliminar sidebar */
+    /* Eliminar todo lo posible */
     [data-testid="stSidebar"] {
         display: none;
     }
     
-    /* Fondo oscuro */
-    .stApp {
-        background-color: #0e1117;
-        color: #ffffff;
-    }
-    
-    /* Ocultar botones de Streamlit */
-    button[kind="header"] {
+    [data-testid="stHeader"] {
         display: none;
     }
     
-    /* Header minimalista */
-    .main-header {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        padding: 5px 20px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    .block-container {
+        padding-top: 0px;
+        padding-bottom: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+        max-width: 100%;
     }
     
-    /* Estadísticas */
+    /* Fondo del mapa */
+    .stApp {
+        background-color: #f8f9fa;
+        color: #000000;
+    }
+    
+    /* Overlay translúcido sobre el mapa */
+    .map-overlay {
+        position: relative;
+    }
+    
+    .map-overlay::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.4);
+        pointer-events: none;
+        z-index: 1;
+    }
+    
+    /* Estadísticas en la parte inferior */
+    .stats-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 240, 240, 0.95) 100%);
+        backdrop-filter: blur(10px);
+        padding: 8px 20px;
+        border-top: 2px solid #2c3e50;
+        z-index: 1000;
+        box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.1);
+    }
+    
     .stats-container {
-        background: rgba(26, 26, 46, 0.8);
-        padding: 8px;
-        border-radius: 6px;
-        margin-bottom: 10px;
-        border: 1px solid #2d3748;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        max-width: 1920px;
+        margin: 0 auto;
     }
     
-    /* Texto blanco */
-    h1, h2, h3, h4, h5, h6, p, div, span, li, ul {
-        color: #ffffff !important;
+    .stat-item {
+        text-align: center;
+        padding: 0 15px;
     }
     
-    /* Ocultar footer de Streamlit */
+    .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    
+    .stat-label {
+        font-size: 12px;
+        color: #7f8c8d;
+        margin-top: 2px;
+    }
+    
+    /* Ocultar footer */
     footer {
         display: none !important;
     }
     
-    /* Contenedor del mapa */
-    .map-container {
-        margin-top: 5px;
+    /* Ocultar botones de Streamlit */
+    .stDeployButton {
+        display: none !important;
+    }
+    
+    /* Popup estilo claro */
+    .leaflet-popup-content-wrapper {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .leaflet-popup-content {
+        color: #2c3e50;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     </style>
     """, unsafe_allow_html=True)
 
 # Función para cargar datos desde GitHub
-@st.cache_data(ttl=300)  # Cache por 5 minutos
+@st.cache_data(ttl=300)
 def cargar_datos_github(url_github):
     try:
         headers = {'User-Agent': 'Mozilla/5.0'}
         response = requests.get(url_github, headers=headers, timeout=10)
         response.raise_for_status()
         return response.json()
-    except requests.exceptions.RequestException as e:
-        return None
-    except json.JSONDecodeError:
+    except:
         return None
 
 # Función para crear iconos según el estado
 def crear_icono(tipo, estado):
     if tipo == "pozo":
-        if estado == 1:  # Encendido
+        if estado == 1:
             return folium.Icon(icon='tint', prefix='fa', color='green', icon_color='white')
-        else:  # Apagado
+        else:
             return folium.Icon(icon='tint', prefix='fa', color='red', icon_color='white')
     elif tipo == "tanque":
         if estado == 1:
@@ -103,54 +153,51 @@ def crear_icono(tipo, estado):
     else:
         return folium.Icon(icon='info-sign', prefix='glyphicon', color='orange')
 
-# Función para crear popup con información detallada
+# Función para crear popup
 def crear_popup(estacion):
     popup_html = f"""
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-                padding: 15px; min-width: 320px; background: #1a1a2e; color: #ffffff;">
-        <h3 style="color: #4da6ff; margin-top: 0; font-size: 18px;">
-            <i class="fa fa-tint"></i> {estacion.get('nombre', 'Estación')}
+                padding: 15px; min-width: 320px; background: rgba(255, 255, 255, 0.98); 
+                color: #2c3e50; border-radius: 8px;">
+        <h3 style="color: #2c3e50; margin-top: 0; font-size: 18px; margin-bottom: 12px;">
+            📍 {estacion.get('nombre', 'Estación')}
         </h3>
-        <hr style="border: 1px solid #2d3748; margin: 10px 0;">
+        <hr style="border: 1px solid #ecf0f1; margin: 10px 0;">
     """
     
-    # Agregar variables al popup
     for key, value in estacion.items():
         if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono']:
-            # Formatear valores numéricos
             if isinstance(value, (int, float)):
                 formatted_value = f"{value:,.2f}"
             else:
                 formatted_value = str(value)
             
             popup_html += f"""
-            <div style="margin: 8px 0; padding: 5px; background: rgba(45, 55, 72, 0.3); 
-                        border-radius: 4px; border-left: 3px solid #4da6ff;">
-                <strong style="color: #a0aec0; font-size: 13px;">{key}:</strong> 
-                <span style="color: #ffffff; font-weight: 500; float: right;">
+            <div style="margin: 8px 0; padding: 6px 8px; background: rgba(236, 240, 241, 0.5); 
+                        border-radius: 4px; border-left: 3px solid #3498db;">
+                <strong style="color: #7f8c8d; font-size: 13px;">{key}:</strong> 
+                <span style="color: #2c3e50; font-weight: 600; float: right;">
                     {formatted_value}
                 </span>
                 <div style="clear: both;"></div>
             </div>
             """
     
-    # Agregar fecha y hora de actualización
     popup_html += f"""
-        <hr style="border: 1px solid #2d3748; margin: 10px 0;">
-        <div style="font-size: 11px; color: #718096; text-align: center;">
-            📅 Última actualización: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+        <hr style="border: 1px solid #ecf0f1; margin: 10px 0;">
+        <div style="font-size: 11px; color: #95a5a6; text-align: center; margin-top: 8px;">
+            📅 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         </div>
     </div>
     """
     
     return folium.Popup(popup_html, max_width=400)
 
-# Función principal para crear el mapa
+# Función para crear el mapa
 def crear_mapa(datos):
     if not datos or 'estaciones' not in datos:
         return None, {}
     
-    # Calcular centro del mapa
     latitudes = []
     longitudes = []
     
@@ -166,11 +213,11 @@ def crear_mapa(datos):
     
     centro_mapa = [sum(latitudes)/len(latitudes), sum(longitudes)/len(longitudes)]
     
-    # Crear mapa con estilo minimalista (CartoDB dark_matter)
+    # Mapa con estilo claro y minimalista
     mapa = folium.Map(
         location=centro_mapa,
         zoom_start=12,
-        tiles='CartoDB dark_matter',  # Mapa oscuro minimalista
+        tiles='CartoDB positron',  # Mapa claro minimalista
         control_scale=False,
         prefer_canvas=True,
         zoom_control=True,
@@ -178,7 +225,6 @@ def crear_mapa(datos):
         dragging=True
     )
     
-    # Contadores para estadísticas
     stats = {
         'total': 0,
         'pozos_activos': 0,
@@ -187,10 +233,10 @@ def crear_mapa(datos):
         'bombas_activas': 0
     }
     
-    # Agregar marcadores individuales (SIN CLUSTER)
+    # Marcadores individuales SIN cluster
     for estacion in datos['estaciones']:
         try:
-            nombre = estacion.get('nombre', 'Estación sin nombre')
+            nombre = estacion.get('nombre', 'Estación')
             lat = estacion.get('latitud')
             lon = estacion.get('longitud')
             tipo = estacion.get('tipo', 'otro')
@@ -201,7 +247,6 @@ def crear_mapa(datos):
             
             stats['total'] += 1
             
-            # Actualizar estadísticas
             if tipo == 'pozo':
                 if estado == 1:
                     stats['pozos_activos'] += 1
@@ -213,7 +258,6 @@ def crear_mapa(datos):
                 if estado == 1:
                     stats['bombas_activas'] += 1
             
-            # Crear marcador con icono y popup
             icono = crear_icono(tipo, estado)
             popup = crear_popup(estacion)
             
@@ -224,82 +268,86 @@ def crear_mapa(datos):
                 icon=icono
             ).add_to(mapa)
             
-        except Exception as e:
+        except:
             continue
     
     return mapa, stats
 
 # Interfaz principal
 def main():
-    # Header minimalista (1% de la pantalla)
-    st.markdown('<div class="main-header">', unsafe_allow_html=True)
-    col1, col2, col3, col4, col5 = st.columns([2, 1, 1, 1, 1])
-    
-    with col1:
-        st.markdown("### 🛢️ SCADA Monitor - Sistema de Monitoreo")
-    
-    # Cargar datos automáticamente (sin input del usuario)
+    # URL del repositorio
     URL_GITHUB = "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json"
+    
     datos = cargar_datos_github(URL_GITHUB)
     
     if datos:
-        # Crear y mostrar mapa
         mapa, stats = crear_mapa(datos)
         
         if mapa:
-            # Mostrar estadísticas minimalistas
-            with st.container():
-                st.markdown('<div class="stats-container">', unsafe_allow_html=True)
-                col_a, col_b, col_c, col_d, col_e = st.columns(5)
-                
-                with col_a:
-                    st.metric("📡 Estaciones", stats['total'])
-                with col_b:
-                    st.metric("🟢 Pozos Activos", stats['pozos_activos'])
-                with col_c:
-                    st.metric("🔴 Pozos Inactivos", stats['pozos_inactivos'])
-                with col_d:
-                    st.metric("🔵 Tanques", stats['tanques'])
-                with col_e:
-                    ultima_actualizacion = datetime.now().strftime("%H:%M:%S")
-                    st.metric("🕐 Actualizado", ultima_actualizacion)
-                
-                st.markdown('</div>', unsafe_allow_html=True)
-            
-            # Mostrar mapa (99% de la pantalla)
-            st.markdown('<div class="map-container">', unsafe_allow_html=True)
+            # Mapa en la parte superior (98% de la pantalla)
             st_folium(
                 mapa, 
-                width=1900,  # FullHD width
-                height=950,  # FullHD height menos espacio para header
+                width=1920,
+                height=1020,
                 returned_objects=[],
                 key="mapa_scada"
             )
-            st.markdown('</div>', unsafe_allow_html=True)
+            
+            # Estadísticas en la barra inferior (fija)
+            st.markdown(f"""
+                <div class="stats-bar">
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <div class="stat-value">{stats['total']}</div>
+                            <div class="stat-label">📡 Estaciones</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" style="color: #27ae60;">{stats['pozos_activos']}</div>
+                            <div class="stat-label">🟢 Pozos Activos</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" style="color: #e74c3c;">{stats['pozos_inactivos']}</div>
+                            <div class="stat-label">🔴 Pozos Inactivos</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" style="color: #3498db;">{stats['tanques']}</div>
+                            <div class="stat-label">🔵 Tanques</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{datetime.now().strftime('%H:%M:%S')}</div>
+                            <div class="stat-label">🕐 Última Actualización</div>
+                        </div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
         
-        # Auto-actualización silenciosa cada 5 minutos
+        # Auto-actualización silenciosa
         time.sleep(300)
         st.cache_data.clear()
         st.rerun()
     else:
-        # Pantalla de carga/error minimalista
+        # Pantalla de carga minimalista
         st.markdown("""
-            <div style="text-align: center; padding: 100px; background: rgba(26, 26, 46, 0.9);">
-                <h1 style="color: #4da6ff; font-size: 48px;">🛢️ SCADA Monitor</h1>
-                <p style="color: #a0aec0; font-size: 18px; margin-top: 20px;">
-                    Cargando datos del sistema...
-                </p>
-                <div style="margin-top: 30px; color: #718096;">
-                    ⏳ Esperando actualización desde SCADA
+            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+                        background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%); 
+                        display: flex; flex-direction: column; justify-content: center; 
+                        align-items: center; z-index: 9999;">
+                <div style="text-align: center; padding: 40px; background: rgba(255, 255, 255, 0.9); 
+                            border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);">
+                    <h1 style="color: #2c3e50; font-size: 48px; margin-bottom: 20px;">🛢️ SCADA Monitor</h1>
+                    <p style="color: #7f8c8d; font-size: 18px; margin-bottom: 30px;">
+                        Cargando datos del sistema...
+                    </p>
+                    <div style="font-size: 14px; color: #95a5a6;">
+                        ⏳ Esperando actualización desde SCADA
+                    </div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
         
-        # Reintentar en 10 segundos
         time.sleep(10)
         st.cache_data.clear()
         st.rerun()
 
-# Ejecutar aplicación
 if __name__ == "__main__":
     main()
