@@ -83,32 +83,6 @@
       "Temperatura Agua (°C)": 18.5,
       "pH": 7.2,
       "Turbidez (NTU)": 15.3
-    },
-    {
-      "nombre": "Rebombo San Pedro",
-      "tipo": "bomba",
-      "estado_bomba": 1,
-      "en_linea": 1,
-      "latitud": 19.299000000000000,
-      "longitud": -99.669000000000000,
-      "Nivel Actual (m)": 2.35,
-      "Caudal (m³/s)": 1.8,
-      "Temperatura Agua (°C)": 18.5,
-      "pH": 7.2,
-      "Turbidez (NTU)": 15.3
-    },
-    {
-      "nombre": "Tanque Wilfrido",
-      "tipo": "tanque",
-      "estado_bomba": 1,
-      "en_linea": 1,
-      "latitud": 19.280000000000000,
-      "longitud": -99.650000000000000,
-      "Capacidad Total (L)": 10000,
-      "Nivel Actual (m)": 7.500,
-      "Porcentaje (%)": 75,
-      "Temperatura (°C)": 22.5,
-      "Presión (kg/cm²)": 3.2
     }
   ],
   "metadata": {
