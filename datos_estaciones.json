@@ -3,8 +3,8 @@
     {
       "nombre": "Pozo 1 - Santa María",
       "tipo": "pozo",
-      "estado_bomba": 1,
-      "en_linea": 0,
+      "estado_bomba": 0,
+      "en_linea": 1,
       "latitud": 19.283352119712312,
       "longitud": -99.65310428742922,
       "Presión (bar)": 2.5,
@@ -18,8 +18,8 @@
     {
       "nombre": "Pozo 2 - San Juan",
       "tipo": "pozo",
-      "estado_bomba": 1,
-      "en_linea": 0,
+      "estado_bomba": 0,
+      "en_linea": 1,
       "latitud": 19.285000000000000,
       "longitud": -99.655000000000000,
       "Presión (bar)": 0,
@@ -33,8 +33,8 @@
     {
       "nombre": "Pozo 3 - La Esperanza",
       "tipo": "pozo",
-      "estado_bomba": 1,
-      "en_linea": 0,
+      "estado_bomba": 0,
+      "en_linea": 1,
       "latitud": 19.286500000000000,
       "longitud": -99.656500000000000,
       "Presión (bar)": 0,
