@@ -79,7 +79,7 @@ st.markdown("""
         margin-top: 1px;
     }
     
-    /* Panel desplegable inferior - fondo sólido */
+    /* Panel desplegable inferior - fondo sólido SIN ESPACIO ARRIBA */
     div[data-testid="stExpander"] {
         position: fixed;
         bottom: 0;
@@ -416,16 +416,17 @@ def main():
                 </div>
                 """, unsafe_allow_html=True)
             
-            # Mostrar mapa (empieza desde arriba)
+            # Mostrar mapa SIN ESPACIO ARRIBA DEL DESPLEGABLE (altura completa 1080px)
             st_folium(
                 mapa, 
                 width=1920,
-                height=800,
+                height=1080,
                 returned_objects=[],
                 key="mapa_scada"
             )
             
             # Panel desplegable en la parte inferior - CON 4 COLUMNAS
+            # El desplegable se superpone al mapa cuando está abierto
             with st.expander("📊 Ver Datos de Estaciones", expanded=False):
                 for idx, estacion in enumerate(datos['estaciones'], 1):
                     nombre = estacion.get('nombre', f'Estación {idx}')
