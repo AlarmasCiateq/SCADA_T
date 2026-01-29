@@ -3,7 +3,7 @@ import folium
 import requests
 import json
 from datetime import datetime
-from streamlit_folium import st_folium
+import hashlib
 
 # Configuración minimalista
 st.set_page_config(
@@ -12,49 +12,48 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS limpio y funcional
+# CSS limpio - solo para el botón de actualización
 st.markdown("""
     <style>
     [data-testid="stSidebar"] { display: none; }
     [data-testid="stHeader"] { display: none; }
     .block-container { padding: 0; max-width: 100%; margin: 0; }
-    .stApp { background-color: #f8f9fa; }
+    .stApp { background-color: #0e1117; }
     
-    /* Estadísticas arriba derecha */
-    .stats-bar {
+    /* Botón de actualización discreto */
+    #update-btn {
         position: fixed;
         top: 10px;
-        right: 15px;
-        background: rgba(255, 255, 255, 0.95);
-        padding: 8px 15px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        left: 10px;
         z-index: 1000;
-        font-family: Arial, sans-serif;
-        font-size: 13px;
+        background: rgba(52, 152, 219, 0.9);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        font-size: 18px;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
-    .stats-grid { display: grid; grid-template-columns: repeat(6, auto); gap: 10px; }
-    .stat-value { font-weight: bold; color: #2c3e50; }
-    .stat-label { font-size: 9px; color: #7f8c8d; }
-    
-    footer, .stDeployButton, .leaflet-control-attribution { display: none !important; }
+    #update-btn:hover {
+        background: rgba(41, 128, 185, 0.95);
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# Cargar datos (sin cache para actualización manual)
+# Cargar datos SIN cache
 def cargar_datos():
     try:
         url = "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json"
         response = requests.get(f"{url}?t={int(datetime.now().timestamp()*1000)}", timeout=5)
         response.raise_for_status()
         return response.json()
-    except Exception as e:
-        st.error(f"Error al cargar datos: {str(e)[:50]}")
+    except:
         return None
 
 # Crear icono (mismo ícono, color según estado)
 def crear_icono(tipo, estado, en_linea):
-    # Color: negro si fuera de línea, sino según estado
     color = 'black' if en_linea == 0 else (
         'green' if (tipo in ['pozo', 'bomba'] and estado == 1) else
         'red' if (tipo in ['pozo', 'bomba'] and estado == 0) else
@@ -64,7 +63,6 @@ def crear_icono(tipo, estado, en_linea):
         'orange'
     )
     
-    # Ícono según tipo (siempre el mismo)
     iconos = {
         'pozo': ('tint', 'fa'),
         'tanque': ('water', 'fa'),
@@ -74,22 +72,12 @@ def crear_icono(tipo, estado, en_linea):
     icon, prefix = iconos.get(tipo, ('info-sign', 'glyphicon'))
     return folium.Icon(icon=icon, prefix=prefix, color=color, icon_color='white')
 
-# Crear popup con datos
-def crear_popup(estacion):
-    html = f"<div style='font-family: Arial; padding: 12px; min-width: 280px'><h4 style='margin:0 0 8px 0; color:#2c3e50'>{estacion.get('nombre', '')}</h4><hr style='margin:8px 0'>"
-    for k, v in estacion.items():
-        if k not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado_bomba', 'en_linea', 'icono']:
-            val = f"{v:,.2f}" if isinstance(v, (float, int)) else str(v)
-            html += f"<div style='margin:5px 0; padding:3px 0'><span style='color:#7f8c8d; font-size:12px'>{k}:</span> <span style='float:right; font-weight:bold'>{val}</span><div style='clear:both'></div></div>"
-    html += f"<hr style='margin:8px 0'><div style='font-size:11px; color:#95a5a6; text-align:center'>{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div></div>"
-    return folium.Popup(html, max_width=320)
-
-# Crear mapa con zoom óptimo
-def crear_mapa(datos):
+# Generar HTML del mapa COMPLETO (estático)
+def generar_html_mapa(datos):
     if not datos or 'estaciones' not in datos:
         return None, {}
     
-    # Calcular bounds para ajustar zoom
+    # Calcular bounds
     bounds = []
     for e in datos['estaciones']:
         if 'latitud' in e and 'longitud' in e:
@@ -98,14 +86,18 @@ def crear_mapa(datos):
     if not bounds:
         return None, {}
     
-    # Centro y mapa
+    # Centro
     centro = [sum(b[0] for b in bounds)/len(bounds), sum(b[1] for b in bounds)/len(bounds)]
+    
+    # Mapa
     mapa = folium.Map(
         location=centro,
         zoom_start=10,
-        tiles='CartoDB positron',  # Mapa claro con calles sutiles
+        tiles='CartoDB positron',
         control_scale=False,
-        prefer_canvas=True
+        prefer_canvas=True,
+        zoom_control=True,
+        scrollWheelZoom=True
     )
     
     # Estadísticas
@@ -128,59 +120,93 @@ def crear_mapa(datos):
         elif tipo == 'tanque':
             stats['tanques'] += 1
         
+        # Popup HTML limpio
+        popup_html = f"""
+        <div style="font-family: Arial, sans-serif; padding: 12px; min-width: 280px; background: white; border-radius: 6px;">
+            <h4 style="margin: 0 0 10px 0; color: #2c3e50;">{e.get('nombre', 'Estación')}</h4>
+            <hr style="margin: 8px 0; border-color: #ecf0f1;">
+        """
+        for k, v in e.items():
+            if k not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado_bomba', 'en_linea', 'icono']:
+                val = f"{v:,.2f}" if isinstance(v, (float, int)) else str(v)
+                popup_html += f"""
+                <div style="margin: 6px 0; padding: 4px 0; display: flex; justify-content: space-between;">
+                    <span style="color: #7f8c8d; font-size: 13px;">{k}:</span>
+                    <span style="font-weight: bold; color: #2c3e50;">{val}</span>
+                </div>
+                """
+        popup_html += f"""
+            <hr style="margin: 8px 0; border-color: #ecf0f1;">
+            <div style="font-size: 11px; color: #95a5a6; text-align: center;">
+                📅 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+            </div>
+        </div>
+        """
+        
         folium.Marker(
             location=[e['latitud'], e['longitud']],
-            popup=crear_popup(e),
+            popup=folium.Popup(popup_html, max_width=320),
             tooltip=e.get('nombre', ''),
             icon=crear_icono(tipo, estado, en_linea)
         ).add_to(mapa)
     
-    # Ajustar zoom para mostrar todas las estaciones
+    # Ajustar zoom para todas las estaciones
     mapa.fit_bounds(bounds, padding=(40, 40))
     
-    return mapa, stats
+    # Estadísticas como control HTML dentro del mapa
+    stats_html = f"""
+    <div style="
+        position: fixed;
+        top: 10px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.92);
+        padding: 8px 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+        z-index: 1000;
+        display: grid;
+        grid-template-columns: repeat(6, auto);
+        gap: 12px;
+        align-items: center;
+    ">
+        <div><div style="font-weight:bold;color:#2c3e50">📡 {stats['total']}</div><div style="font-size:9px;color:#7f8c8d">Total</div></div>
+        <div><div style="font-weight:bold;color:#27ae60">🟢 {stats['activos']}</div><div style="font-size:9px;color:#7f8c8d">Activos</div></div>
+        <div><div style="font-weight:bold;color:#e74c3c">🔴 {stats['inactivos']}</div><div style="font-size:9px;color:#7f8c8d">Inactivos</div></div>
+        <div><div style="font-weight:bold;color:#3498db">🔵 {stats['tanques']}</div><div style="font-size:9px;color:#7f8c8d">Tanques</div></div>
+        <div><div style="font-weight:bold;color:#000">⚫ {stats['offline']}</div><div style="font-size:9px;color:#7f8c8d">Offline</div></div>
+        <div><div style="font-weight:bold;color:#2c3e50">🕐 {datetime.now().strftime('%H:%M')}</div><div style="font-size:9px;color:#7f8c8d">Actualizado</div></div>
+    </div>
+    """
+    
+    mapa.get_root().html.add_child(folium.Element(stats_html))
+    
+    return mapa._repr_html_(), stats
 
 # Interfaz principal
 def main():
-    # Botón de actualización manual (arriba izquierda)
-    col1, col2 = st.columns([1, 20])
-    with col1:
-        if st.button("🔄", key="btn_actualizar", help="Actualizar datos"):
-            st.cache_data.clear()
-            st.rerun()
+    # Botón de actualización (fuera del mapa)
+    st.markdown('<button id="update-btn" onclick="window.location.reload();">🔄</button>', unsafe_allow_html=True)
     
     # Cargar datos
     datos = cargar_datos()
     if not datos:
-        st.warning("Esperando datos del sistema SCADA...")
-        return
+        st.error("⚠️ No se pudieron cargar los datos. Verifica el archivo en GitHub.")
+        st.stop()
     
-    # Crear mapa
-    mapa, stats = crear_mapa(datos)
-    if not mapa:
-        st.error("No hay coordenadas válidas en los datos")
-        return
+    # Generar HTML del mapa
+    html_mapa, stats = generar_html_mapa(datos)
+    if not html_mapa:
+        st.error("⚠️ No hay coordenadas válidas en los datos.")
+        st.stop()
     
-    # Estadísticas flotantes
-    st.markdown(f"""
-        <div class="stats-bar">
-            <div class="stats-grid">
-                <div><div class="stat-value">📡 {stats['total']}</div><div class="stat-label">Total</div></div>
-                <div><div class="stat-value" style="color:#27ae60">🟢 {stats['activos']}</div><div class="stat-label">Activos</div></div>
-                <div><div class="stat-value" style="color:#e74c3c">🔴 {stats['inactivos']}</div><div class="stat-label">Inactivos</div></div>
-                <div><div class="stat-value" style="color:#3498db">🔵 {stats['tanques']}</div><div class="stat-label">Tanques</div></div>
-                <div><div class="stat-value" style="color:#000">⚫ {stats['offline']}</div><div class="stat-label">Offline</div></div>
-                <div><div class="stat-value">🕐 {datetime.now().strftime('%H:%M')}</div><div class="stat-label">Actualizado</div></div>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    # Mostrar mapa (FullHD)
-    st_folium(
-        mapa,
+    # Mostrar mapa HTML estático (NO se rerenderiza al interactuar)
+    st.components.v1.html(
+        html_mapa,
         width=1920,
         height=1080,
-        key="mapa_scada"
+        scrolling=False
     )
 
 if __name__ == "__main__":
