@@ -5,16 +5,17 @@ import json
 import time
 from datetime import datetime
 from streamlit_folium import st_folium
+import hashlib
 
 # Configuración de la página
 st.set_page_config(
     page_title="SCADA Monitor",
-    page_icon="💧",
+    page_icon="🛢️",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# CSS ultra minimalista
+# CSS y JavaScript para panel personalizado
 st.markdown("""
     <style>
     /* Eliminar todo */
@@ -79,42 +80,41 @@ st.markdown("""
         margin-top: 1px;
     }
     
-    /* Panel desplegable - ALTURA MÁXIMA FIJA CON SCROLL */
-    div[data-testid="stExpander"] {
+    /* Panel de datos personalizado - NO USAR st.expander */
+    #data-panel {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        z-index: 1001 !important;
-        margin: 0 !important;
-        padding: 0 !important;
+        background: white;
+        border-top: 3px solid #3498db;
+        z-index: 1001;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+        max-height: 50px;
+        overflow: hidden;
     }
     
-    /* Header del expander SIEMPRE visible */
-    .streamlit-expanderHeader {
-        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
-        color: white !important;
-        font-weight: bold !important;
-        font-size: 16px !important;
-        padding: 12px 20px !important;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
-        border: 2px solid #f1c40f !important;
-        position: relative !important;
-        z-index: 1002 !important;
-        cursor: pointer !important;
+    #data-panel-header {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        color: white;
+        padding: 12px 20px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 2px solid #f1c40f;
     }
     
-    /* Contenido del expander - ALTURA MÁXIMA FIJA DE 500px con scroll */
-    div[data-testid="stExpander"] > div {
-        background: white !important;
-        padding: 12px !important;
-        max-height: 500px !important;  /* ALTURA MÁXIMA FIJA */
-        overflow-y: auto !important;
-        border-top: 3px solid #3498db !important;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
+    #data-panel-content {
+        padding: 12px;
+        max-height: 450px;
+        overflow-y: auto;
     }
     
-    /* Contenido del expander */
+    /* Contenido del panel */
     .station-card {
         background: #f8f9fa;
         border-radius: 6px;
@@ -147,11 +147,16 @@ st.markdown("""
     }
     
     /* Columnas para variables */
+    .vars-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+    
     .var-item {
         background: #e9ecef;
         padding: 5px 8px;
         border-radius: 4px;
-        margin: 4px 0;
         font-size: 12px;
     }
     
@@ -205,13 +210,32 @@ st.markdown("""
         border-radius: 3px;
     }
     </style>
+    
+    <script>
+    // JavaScript para controlar el panel de datos
+    function togglePanel() {
+        const panel = document.getElementById('data-panel');
+        if (panel.style.maxHeight === '500px' || panel.style.maxHeight === '') {
+            panel.style.maxHeight = '50px';
+        } else {
+            panel.style.maxHeight = '500px';
+        }
+    }
+    
+    // Inicializar panel cerrado
+    document.addEventListener('DOMContentLoaded', function() {
+        const panel = document.getElementById('data-panel');
+        if (panel) {
+            panel.style.maxHeight = '50px';
+        }
+    });
+    </script>
     """, unsafe_allow_html=True)
 
-# Función para cargar datos desde GitHub - SIN CACHE para actualización inmediata
+# Función para cargar datos desde GitHub - SIN CACHE
 def cargar_datos_github(url_github):
     try:
-        # Agregar timestamp para evitar cache del navegador
-        timestamp = int(time.time())
+        timestamp = int(time.time() * 1000)
         url_con_timestamp = f"{url_github}?t={timestamp}"
         
         headers = {
@@ -230,30 +254,31 @@ def cargar_datos_github(url_github):
 
 # Función para crear iconos según el estado y conexión
 def crear_icono(tipo, estado, en_linea):
-    # Si está fuera de línea, usar color negro
+    # Determinar color
     if en_linea == 0:
-        return folium.Icon(icon='ban', prefix='fa', color='black', icon_color='white')
-    
-    # Si está en línea, usar colores normales
-    if tipo == "pozo":
-        if estado == 1:
-            return folium.Icon(icon='tint', prefix='fa', color='green', icon_color='white')
-        else:
-            return folium.Icon(icon='tint', prefix='fa', color='red', icon_color='white')
+        color = 'black'  # Solo color negro, mismo ícono
+    elif tipo == "pozo":
+        color = 'green' if estado == 1 else 'red'
     elif tipo == "tanque":
-        if estado == 1:
-            return folium.Icon(icon='water', prefix='fa', color='blue', icon_color='white')
-        else:
-            return folium.Icon(icon='water', prefix='fa', color='gray', icon_color='white')
+        color = 'blue' if estado == 1 else 'gray'
     elif tipo == "bomba":
-        if estado == 1:
-            return folium.Icon(icon='cog', prefix='fa', color='green', icon_color='white')
-        else:
-            return folium.Icon(icon='cog', prefix='fa', color='red', icon_color='white')
+        color = 'green' if estado == 1 else 'red'
     elif tipo == "sensor":
-        return folium.Icon(icon='microchip', prefix='fa', color='purple', icon_color='white')
+        color = 'purple'
     else:
-        return folium.Icon(icon='info-sign', prefix='glyphicon', color='orange')
+        color = 'orange'
+    
+    # Determinar ícono según tipo (siempre el mismo, solo cambia color)
+    if tipo == "pozo":
+        return folium.Icon(icon='tint', prefix='fa', color=color, icon_color='white')
+    elif tipo == "tanque":
+        return folium.Icon(icon='water', prefix='fa', color=color, icon_color='white')
+    elif tipo == "bomba":
+        return folium.Icon(icon='cog', prefix='fa', color=color, icon_color='white')
+    elif tipo == "sensor":
+        return folium.Icon(icon='microchip', prefix='fa', color=color, icon_color='white')
+    else:
+        return folium.Icon(icon='info-sign', prefix='glyphicon', color=color)
 
 # Función para crear popup
 def crear_popup(estacion):
@@ -295,8 +320,8 @@ def crear_popup(estacion):
     
     return folium.Popup(popup_html, max_width=400)
 
-# Función para crear el mapa
-def crear_mapa(datos):
+# Función para crear el mapa (solo primera vez)
+def crear_mapa_inicial(datos):
     if not datos or 'estaciones' not in datos:
         return None, {}
     
@@ -346,14 +371,13 @@ def crear_mapa(datos):
             lon = estacion.get('longitud')
             tipo = estacion.get('tipo', 'otro')
             estado = estacion.get('estado_bomba', estacion.get('estado', 0))
-            en_linea = estacion.get('en_linea', 1)  # 1 = en línea, 0 = fuera de línea
+            en_linea = estacion.get('en_linea', 1)
             
             if lat is None or lon is None:
                 continue
             
             stats['total'] += 1
             
-            # Contar fuera de línea
             if en_linea == 0:
                 stats['fuera_linea'] += 1
             
@@ -387,51 +411,171 @@ def crear_mapa(datos):
     
     return mapa, stats
 
+# Función para generar HTML del panel de datos
+def generar_html_panel(datos):
+    html = """
+    <div id="data-panel">
+        <div id="data-panel-header" onclick="togglePanel()">
+            <span>📊 Ver Datos de Estaciones</span>
+            <span id="panel-toggle-icon">▼</span>
+        </div>
+        <div id="data-panel-content">
+    """
+    
+    for idx, estacion in enumerate(datos['estaciones'], 1):
+        nombre = estacion.get('nombre', f'Estación {idx}')
+        lat = estacion.get('latitud', 'N/A')
+        lon = estacion.get('longitud', 'N/A')
+        estado = estacion.get('estado_bomba', estacion.get('estado', 0))
+        en_linea = estacion.get('en_linea', 1)
+        estado_icon = "🟢" if estado == 1 else "🔴"
+        if en_linea == 0:
+            estado_icon = "⚫"
+        
+        # Crear lista de variables
+        variables = []
+        for key, value in estacion.items():
+            if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono', 'en_linea']:
+                if isinstance(value, (int, float)):
+                    formatted_value = f"{value:,.2f}"
+                else:
+                    formatted_value = str(value)
+                variables.append({'label': key, 'value': formatted_value})
+        
+        # Tarjeta de estación
+        html += f"""
+            <div class="station-card">
+                <div class="station-header">
+                    <span class="station-name">{estado_icon} {nombre}</span>
+                    <span class="station-coords">{lat:.5f}, {lon:.5f}</span>
+                </div>
+                <div class="vars-container">
+        """
+        
+        # Variables en 4 columnas
+        for i, var in enumerate(variables):
+            html += f"""
+                <div class="var-item">
+                    <span class="var-label">{var['label']}:</span>
+                    <span class="var-value">{var['value']}</span>
+                </div>
+            """
+        
+        html += """
+                </div>
+            </div>
+            <hr style='margin: 15px 0; border: 1px solid #dee2e6;'>
+        """
+    
+    html += """
+        </div>
+    </div>
+    <script>
+    function togglePanel() {
+        const panel = document.getElementById('data-panel');
+        const icon = document.getElementById('panel-toggle-icon');
+        if (panel.style.maxHeight === '50px') {
+            panel.style.maxHeight = '500px';
+            icon.textContent = '▲';
+        } else {
+            panel.style.maxHeight = '50px';
+            icon.textContent = '▼';
+        }
+    }
+    </script>
+    """
+    
+    return html
+
 # Interfaz principal
 def main():
     # URL del repositorio
     URL_GITHUB = "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json"
     
-    # Cargar datos SIN CACHE para actualización inmediata
+    # Inicializar session_state
+    if 'mapa_creado' not in st.session_state:
+        st.session_state.mapa_creado = False
+        st.session_state.datos_hash = None
+        st.session_state.ultima_actualizacion = None
+    
+    # Cargar datos
     datos = cargar_datos_github(URL_GITHUB)
     
     if datos:
-        mapa, stats = crear_mapa(datos)
+        # Calcular hash de los datos para detectar cambios
+        datos_str = json.dumps(datos, sort_keys=True)
+        datos_hash = hashlib.md5(datos_str.encode()).hexdigest()
         
-        if mapa:
-            # Estadísticas flotantes en la parte superior derecha - CON FUERA DE LÍNEA
-            st.markdown(f"""
-                <div class="stats-bar">
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-value">📡 {stats['total']}</div>
-                            <div class="stat-label">Total</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" style="color: #27ae60;">🟢 {stats['pozos_activos']}</div>
-                            <div class="stat-label">Activos</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" style="color: #e74c3c;">🔴 {stats['pozos_inactivos']}</div>
-                            <div class="stat-label">Inactivos</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" style="color: #3498db;">🔵 {stats['tanques']}</div>
-                            <div class="stat-label">Tanques</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" style="color: #000000;">⚫ {stats['fuera_linea']}</div>
-                            <div class="stat-label">Offline</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">🕐 {datetime.now().strftime('%H:%M:%S')}</div>
-                            <div class="stat-label">Actualizado</div>
-                        </div>
+        # Primera carga: crear mapa completo
+        if not st.session_state.mapa_creado:
+            mapa, stats = crear_mapa_inicial(datos)
+            st.session_state.mapa_creado = True
+            st.session_state.datos_hash = datos_hash
+        else:
+            # Subsecuentes: solo actualizar panel de datos si hay cambios
+            mapa = None
+            # Recalcular estadísticas
+            stats = {
+                'total': 0,
+                'pozos_activos': 0,
+                'pozos_inactivos': 0,
+                'tanques': 0,
+                'bombas_activas': 0,
+                'fuera_linea': 0
+            }
+            
+            for estacion in datos['estaciones']:
+                stats['total'] += 1
+                en_linea = estacion.get('en_linea', 1)
+                tipo = estacion.get('tipo', 'otro')
+                estado = estacion.get('estado_bomba', estacion.get('estado', 0))
+                
+                if en_linea == 0:
+                    stats['fuera_linea'] += 1
+                elif tipo == 'pozo':
+                    if estado == 1:
+                        stats['pozos_activos'] += 1
+                    else:
+                        stats['pozos_inactivos'] += 1
+                elif tipo == 'tanque':
+                    stats['tanques'] += 1
+                elif tipo == 'bomba' and estado == 1:
+                    stats['bombas_activas'] += 1
+        
+        # Mostrar estadísticas
+        st.markdown(f"""
+            <div class="stats-bar">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">📡 {stats['total']}</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" style="color: #27ae60;">🟢 {stats['pozos_activos']}</div>
+                        <div class="stat-label">Activos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" style="color: #e74c3c;">🔴 {stats['pozos_inactivos']}</div>
+                        <div class="stat-label">Inactivos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" style="color: #3498db;">🔵 {stats['tanques']}</div>
+                        <div class="stat-label">Tanques</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" style="color: #000000;">⚫ {stats['fuera_linea']}</div>
+                        <div class="stat-label">Offline</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">🕐 {datetime.now().strftime('%H:%M:%S')}</div>
+                        <div class="stat-label">Actualizado</div>
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
-            
-            # Mostrar mapa con altura 1030px (dejando 50px para el header del expander)
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Mostrar mapa (solo primera vez)
+        if st.session_state.mapa_creado and 'mapa' in locals() and mapa is not None:
             st_folium(
                 mapa, 
                 width=1920,
@@ -439,57 +583,13 @@ def main():
                 returned_objects=[],
                 key="mapa_scada"
             )
-            
-            # Panel desplegable en la parte inferior - CON 4 COLUMNAS
-            # ALTURA MÁXIMA FIJA DE 500px con scroll interno
-            with st.expander("📊 Ver Datos de Estaciones", expanded=False):
-                for idx, estacion in enumerate(datos['estaciones'], 1):
-                    nombre = estacion.get('nombre', f'Estación {idx}')
-                    lat = estacion.get('latitud', 'N/A')
-                    lon = estacion.get('longitud', 'N/A')
-                    estado = estacion.get('estado_bomba', estacion.get('estado', 0))
-                    en_linea = estacion.get('en_linea', 1)
-                    estado_icon = "🟢" if estado == 1 else "🔴"
-                    if en_linea == 0:
-                        estado_icon = "⚫"
-                    
-                    # Crear lista de variables (excluyendo campos especiales)
-                    variables = []
-                    for key, value in estacion.items():
-                        if key not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado', 'estado_bomba', 'icono', 'en_linea']:
-                            if isinstance(value, (int, float)):
-                                formatted_value = f"{value:,.2f}"
-                            else:
-                                formatted_value = str(value)
-                            variables.append({'label': key, 'value': formatted_value})
-                    
-                    # Mostrar tarjeta de estación
-                    st.markdown(f"""
-                        <div class="station-card">
-                            <div class="station-header">
-                                <span class="station-name">{estado_icon} {nombre}</span>
-                                <span class="station-coords">{lat:.5f}, {lon:.5f}</span>
-                            </div>
-                        </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Dividir variables en 4 columnas usando Streamlit columns
-                    if variables:
-                        col1, col2, col3, col4 = st.columns(4)
-                        cols = [col1, col2, col3, col4]
-                        
-                        for i, var in enumerate(variables):
-                            col_idx = i % 4
-                            with cols[col_idx]:
-                                st.markdown(f"""
-                                    <div class="var-item">
-                                        <span class="var-label">{var['label']}:</span>
-                                        <span class="var-value">{var['value']}</span>
-                                    </div>
-                                """, unsafe_allow_html=True)
-                    
-                    # Separador entre estaciones
-                    st.markdown("<hr style='margin: 15px 0; border: 1px solid #dee2e6;'>", unsafe_allow_html=True)
+        else:
+            # Mantener el espacio del mapa
+            st.empty()
+        
+        # Mostrar panel de datos personalizado
+        panel_html = generar_html_panel(datos)
+        st.markdown(panel_html, unsafe_allow_html=True)
         
         # Auto-actualización cada 60 segundos
         time.sleep(60)
