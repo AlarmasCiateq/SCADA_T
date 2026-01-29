@@ -3,7 +3,7 @@
     {
       "nombre": "Pozo 1 - Santa María",
       "tipo": "pozo",
-      "estado_bomba": 1,
+      "estado_bomba": 0,
       "en_linea": 1,
       "latitud": 19.283352119712312,
       "longitud": -99.65310428742922,
@@ -33,7 +33,7 @@
     {
       "nombre": "Pozo 3 - La Esperanza",
       "tipo": "pozo",
-      "estado_bomba": 1,
+      "estado_bomba": 0,
       "en_linea": 1,
       "latitud": 19.286500000000000,
       "longitud": -99.656500000000000,
