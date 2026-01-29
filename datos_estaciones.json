@@ -3,7 +3,7 @@
     {
       "nombre": "Pozo 1 - Santa María",
       "tipo": "pozo",
-      "estado_bomba": 0,
+      "estado_bomba": 1,
       "en_linea": 1,
       "latitud": 19.283352119712312,
       "longitud": -99.65310428742922,
@@ -18,7 +18,7 @@
     {
       "nombre": "Pozo 2 - San Juan",
       "tipo": "pozo",
-      "estado_bomba": 0,
+      "estado_bomba": 1,
       "en_linea": 1,
       "latitud": 19.285000000000000,
       "longitud": -99.655000000000000,
@@ -33,7 +33,7 @@
     {
       "nombre": "Pozo 3 - La Esperanza",
       "tipo": "pozo",
-      "estado_bomba": 0,
+      "estado_bomba": 1,
       "en_linea": 1,
       "latitud": 19.286500000000000,
       "longitud": -99.656500000000000,
@@ -112,7 +112,7 @@
     }
   ],
   "metadata": {
-    "ultima_actualizacion": "2026-01-29T10:15:00Z",
+    "ultima_actualizacion": "2026-01-29T10:25:00Z",
     "fuente": "Sistema SCADA",
     "version": "1.0"
   }
