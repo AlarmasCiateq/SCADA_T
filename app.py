@@ -31,6 +31,31 @@ html_completo = """
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #0e1117; overflow: hidden; }
         #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        
+        /* Botón de actualización manual (solo para pruebas) */
+        #update-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: rgba(52, 152, 219, 0.9);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: none; /* Oculto en producción */
+        }
+        #update-btn:hover {
+            background: rgba(41, 128, 185, 0.95);
+        }
+        #update-btn:active {
+            transform: scale(0.98);
+        }
+        
+        /* Estadísticas flotantes */
         #stats-bar {
             position: fixed;
             top: 10px;
@@ -56,10 +81,33 @@ html_completo = """
         .custom-popup .var-label { color: #7f8c8d; }
         .custom-popup .var-value { font-weight: bold; color: #2c3e50; }
         .custom-popup .timestamp { font-size: 11px; color: #95a5a6; text-align: center; margin-top: 8px; }
+        
+        /* Contador de tiempo para próxima actualización */
+        #timer-display {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #2c3e50;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 999;
+            display: none; /* Oculto en producción */
+        }
     </style>
 </head>
 <body>
     <div id="map"></div>
+    
+    <!-- Botón de actualización manual (para pruebas) -->
+    <button id="update-btn" onclick="cargarDatos()">🔄 Actualizar Ahora</button>
+    
+    <!-- Contador de tiempo (para pruebas) -->
+    <div id="timer-display">Próxima actualización: <span id="timer-count">--:--</span></div>
+    
+    <!-- Estadísticas -->
     <div id="stats-bar">
         <div><div class="stat-value">📡 <span id="stat-total">0</span></div><div class="stat-label">Total</div></div>
         <div><div class="stat-value" style="color:#27ae60">🟢 <span id="stat-activos">0</span></div><div class="stat-label">Activos</div></div>
@@ -71,13 +119,30 @@ html_completo = """
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Configuración
+        // ════════════════════════════════════════════════════════════════
+        // CONFIGURACIÓN - MODIFICA ESTA VARIABLE PARA CAMBIAR EL TIEMPO
+        // ════════════════════════════════════════════════════════════════
+        
+        // TIEMPO DE ACTUALIZACIÓN EN MILISEGUNDOS:
+        // 10000 = 10 segundos (para pruebas rápidas)
+        // 30000 = 30 segundos (para pruebas)
+        // 60000 = 1 minuto (para pruebas)
+        // 300000 = 5 minutos (producción)
+        // 600000 = 10 minutos (producción)
+        
+        const INTERVALO_ACTUALIZACION = 10000; // ⬅️ CAMBIA ESTE VALOR
+        
+        // Mostrar/Ocultar controles de pruebas:
+        const MODO_PRUEBAS = true; // true = mostrar botón y contador, false = ocultar
+        
+        // ════════════════════════════════════════════════════════════════
+        
         const URL_DATOS = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json';
-        const INTERVALO_ACTUALIZACION = 5 * 60 * 1000; // 5 minutos
         
         let map = null;
         let markers = new Map(); // id -> marker
         let primeraCarga = true;
+        let timerInterval = null;
         
         // Inicializar mapa
         function initMap() {
@@ -94,11 +159,23 @@ html_completo = """
                 maxZoom: 19
             }).addTo(map);
             
+            // Mostrar/Ocultar controles de pruebas
+            if (MODO_PRUEBAS) {
+                document.getElementById('update-btn').style.display = 'block';
+                document.getElementById('timer-display').style.display = 'block';
+            }
+            
             // Cargar datos iniciales
             cargarDatos();
             
             // Programar actualización automática
             setInterval(cargarDatos, INTERVALO_ACTUALIZACION);
+            
+            // Iniciar contador visual
+            if (MODO_PRUEBAS) {
+                actualizarContador();
+                timerInterval = setInterval(actualizarContador, 1000);
+            }
         }
         
         // Cargar datos desde GitHub
@@ -121,8 +198,10 @@ html_completo = """
                     minute: '2-digit' 
                 });
                 
+                console.log('✓ Datos actualizados:', new Date().toLocaleTimeString());
+                
             } catch (error) {
-                console.error('Error:', error);
+                console.error('✗ Error al cargar datos:', error);
             }
         }
         
@@ -171,6 +250,7 @@ html_completo = """
                 const bounds = L.latLngBounds(nuevasBounds);
                 map.fitBounds(bounds, { padding: [40, 40] });
                 primeraCarga = false;
+                console.log('✓ Zoom inicial ajustado');
             }
         }
         
@@ -258,6 +338,19 @@ html_completo = """
             document.getElementById('stat-inactivos').textContent = stats.inactivos;
             document.getElementById('stat-tanques').textContent = stats.tanques;
             document.getElementById('stat-offline').textContent = stats.offline;
+        }
+        
+        // Actualizar contador visual (solo para pruebas)
+        function actualizarContador() {
+            const now = Date.now();
+            const nextUpdate = Math.ceil(now / INTERVALO_ACTUALIZACION) * INTERVALO_ACTUALIZACION;
+            const secondsLeft = Math.floor((nextUpdate - now) / 1000);
+            
+            const mins = Math.floor(secondsLeft / 60);
+            const secs = secondsLeft % 60;
+            
+            document.getElementById('timer-count').textContent = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
         
         // Iniciar cuando el DOM esté listo
