@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCADA Monitor</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #0e1117; 
+            overflow: hidden;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        /* Estadísticas flotantes */
+        #stats-bar {
+            position: fixed;
+            top: 10px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: grid;
+            grid-template-columns: repeat(6, auto);
+            gap: 12px;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .stat-label {
+            font-size: 9px;
+            color: #7f8c8d;
+        }
+        
+        /* Popup estilo */
+        .custom-popup {
+            font-family: Arial, sans-serif;
+            padding: 12px;
+            min-width: 280px;
+            background: white;
+            border-radius: 6px;
+        }
+        
+        .custom-popup h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .custom-popup hr {
+            margin: 8px 0;
+            border-color: #ecf0f1;
+        }
+        
+        .custom-popup .var-row {
+            margin: 6px 0;
+            padding: 4px 0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+        
+        .custom-popup .var-label {
+            color: #7f8c8d;
+        }
+        
+        .custom-popup .var-value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .custom-popup .timestamp {
+            font-size: 11px;
+            color: #95a5a6;
+            text-align: center;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mapa -->
+    <div id="map"></div>
+    
+    <!-- Estadísticas -->
+    <div id="stats-bar">
+        <div>
+            <div class="stat-value">📡 <span id="stat-total">0</span></div>
+            <div class="stat-label">Total</div>
+        </div>
+        <div>
+            <div class="stat-value" style="color:#27ae60">🟢 <span id="stat-activos">0</span></div>
+            <div class="stat-label">Activos</div>
+        </div>
+        <div>
+            <div class="stat-value" style="color:#e74c3c">🔴 <span id="stat-inactivos">0</span></div>
+            <div class="stat-label">Inactivos</div>
+        </div>
+        <div>
+            <div class="stat-value" style="color:#3498db">🔵 <span id="stat-tanques">0</span></div>
+            <div class="stat-label">Tanques</div>
+        </div>
+        <div>
+            <div class="stat-value" style="color:#000">⚫ <span id="stat-offline">0</span></div>
+            <div class="stat-label">Offline</div>
+        </div>
+        <div>
+            <div class="stat-value">🕐 <span id="stat-time">--:--</span></div>
+            <div class="stat-label">Actualizado</div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    
+    <script>
+        // Configuración
+        const URL_DATOS = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json';
+        const INTERVALO_ACTUALIZACION = 5 * 60 * 1000; // 5 minutos
+        
+        // Variables globales
+        let map = null;
+        let markers = new Map(); // id -> marker
+        let bounds = null;
+        let primeraCarga = true;
+        
+        // Inicializar mapa
+        function initMap() {
+            map = L.map('map', {
+                zoomControl: true,
+                scrollWheelZoom: true,
+                dragging: true,
+                tap: false
+            });
+            
+            // Mapa claro con calles sutiles
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+            
+            // Cargar datos iniciales
+            cargarDatos();
+            
+            // Programar actualización automática
+            setInterval(cargarDatos, INTERVALO_ACTUALIZACION);
+        }
+        
+        // Cargar datos desde GitHub
+        async function cargarDatos() {
+            try {
+                const timestamp = Date.now();
+                const response = await fetch(`${URL_DATOS}?t=${timestamp}`, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Error al cargar datos');
+                }
+                
+                const datos = await response.json();
+                actualizarMapa(datos);
+                actualizarEstadisticas(datos);
+                
+                // Actualizar timestamp
+                document.getElementById('stat-time').textContent = new Date().toLocaleTimeString('es-ES', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        // Actualizar mapa (solo valores y colores, no posiciones)
+        function actualizarMapa(datos) {
+            if (!datos || !datos.estaciones) return;
+            
+            const nuevasBounds = [];
+            
+            datos.estaciones.forEach(estacion => {
+                if (!estacion.latitud || !estacion.longitud) return;
+                
+                const id = estacion.nombre || `${estacion.latitud},${estacion.longitud}`;
+                const lat = parseFloat(estacion.latitud);
+                const lng = parseFloat(estacion.longitud);
+                
+                nuevasBounds.push([lat, lng]);
+                
+                // Si ya existe el marcador, actualizar popup y color
+                if (markers.has(id)) {
+                    const marker = markers.get(id);
+                    
+                    // Actualizar popup
+                    const popupContent = crearPopupContent(estacion);
+                    marker.setPopupContent(popupContent);
+                    
+                    // Actualizar color si cambió estado
+                    const nuevoIcono = crearIcono(estacion.tipo, estacion.estado_bomba, estacion.en_linea);
+                    marker.setIcon(nuevoIcono);
+                    
+                } else {
+                    // Crear nuevo marcador
+                    const icono = crearIcono(estacion.tipo, estacion.estado_bomba, estacion.en_linea);
+                    const popupContent = crearPopupContent(estacion);
+                    
+                    const marker = L.marker([lat, lng], { icon: icono })
+                        .bindPopup(popupContent, { maxWidth: 320 })
+                        .addTo(map);
+                    
+                    markers.set(id, marker);
+                }
+            });
+            
+            // Ajustar bounds SOLO en primera carga
+            if (primeraCarga && nuevasBounds.length > 0) {
+                bounds = L.latLngBounds(nuevasBounds);
+                map.fitBounds(bounds, { padding: [40, 40] });
+                primeraCarga = false;
+            }
+        }
+        
+        // Crear icono según tipo y estado
+        function crearIcono(tipo, estado, enLinea) {
+            // Determinar color
+            let color = 'black';
+            if (enLinea !== 0) {
+                if (tipo === 'pozo' || tipo === 'bomba') {
+                    color = estado === 1 ? 'green' : 'red';
+                } else if (tipo === 'tanque') {
+                    color = estado === 1 ? 'blue' : 'gray';
+                } else if (tipo === 'sensor') {
+                    color = 'purple';
+                } else {
+                    color = 'orange';
+                }
+            }
+            
+            // Determinar ícono (siempre el mismo según tipo)
+            let iconClass = 'fa-tint';
+            if (tipo === 'tanque') iconClass = 'fa-water';
+            else if (tipo === 'bomba') iconClass = 'fa-cog';
+            else if (tipo === 'sensor') iconClass = 'fa-microchip';
+            
+            // Colores hex para Leaflet
+            const colorMap = {
+                'green': '#27ae60',
+                'red': '#e74c3c',
+                'blue': '#3498db',
+                'gray': '#95a5a6',
+                'purple': '#9b59b6',
+                'orange': '#f39c12',
+                'black': '#000000'
+            };
+            
+            return L.divIcon({
+                html: `<div style="
+                    background: ${colorMap[color]};
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+                ">
+                    <i class="fa ${iconClass}" style="color: white; font-size: 16px;"></i>
+                </div>`,
+                className: '',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15],
+                popupAnchor: [0, -15]
+            });
+        }
+        
+        // Crear contenido del popup
+        function crearPopupContent(estacion) {
+            let html = `
+                <div class="custom-popup">
+                    <h4>${estacion.nombre || 'Estación'}</h4>
+                    <hr>
+            `;
+            
+            // Variables
+            for (const key in estacion) {
+                if (!['nombre', 'latitud', 'longitud', 'tipo', 'estado_bomba', 'en_linea', 'icono'].includes(key)) {
+                    const value = typeof estacion[key] === 'number' 
+                        ? estacion[key].toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                        : estacion[key];
+                    
+                    html += `
+                        <div class="var-row">
+                            <span class="var-label">${key}:</span>
+                            <span class="var-value">${value}</span>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += `
+                <hr>
+                <div class="timestamp">📅 ${new Date().toLocaleString('es-ES')}</div>
+            </div>
+            `;
+            
+            return html;
+        }
+        
+        // Actualizar estadísticas
+        function actualizarEstadisticas(datos) {
+            if (!datos || !datos.estaciones) return;
+            
+            const stats = {
+                total: 0,
+                activos: 0,
+                inactivos: 0,
+                tanques: 0,
+                offline: 0
+            };
+            
+            datos.estaciones.forEach(estacion => {
+                stats.total++;
+                
+                const enLinea = estacion.en_linea || 1;
+                const tipo = estacion.tipo || 'otro';
+                const estado = estacion.estado_bomba || estacion.estado || 0;
+                
+                if (enLinea === 0) {
+                    stats.offline++;
+                } else if (tipo === 'pozo') {
+                    if (estado === 1) stats.activos++;
+                    else stats.inactivos++;
+                } else if (tipo === 'tanque') {
+                    stats.tanques++;
+                }
+            });
+            
+            // Actualizar DOM
+            document.getElementById('stat-total').textContent = stats.total;
+            document.getElementById('stat-activos').textContent = stats.activos;
+            document.getElementById('stat-inactivos').textContent = stats.inactivos;
+            document.getElementById('stat-tanques').textContent = stats.tanques;
+            document.getElementById('stat-offline').textContent = stats.offline;
+        }
+        
+        // Iniciar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', initMap);
+    </script>
+    
+    <!-- Font Awesome para íconos -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>
