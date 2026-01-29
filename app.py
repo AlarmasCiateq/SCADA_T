@@ -9,11 +9,11 @@ from streamlit_folium import st_folium
 # Configuración de la página
 st.set_page_config(
     page_title="SCADA Monitor",
-    page_icon="🛢️",
+    page_icon="💧",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
-  
+
 # CSS ultra minimalista
 st.markdown("""
     <style>
@@ -79,7 +79,7 @@ st.markdown("""
         margin-top: 1px;
     }
     
-    /* Panel desplegable - header SIEMPRE visible */
+    /* Panel desplegable - ALTURA MÁXIMA FIJA CON SCROLL */
     div[data-testid="stExpander"] {
         position: fixed;
         bottom: 0;
@@ -104,11 +104,11 @@ st.markdown("""
         cursor: pointer !important;
     }
     
-    /* Contenido del expander - con scroll interno */
+    /* Contenido del expander - ALTURA MÁXIMA FIJA DE 500px con scroll */
     div[data-testid="stExpander"] > div {
         background: white !important;
         padding: 12px !important;
-        max-height: 350px !important;
+        max-height: 500px !important;  /* ALTURA MÁXIMA FIJA */
         overflow-y: auto !important;
         border-top: 3px solid #3498db !important;
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
@@ -207,15 +207,25 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Función para cargar datos desde GitHub
-@st.cache_data(ttl=300)
+# Función para cargar datos desde GitHub - SIN CACHE para actualización inmediata
 def cargar_datos_github(url_github):
     try:
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        response = requests.get(url_github, headers=headers, timeout=10)
+        # Agregar timestamp para evitar cache del navegador
+        timestamp = int(time.time())
+        url_con_timestamp = f"{url_github}?t={timestamp}"
+        
+        headers = {
+            'User-Agent': 'Mozilla/5.0',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
+        
+        response = requests.get(url_con_timestamp, headers=headers, timeout=10)
         response.raise_for_status()
         return response.json()
-    except:
+    except Exception as e:
+        print(f"Error al cargar datos: {e}")
         return None
 
 # Función para crear iconos según el estado y conexión
@@ -382,6 +392,7 @@ def main():
     # URL del repositorio
     URL_GITHUB = "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json"
     
+    # Cargar datos SIN CACHE para actualización inmediata
     datos = cargar_datos_github(URL_GITHUB)
     
     if datos:
@@ -420,7 +431,7 @@ def main():
                 </div>
                 """, unsafe_allow_html=True)
             
-            # Mostrar mapa con altura 1030px (dejando 50px visibles para el header del expander)
+            # Mostrar mapa con altura 1030px (dejando 50px para el header del expander)
             st_folium(
                 mapa, 
                 width=1920,
@@ -430,7 +441,7 @@ def main():
             )
             
             # Panel desplegable en la parte inferior - CON 4 COLUMNAS
-            # El header SIEMPRE visible (50px), el contenido se expande hacia arriba con scroll
+            # ALTURA MÁXIMA FIJA DE 500px con scroll interno
             with st.expander("📊 Ver Datos de Estaciones", expanded=False):
                 for idx, estacion in enumerate(datos['estaciones'], 1):
                     nombre = estacion.get('nombre', f'Estación {idx}')
@@ -480,9 +491,8 @@ def main():
                     # Separador entre estaciones
                     st.markdown("<hr style='margin: 15px 0; border: 1px solid #dee2e6;'>", unsafe_allow_html=True)
         
-        # Auto-actualización silenciosa
-        time.sleep(300)
-        st.cache_data.clear()
+        # Auto-actualización cada 60 segundos
+        time.sleep(60)
         st.rerun()
     else:
         # Pantalla de carga
@@ -504,8 +514,7 @@ def main():
             </div>
             """, unsafe_allow_html=True)
         
-        time.sleep(10)
-        st.cache_data.clear()
+        time.sleep(5)
         st.rerun()
 
 if __name__ == "__main__":
