@@ -79,27 +79,18 @@ st.markdown("""
         margin-top: 1px;
     }
     
-    /* Panel desplegable inferior - fondo sólido SIN ESPACIO ARRIBA */
+    /* Panel desplegable - header SIEMPRE visible */
     div[data-testid="stExpander"] {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        background: white !important;
-        border-top: 3px solid #3498db;
-        z-index: 999;
+        z-index: 1001 !important;
         margin: 0 !important;
         padding: 0 !important;
-        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
     }
     
-    div[data-testid="stExpander"] > div {
-        padding: 12px !important;
-        max-height: 350px;
-        overflow-y: auto;
-    }
-    
-    /* Estilo del botón del expander */
+    /* Header del expander SIEMPRE visible */
     .streamlit-expanderHeader {
         background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%) !important;
         color: white !important;
@@ -108,6 +99,19 @@ st.markdown("""
         padding: 12px 20px !important;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
         border: 2px solid #f1c40f !important;
+        position: relative !important;
+        z-index: 1002 !important;
+        cursor: pointer !important;
+    }
+    
+    /* Contenido del expander - con scroll interno */
+    div[data-testid="stExpander"] > div {
+        background: white !important;
+        padding: 12px !important;
+        max-height: 350px !important;
+        overflow-y: auto !important;
+        border-top: 3px solid #3498db !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15) !important;
     }
     
     /* Contenido del expander */
@@ -416,17 +420,17 @@ def main():
                 </div>
                 """, unsafe_allow_html=True)
             
-            # Mostrar mapa SIN ESPACIO ARRIBA DEL DESPLEGABLE (altura completa 1080px)
+            # Mostrar mapa con altura 1030px (dejando 50px visibles para el header del expander)
             st_folium(
                 mapa, 
                 width=1920,
-                height=1080,
+                height=1030,
                 returned_objects=[],
                 key="mapa_scada"
             )
             
             # Panel desplegable en la parte inferior - CON 4 COLUMNAS
-            # El desplegable se superpone al mapa cuando está abierto
+            # El header SIEMPRE visible (50px), el contenido se expande hacia arriba con scroll
             with st.expander("📊 Ver Datos de Estaciones", expanded=False):
                 for idx, estacion in enumerate(datos['estaciones'], 1):
                     nombre = estacion.get('nombre', f'Estación {idx}')
