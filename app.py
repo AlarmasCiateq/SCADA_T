@@ -1,9 +1,4 @@
 import streamlit as st
-import folium
-import requests
-import json
-from datetime import datetime
-import hashlib
 
 # Configuración minimalista
 st.set_page_config(
@@ -12,202 +7,270 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS limpio - solo para el botón de actualización
+# CSS para ocultar elementos de Streamlit
 st.markdown("""
     <style>
     [data-testid="stSidebar"] { display: none; }
     [data-testid="stHeader"] { display: none; }
     .block-container { padding: 0; max-width: 100%; margin: 0; }
     .stApp { background-color: #0e1117; }
-    
-    /* Botón de actualización discreto */
-    #update-btn {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        z-index: 1000;
-        background: rgba(52, 152, 219, 0.9);
-        color: white;
-        border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 20px;
-        font-size: 18px;
-        cursor: pointer;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-    #update-btn:hover {
-        background: rgba(41, 128, 185, 0.95);
-    }
+    footer, .stDeployButton { display: none !important; }
     </style>
     """, unsafe_allow_html=True)
 
-# Cargar datos SIN cache
-def cargar_datos():
-    try:
-        url = "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json"
-        response = requests.get(f"{url}?t={int(datetime.now().timestamp()*1000)}", timeout=5)
-        response.raise_for_status()
-        return response.json()
-    except:
-        return None
-
-# Crear icono (mismo ícono, color según estado)
-def crear_icono(tipo, estado, en_linea):
-    color = 'black' if en_linea == 0 else (
-        'green' if (tipo in ['pozo', 'bomba'] and estado == 1) else
-        'red' if (tipo in ['pozo', 'bomba'] and estado == 0) else
-        'blue' if (tipo == 'tanque' and estado == 1) else
-        'gray' if tipo == 'tanque' else
-        'purple' if tipo == 'sensor' else
-        'orange'
-    )
-    
-    iconos = {
-        'pozo': ('tint', 'fa'),
-        'tanque': ('water', 'fa'),
-        'bomba': ('cog', 'fa'),
-        'sensor': ('microchip', 'fa')
-    }
-    icon, prefix = iconos.get(tipo, ('info-sign', 'glyphicon'))
-    return folium.Icon(icon=icon, prefix=prefix, color=color, icon_color='white')
-
-# Generar HTML del mapa COMPLETO (estático)
-def generar_html_mapa(datos):
-    if not datos or 'estaciones' not in datos:
-        return None, {}
-    
-    # Calcular bounds
-    bounds = []
-    for e in datos['estaciones']:
-        if 'latitud' in e and 'longitud' in e:
-            bounds.append([e['latitud'], e['longitud']])
-    
-    if not bounds:
-        return None, {}
-    
-    # Centro
-    centro = [sum(b[0] for b in bounds)/len(bounds), sum(b[1] for b in bounds)/len(bounds)]
-    
-    # Mapa
-    mapa = folium.Map(
-        location=centro,
-        zoom_start=10,
-        tiles='CartoDB positron',
-        control_scale=False,
-        prefer_canvas=True,
-        zoom_control=True,
-        scrollWheelZoom=True
-    )
-    
-    # Estadísticas
-    stats = {'total':0, 'activos':0, 'inactivos':0, 'tanques':0, 'offline':0}
-    
-    # Marcadores
-    for e in datos['estaciones']:
-        if 'latitud' not in e or 'longitud' not in e:
-            continue
-        
-        stats['total'] += 1
-        en_linea = e.get('en_linea', 1)
-        tipo = e.get('tipo', 'otro')
-        estado = e.get('estado_bomba', e.get('estado', 0))
-        
-        if en_linea == 0:
-            stats['offline'] += 1
-        elif tipo == 'pozo':
-            stats['activos' if estado == 1 else 'inactivos'] += 1
-        elif tipo == 'tanque':
-            stats['tanques'] += 1
-        
-        # Popup HTML limpio
-        popup_html = f"""
-        <div style="font-family: Arial, sans-serif; padding: 12px; min-width: 280px; background: white; border-radius: 6px;">
-            <h4 style="margin: 0 0 10px 0; color: #2c3e50;">{e.get('nombre', 'Estación')}</h4>
-            <hr style="margin: 8px 0; border-color: #ecf0f1;">
-        """
-        for k, v in e.items():
-            if k not in ['nombre', 'latitud', 'longitud', 'tipo', 'estado_bomba', 'en_linea', 'icono']:
-                val = f"{v:,.2f}" if isinstance(v, (float, int)) else str(v)
-                popup_html += f"""
-                <div style="margin: 6px 0; padding: 4px 0; display: flex; justify-content: space-between;">
-                    <span style="color: #7f8c8d; font-size: 13px;">{k}:</span>
-                    <span style="font-weight: bold; color: #2c3e50;">{val}</span>
-                </div>
-                """
-        popup_html += f"""
-            <hr style="margin: 8px 0; border-color: #ecf0f1;">
-            <div style="font-size: 11px; color: #95a5a6; text-align: center;">
-                📅 {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-            </div>
-        </div>
-        """
-        
-        folium.Marker(
-            location=[e['latitud'], e['longitud']],
-            popup=folium.Popup(popup_html, max_width=320),
-            tooltip=e.get('nombre', ''),
-            icon=crear_icono(tipo, estado, en_linea)
-        ).add_to(mapa)
-    
-    # Ajustar zoom para todas las estaciones
-    mapa.fit_bounds(bounds, padding=(40, 40))
-    
-    # Estadísticas como control HTML dentro del mapa
-    stats_html = f"""
-    <div style="
-        position: fixed;
-        top: 10px;
-        right: 15px;
-        background: rgba(255, 255, 255, 0.92);
-        padding: 8px 15px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-        font-family: Arial, sans-serif;
-        font-size: 13px;
-        z-index: 1000;
-        display: grid;
-        grid-template-columns: repeat(6, auto);
-        gap: 12px;
-        align-items: center;
-    ">
-        <div><div style="font-weight:bold;color:#2c3e50">📡 {stats['total']}</div><div style="font-size:9px;color:#7f8c8d">Total</div></div>
-        <div><div style="font-weight:bold;color:#27ae60">🟢 {stats['activos']}</div><div style="font-size:9px;color:#7f8c8d">Activos</div></div>
-        <div><div style="font-weight:bold;color:#e74c3c">🔴 {stats['inactivos']}</div><div style="font-size:9px;color:#7f8c8d">Inactivos</div></div>
-        <div><div style="font-weight:bold;color:#3498db">🔵 {stats['tanques']}</div><div style="font-size:9px;color:#7f8c8d">Tanques</div></div>
-        <div><div style="font-weight:bold;color:#000">⚫ {stats['offline']}</div><div style="font-size:9px;color:#7f8c8d">Offline</div></div>
-        <div><div style="font-weight:bold;color:#2c3e50">🕐 {datetime.now().strftime('%H:%M')}</div><div style="font-size:9px;color:#7f8c8d">Actualizado</div></div>
+# HTML+JS completo como string (se ejecutará en el navegador)
+html_completo = """
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCADA Monitor</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #0e1117; overflow: hidden; }
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        #stats-bar {
+            position: fixed;
+            top: 10px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: grid;
+            grid-template-columns: repeat(6, auto);
+            gap: 12px;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+        }
+        .stat-value { font-weight: bold; color: #2c3e50; font-size: 16px; }
+        .stat-label { font-size: 9px; color: #7f8c8d; }
+        .custom-popup { font-family: Arial; padding: 12px; min-width: 280px; background: white; border-radius: 6px; }
+        .custom-popup h4 { margin: 0 0 10px 0; color: #2c3e50; font-size: 16px; }
+        .custom-popup hr { margin: 8px 0; border-color: #ecf0f1; }
+        .custom-popup .var-row { margin: 6px 0; padding: 4px 0; display: flex; justify-content: space-between; font-size: 13px; }
+        .custom-popup .var-label { color: #7f8c8d; }
+        .custom-popup .var-value { font-weight: bold; color: #2c3e50; }
+        .custom-popup .timestamp { font-size: 11px; color: #95a5a6; text-align: center; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="stats-bar">
+        <div><div class="stat-value">📡 <span id="stat-total">0</span></div><div class="stat-label">Total</div></div>
+        <div><div class="stat-value" style="color:#27ae60">🟢 <span id="stat-activos">0</span></div><div class="stat-label">Activos</div></div>
+        <div><div class="stat-value" style="color:#e74c3c">🔴 <span id="stat-inactivos">0</span></div><div class="stat-label">Inactivos</div></div>
+        <div><div class="stat-value" style="color:#3498db">🔵 <span id="stat-tanques">0</span></div><div class="stat-label">Tanques</div></div>
+        <div><div class="stat-value" style="color:#000">⚫ <span id="stat-offline">0</span></div><div class="stat-label">Offline</div></div>
+        <div><div class="stat-value">🕐 <span id="stat-time">--:--</span></div><div class="stat-label">Actualizado</div></div>
     </div>
-    """
-    
-    mapa.get_root().html.add_child(folium.Element(stats_html))
-    
-    return mapa._repr_html_(), stats
 
-# Interfaz principal
-def main():
-    # Botón de actualización (fuera del mapa)
-    st.markdown('<button id="update-btn" onclick="window.location.reload();">🔄</button>', unsafe_allow_html=True)
-    
-    # Cargar datos
-    datos = cargar_datos()
-    if not datos:
-        st.error("⚠️ No se pudieron cargar los datos. Verifica el archivo en GitHub.")
-        st.stop()
-    
-    # Generar HTML del mapa
-    html_mapa, stats = generar_html_mapa(datos)
-    if not html_mapa:
-        st.error("⚠️ No hay coordenadas válidas en los datos.")
-        st.stop()
-    
-    # Mostrar mapa HTML estático (NO se rerenderiza al interactuar)
-    st.components.v1.html(
-        html_mapa,
-        width=1920,
-        height=1080,
-        scrolling=False
-    )
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Configuración
+        const URL_DATOS = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json';
+        const INTERVALO_ACTUALIZACION = 5 * 60 * 1000; // 5 minutos
+        
+        let map = null;
+        let markers = new Map(); // id -> marker
+        let primeraCarga = true;
+        
+        // Inicializar mapa
+        function initMap() {
+            map = L.map('map', {
+                zoomControl: true,
+                scrollWheelZoom: true,
+                dragging: true
+            });
+            
+            // Mapa claro con calles sutiles
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+            
+            // Cargar datos iniciales
+            cargarDatos();
+            
+            // Programar actualización automática
+            setInterval(cargarDatos, INTERVALO_ACTUALIZACION);
+        }
+        
+        // Cargar datos desde GitHub
+        async function cargarDatos() {
+            try {
+                const timestamp = Date.now();
+                const response = await fetch(`${URL_DATOS}?t=${timestamp}`, {
+                    cache: 'no-store'
+                });
+                
+                if (!response.ok) throw new Error('Error al cargar datos');
+                
+                const datos = await response.json();
+                actualizarMapa(datos);
+                actualizarEstadisticas(datos);
+                
+                // Actualizar timestamp
+                document.getElementById('stat-time').textContent = new Date().toLocaleTimeString('es-ES', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        // Actualizar mapa (solo valores y colores, no posiciones)
+        function actualizarMapa(datos) {
+            if (!datos || !datos.estaciones) return;
+            
+            const nuevasBounds = [];
+            
+            datos.estaciones.forEach(estacion => {
+                if (!estacion.latitud || !estacion.longitud) return;
+                
+                const id = estacion.nombre || `${estacion.latitud},${estacion.longitud}`;
+                const lat = parseFloat(estacion.latitud);
+                const lng = parseFloat(estacion.longitud);
+                
+                nuevasBounds.push([lat, lng]);
+                
+                // Si ya existe el marcador, actualizar popup y color
+                if (markers.has(id)) {
+                    const marker = markers.get(id);
+                    
+                    // Actualizar popup
+                    const popupContent = crearPopupContent(estacion);
+                    marker.setPopupContent(popupContent);
+                    
+                    // Actualizar color si cambió estado
+                    const nuevoIcono = crearIcono(estacion.tipo, estacion.estado_bomba, estacion.en_linea);
+                    marker.setIcon(nuevoIcono);
+                    
+                } else {
+                    // Crear nuevo marcador
+                    const icono = crearIcono(estacion.tipo, estacion.estado_bomba, estacion.en_linea);
+                    const popupContent = crearPopupContent(estacion);
+                    
+                    const marker = L.marker([lat, lng], { icon: icono })
+                        .bindPopup(popupContent, { maxWidth: 320 })
+                        .addTo(map);
+                    
+                    markers.set(id, marker);
+                }
+            });
+            
+            // Ajustar bounds SOLO en primera carga
+            if (primeraCarga && nuevasBounds.length > 0) {
+                const bounds = L.latLngBounds(nuevasBounds);
+                map.fitBounds(bounds, { padding: [40, 40] });
+                primeraCarga = false;
+            }
+        }
+        
+        // Crear icono según tipo y estado (usando DivIcon para colores personalizados)
+        function crearIcono(tipo, estado, enLinea) {
+            // Determinar color
+            let color = '#000000'; // negro por defecto (offline)
+            if (enLinea !== 0) {
+                if (tipo === 'pozo' || tipo === 'bomba') {
+                    color = estado === 1 ? '#27ae60' : '#e74c3c'; // verde/rojo
+                } else if (tipo === 'tanque') {
+                    color = estado === 1 ? '#3498db' : '#95a5a6'; // azul/gris
+                } else if (tipo === 'sensor') {
+                    color = '#9b59b6'; // morado
+                } else {
+                    color = '#f39c12'; // naranja
+                }
+            }
+            
+            // Determinar ícono (siempre el mismo según tipo)
+            let iconClass = '💧'; // pozo por defecto
+            if (tipo === 'tanque') iconClass = '🌊';
+            else if (tipo === 'bomba') iconClass = '⚙️';
+            else if (tipo === 'sensor') iconClass = '📡';
+            
+            return L.divIcon({
+                html: `<div style="
+                    background: ${color};
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+                    font-size: 18px;
+                    color: white;
+                ">${iconClass}</div>`,
+                className: '',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            });
+        }
+        
+        // Crear contenido del popup
+        function crearPopupContent(estacion) {
+            let html = `<div class="custom-popup"><h4>${estacion.nombre || 'Estación'}</h4><hr>`;
+            
+            for (const key in estacion) {
+                if (!['nombre', 'latitud', 'longitud', 'tipo', 'estado_bomba', 'en_linea', 'icono'].includes(key)) {
+                    const value = typeof estacion[key] === 'number' 
+                        ? estacion[key].toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                        : estacion[key];
+                    
+                    html += `<div class="var-row"><span class="var-label">${key}:</span><span class="var-value">${value}</span></div>`;
+                }
+            }
+            
+            html += `<hr><div class="timestamp">📅 ${new Date().toLocaleString('es-ES')}</div></div>`;
+            return html;
+        }
+        
+        // Actualizar estadísticas
+        function actualizarEstadisticas(datos) {
+            if (!datos || !datos.estaciones) return;
+            
+            const stats = { total:0, activos:0, inactivos:0, tanques:0, offline:0 };
+            
+            datos.estaciones.forEach(estacion => {
+                stats.total++;
+                const enLinea = estacion.en_linea || 1;
+                const tipo = estacion.tipo || 'otro';
+                const estado = estacion.estado_bomba || estacion.estado || 0;
+                
+                if (enLinea === 0) stats.offline++;
+                else if (tipo === 'pozo') {
+                    if (estado === 1) stats.activos++;
+                    else stats.inactivos++;
+                } else if (tipo === 'tanque') stats.tanques++;
+            });
+            
+            document.getElementById('stat-total').textContent = stats.total;
+            document.getElementById('stat-activos').textContent = stats.activos;
+            document.getElementById('stat-inactivos').textContent = stats.inactivos;
+            document.getElementById('stat-tanques').textContent = stats.tanques;
+            document.getElementById('stat-offline').textContent = stats.offline;
+        }
+        
+        // Iniciar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', initMap);
+    </script>
+</body>
+</html>
+"""
 
-if __name__ == "__main__":
-    main()
+# Mostrar el HTML+JS en Streamlit (se ejecutará en el navegador del usuario)
+st.components.v1.html(
+    html_completo,
+    width=1920,
+    height=1080,
+    scrolling=False
+)
