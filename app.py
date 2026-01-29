@@ -18,7 +18,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# HTML+JS completo como string (se ejecutará en el navegador)
+# HTML+JS completo con proxy CORS y modo pruebas
 html_completo = """
 <!DOCTYPE html>
 <html lang="es">
@@ -32,7 +32,7 @@ html_completo = """
         body { font-family: Arial, sans-serif; background: #0e1117; overflow: hidden; }
         #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
-        /* Botón de actualización manual (solo para pruebas) */
+        /* Botón de actualización manual */
         #update-btn {
             position: fixed;
             top: 10px;
@@ -46,7 +46,6 @@ html_completo = """
             font-size: 14px;
             cursor: pointer;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            display: none; /* Oculto en producción */
         }
         #update-btn:hover {
             background: rgba(41, 128, 185, 0.95);
@@ -82,32 +81,29 @@ html_completo = """
         .custom-popup .var-value { font-weight: bold; color: #2c3e50; }
         .custom-popup .timestamp { font-size: 11px; color: #95a5a6; text-align: center; margin-top: 8px; }
         
-        /* Contador de tiempo para próxima actualización */
-        #timer-display {
+        /* Mensaje de estado */
+        #status-msg {
             position: fixed;
             bottom: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.85);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            color: #2c3e50;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(46, 204, 113, 0.9);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
             z-index: 999;
-            display: none; /* Oculto en producción */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        #status-msg.error {
+            background: rgba(231, 76, 60, 0.9);
         }
     </style>
 </head>
 <body>
     <div id="map"></div>
-    
-    <!-- Botón de actualización manual (para pruebas) -->
-    <button id="update-btn" onclick="cargarDatos()">🔄 Actualizar Ahora</button>
-    
-    <!-- Contador de tiempo (para pruebas) -->
-    <div id="timer-display">Próxima actualización: <span id="timer-count">--:--</span></div>
-    
-    <!-- Estadísticas -->
+    <button id="update-btn" onclick="cargarDatos()">🔄 Actualizar</button>
     <div id="stats-bar">
         <div><div class="stat-value">📡 <span id="stat-total">0</span></div><div class="stat-label">Total</div></div>
         <div><div class="stat-value" style="color:#27ae60">🟢 <span id="stat-activos">0</span></div><div class="stat-label">Activos</div></div>
@@ -116,33 +112,31 @@ html_completo = """
         <div><div class="stat-value" style="color:#000">⚫ <span id="stat-offline">0</span></div><div class="stat-label">Offline</div></div>
         <div><div class="stat-value">🕐 <span id="stat-time">--:--</span></div><div class="stat-label">Actualizado</div></div>
     </div>
+    <div id="status-msg"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         // ════════════════════════════════════════════════════════════════
-        // CONFIGURACIÓN - MODIFICA ESTA VARIABLE PARA CAMBIAR EL TIEMPO
+        // CONFIGURACIÓN - MODIFICA ESTOS VALORES SEGÚN TUS NECESIDADES
         // ════════════════════════════════════════════════════════════════
         
-        // TIEMPO DE ACTUALIZACIÓN EN MILISEGUNDOS:
-        // 10000 = 10 segundos (para pruebas rápidas)
-        // 30000 = 30 segundos (para pruebas)
-        // 60000 = 1 minuto (para pruebas)
+        // Tiempo de actualización en milisegundos:
+        // 5000 = 5 segundos (pruebas muy rápidas)
+        // 10000 = 10 segundos (pruebas rápidas)
+        // 30000 = 30 segundos (pruebas)
         // 300000 = 5 minutos (producción)
-        // 600000 = 10 minutos (producción)
+        const INTERVALO_ACTUALIZACION = 5000; // ⬅️ CAMBIA ESTE VALOR
         
-        const INTERVALO_ACTUALIZACION = 10000; // ⬅️ CAMBIA ESTE VALOR
-        
-        // Mostrar/Ocultar controles de pruebas:
-        const MODO_PRUEBAS = true; // true = mostrar botón y contador, false = ocultar
+        // URL del JSON en GitHub (usando proxy CORS)
+        const URL_GITHUB_RAW = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json';
+        const PROXY_CORS = 'https://corsproxy.io/?'; // Proxy público gratuito
         
         // ════════════════════════════════════════════════════════════════
-        
-        const URL_DATOS = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/datos_estaciones.json';
         
         let map = null;
         let markers = new Map(); // id -> marker
         let primeraCarga = true;
-        let timerInterval = null;
+        let timer = null;
         
         // Inicializar mapa
         function initMap() {
@@ -159,36 +153,36 @@ html_completo = """
                 maxZoom: 19
             }).addTo(map);
             
-            // Mostrar/Ocultar controles de pruebas
-            if (MODO_PRUEBAS) {
-                document.getElementById('update-btn').style.display = 'block';
-                document.getElementById('timer-display').style.display = 'block';
-            }
-            
             // Cargar datos iniciales
             cargarDatos();
             
             // Programar actualización automática
-            setInterval(cargarDatos, INTERVALO_ACTUALIZACION);
-            
-            // Iniciar contador visual
-            if (MODO_PRUEBAS) {
-                actualizarContador();
-                timerInterval = setInterval(actualizarContador, 1000);
-            }
+            timer = setInterval(cargarDatos, INTERVALO_ACTUALIZACION);
         }
         
-        // Cargar datos desde GitHub
+        // Cargar datos desde GitHub usando proxy CORS
         async function cargarDatos() {
             try {
+                // Mostrar mensaje de carga
+                mostrarMensaje('Actualizando datos...', false);
+                
                 const timestamp = Date.now();
-                const response = await fetch(`${URL_DATOS}?t=${timestamp}`, {
-                    cache: 'no-store'
+                const urlCompleta = PROXY_CORS + encodeURIComponent(URL_GITHUB_RAW + '?t=' + timestamp);
+                
+                const response = await fetch(urlCompleta, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
                 });
                 
-                if (!response.ok) throw new Error('Error al cargar datos');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 
-                const datos = await response.json();
+                const texto = await response.text();
+                const datos = JSON.parse(texto);
+                
                 actualizarMapa(datos);
                 actualizarEstadisticas(datos);
                 
@@ -198,11 +192,27 @@ html_completo = """
                     minute: '2-digit' 
                 });
                 
+                // Mostrar mensaje de éxito
+                mostrarMensaje('✓ Datos actualizados', false);
+                
                 console.log('✓ Datos actualizados:', new Date().toLocaleTimeString());
                 
             } catch (error) {
                 console.error('✗ Error al cargar datos:', error);
+                mostrarMensaje('✗ Error: ' + error.message, true);
             }
+        }
+        
+        // Mostrar mensaje temporal
+        function mostrarMensaje(texto, esError) {
+            const msg = document.getElementById('status-msg');
+            msg.textContent = texto;
+            msg.className = esError ? 'error' : '';
+            msg.style.opacity = '1';
+            
+            setTimeout(() => {
+                msg.style.opacity = '0';
+            }, 3000);
         }
         
         // Actualizar mapa (solo valores y colores, no posiciones)
@@ -254,7 +264,7 @@ html_completo = """
             }
         }
         
-        // Crear icono según tipo y estado (usando DivIcon para colores personalizados)
+        // Crear icono según tipo y estado
         function crearIcono(tipo, estado, enLinea) {
             // Determinar color
             let color = '#000000'; // negro por defecto (offline)
@@ -340,27 +350,19 @@ html_completo = """
             document.getElementById('stat-offline').textContent = stats.offline;
         }
         
-        // Actualizar contador visual (solo para pruebas)
-        function actualizarContador() {
-            const now = Date.now();
-            const nextUpdate = Math.ceil(now / INTERVALO_ACTUALIZACION) * INTERVALO_ACTUALIZACION;
-            const secondsLeft = Math.floor((nextUpdate - now) / 1000);
-            
-            const mins = Math.floor(secondsLeft / 60);
-            const secs = secondsLeft % 60;
-            
-            document.getElementById('timer-count').textContent = 
-                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-        
         // Iniciar cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', initMap);
+        
+        // Limpiar intervalo al cerrar la página
+        window.addEventListener('beforeunload', () => {
+            if (timer) clearInterval(timer);
+        });
     </script>
 </body>
 </html>
 """
 
-# Mostrar el HTML+JS en Streamlit (se ejecutará en el navegador del usuario)
+# Mostrar el HTML+JS en Streamlit
 st.components.v1.html(
     html_completo,
     width=1920,
