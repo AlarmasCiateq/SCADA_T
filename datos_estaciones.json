@@ -44,45 +44,6 @@
       "Potencia Activa (kW)": 0,
       "Nivel de Agua (%)": 0,
       "Temperatura (°C)": 0
-    },
-    {
-      "nombre": "Tanque Principal",
-      "tipo": "tanque",
-      "estado_bomba": 1,
-      "en_linea": 1,
-      "latitud": 19.287000000000000,
-      "longitud": -99.657000000000000,
-      "Capacidad Total (L)": 10000,
-      "Nivel Actual (L)": 7500,
-      "Porcentaje (%)": 75,
-      "Temperatura (°C)": 22.5,
-      "Presión (bar)": 3.2
-    },
-    {
-      "nombre": "Bomba de Transferencia",
-      "tipo": "bomba",
-      "estado_bomba": 1,
-      "en_linea": 1,
-      "latitud": 19.289000000000000,
-      "longitud": -99.659000000000000,
-      "Flujo (m³/h)": 45.5,
-      "Presión Descarga (bar)": 4.8,
-      "Potencia (kW)": 15.2,
-      "Eficiencia (%)": 82.5,
-      "Horas de Operación": 1250
-    },
-    {
-      "nombre": "Sensor Nivel Río",
-      "tipo": "sensor",
-      "estado_bomba": 1,
-      "en_linea": 1,
-      "latitud": 19.291000000000000,
-      "longitud": -99.661000000000000,
-      "Nivel Actual (m)": 2.35,
-      "Caudal (m³/s)": 1.8,
-      "Temperatura Agua (°C)": 18.5,
-      "pH": 7.2,
-      "Turbidez (NTU)": 15.3
     }
   ],
   "metadata": {
