@@ -75,7 +75,7 @@
       "nombre": "Sensor Nivel Río",
       "tipo": "sensor",
       "estado_bomba": 1,
-      "en_linea": 0,
+      "en_linea": 1,
       "latitud": 19.291000000000000,
       "longitud": -99.661000000000000,
       "Nivel Actual (m)": 2.35,
@@ -88,7 +88,7 @@
       "nombre": "Rebombo San Pedro",
       "tipo": "bomba",
       "estado_bomba": 0,
-      "en_linea": 0,
+      "en_linea": 1,
       "latitud": 19.299000000000000,
       "longitud": -99.669000000000000,
       "Nivel Actual (m)": 2.35,
@@ -101,7 +101,7 @@
       "nombre": "Tanque Wilfrido",
       "tipo": "tanque",
       "estado_bomba": 1,
-      "en_linea": 0,
+      "en_linea": 1,
       "latitud": 19.280000000000000,
       "longitud": -99.650000000000000,
       "Capacidad Total (L)": 10000,
@@ -112,7 +112,7 @@
     }
   ],
   "metadata": {
-    "ultima_actualizacion": "2026-01-29T10:11:00Z",
+    "ultima_actualizacion": "2026-01-29T10:15:00Z",
     "fuente": "Sistema SCADA",
     "version": "1.0"
   }
