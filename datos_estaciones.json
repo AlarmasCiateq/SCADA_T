@@ -33,7 +33,7 @@
     {
       "nombre": "Pozo 3 - La Esperanza",
       "tipo": "pozo",
-      "estado_bomba": 1,
+      "estado_bomba": 0,
       "en_linea": 0,
       "latitud": 19.286500000000000,
       "longitud": -99.656500000000000,
@@ -87,7 +87,7 @@
     {
       "nombre": "Rebombo San Pedro",
       "tipo": "bomba",
-      "estado_bomba": 1,
+      "estado_bomba": 0,
       "en_linea": 1,
       "latitud": 19.299000000000000,
       "longitud": -99.669000000000000,
