@@ -37,7 +37,7 @@
     {
       "nombre": "Pozo 3 - La Esperanza",
       "tipo": "pozo",
-      "estado_bomba": 1,
+      "estado_bomba": 0,
       "en_linea": 1,
       "latitud": 19.286500000000000,
       "longitud": -99.656500000000000,
@@ -116,7 +116,8 @@
       "Porcentaje (%)": 75,
       "Temperatura (°C)": 22.5,
       "Presión (kg/cm²)": 3.2,
-      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg"
+      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg",
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg"
     }
   ],
   "metadata": {
