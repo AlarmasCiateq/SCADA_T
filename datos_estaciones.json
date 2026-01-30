@@ -89,7 +89,7 @@
       "Temperatura Agua (°C)": 18.5,
       "pH": 7.2,
       "Turbidez (NTU)": 15.3,
-      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/sensor_nivel.svg"
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/sensor_nivel.svg"
     },
     {
       "nombre": "Rebombo San Pedro",
