@@ -4,7 +4,7 @@
       "nombre": "Pozo 1 - Santa María",
       "tipo": "pozo",
       "estado_bomba": 1,
-      "en_linea": 1,
+      "en_linea": 0,
       "latitud": 19.283352119712312,
       "longitud": -99.65310428742922,
       "Presión (bar)": 2.5,
@@ -88,7 +88,8 @@
       "Caudal (m³/s)": 1.8,
       "Temperatura Agua (°C)": 18.5,
       "pH": 7.2,
-      "Turbidez (NTU)": 15.3
+      "Turbidez (NTU)": 15.3,
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/sensor_nivel.svg"
     },
     {
       "nombre": "Rebombo San Pedro",
