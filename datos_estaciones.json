@@ -13,8 +13,8 @@
       "Voltaje Promedio (V)": 429.25,
       "Potencia Activa (kW)": 23.14,
       "Nivel de Agua (%)": 85.3,
-      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo_1.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo_2.svg",
+      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 1.svg",
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg",
       "Temperatura (°C)": 22.5
     },
     {
@@ -30,8 +30,8 @@
       "Voltaje Promedio (V)": 0,
       "Potencia Activa (kW)": 0,
       "Nivel de Agua (%)": 30.1,
-      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo_1.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo_2.svg",
+      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 1.svg",
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg",
       "Temperatura (°C)": 20.0
     },
     {
@@ -47,8 +47,8 @@
       "Voltaje Promedio (V)": 0,
       "Potencia Activa (kW)": 0,
       "Nivel de Agua (%)": 0,
-      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo_1.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo_2.svg",
+      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 1.svg",
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg",
       "Temperatura (°C)": 0
     },
     {
