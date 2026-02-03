@@ -52,7 +52,7 @@
       "latitud": 19.287000000000000,
       "longitud": -99.657000000000000,
       "Nivel": 87.500,
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg"
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg"
     },
     {
       "nombre": "Bomba de Transferencia",
