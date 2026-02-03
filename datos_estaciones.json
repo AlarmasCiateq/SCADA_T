@@ -54,15 +54,12 @@
     {
       "nombre": "Tanque Principal",
       "tipo": "tanque",
-      "estado_bomba": 0,
       "en_linea": 1,
       "latitud": 19.287000000000000,
       "longitud": -99.657000000000000,
       "Capacidad Total (L)": 10000,
-      "Nivel Actual (L)": 7500,
-      "Porcentaje (%)": 75,
-      "Temperatura (°C)": 22.5,
-      "Presión (bar)": 3.2
+      "Nivel": 7.500,
+      "Porcentaje (%)": 75
     },
     {
       "nombre": "Bomba de Transferencia",
@@ -84,7 +81,7 @@
       "en_linea": 1,
       "latitud": 19.291000000000000,
       "longitud": -99.661000000000000,
-      "Nivel Actual (m)": 2.35,
+      "Nivel": 2.35,
       "Caudal (m³/s)": 1.8,
       "Temperatura Agua (°C)": 18.5,
       "pH": 7.2,
@@ -100,10 +97,7 @@
       "latitud": 19.299000000000000,
       "longitud": -99.669000000000000,
       "Nivel Actual (m)": 2.35,
-      "Caudal (m³/s)": 1.8,
-      "Temperatura Agua (°C)": 18.5,
-      "pH": 7.2,
-      "Turbidez (NTU)": 15.3
+      "Flujo Instantáneo (L/s)": 1.8,
     },
     {
       "nombre": "Tanque Wilfrido",
@@ -113,9 +107,8 @@
       "latitud": 19.280000000000000,
       "longitud": -99.650000000000000,
       "Capacidad Total (L)": 10000,
-      "Nivel Actual (m)": 7.500,
+      "Nivel": 3.500,
       "Porcentaje (%)": 75,
-      "Temperatura (°C)": 22.5,
       "Presión (kg/cm²)": 3.2,
       "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg",
       "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg"
