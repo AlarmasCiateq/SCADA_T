@@ -96,8 +96,8 @@
       "en_linea": 1,
       "latitud": 19.299000000000000,
       "longitud": -99.669000000000000,
-      "Nivel Actual (m)": 2.35,
-      "Flujo Instantáneo (L/s)": 1.8,
+      "Nivel": 2.35,
+      "Flujo Instantáneo (L/s)": 1.8
     },
     {
       "nombre": "Tanque Wilfrido",
