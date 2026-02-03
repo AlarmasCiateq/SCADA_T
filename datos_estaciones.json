@@ -12,10 +12,8 @@
       "Corriente Promedio (A)": 126.40,
       "Voltaje Promedio (V)": 429.25,
       "Potencia Activa (kW)": 23.14,
-      "Nivel de Agua (%)": 85.3,
       "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 1.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg",
-      "Temperatura (°C)": 22.5
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg"
     },
     {
       "nombre": "Pozo 2 - San Juan",
@@ -29,10 +27,8 @@
       "Corriente Promedio (A)": 0,
       "Voltaje Promedio (V)": 0,
       "Potencia Activa (kW)": 0,
-      "Nivel de Agua (%)": 30.1,
       "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 1.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg",
-      "Temperatura (°C)": 20.0
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg"
     },
     {
       "nombre": "Pozo 3 - La Esperanza",
@@ -46,10 +42,8 @@
       "Corriente Promedio (A)": 0,
       "Voltaje Promedio (V)": 0,
       "Potencia Activa (kW)": 0,
-      "Nivel de Agua (%)": 0,
       "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 1.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg",
-      "Temperatura (°C)": 0
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg"
     },
     {
       "nombre": "Tanque Principal",
