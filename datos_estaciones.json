@@ -51,9 +51,7 @@
       "en_linea": 1,
       "latitud": 19.287000000000000,
       "longitud": -99.657000000000000,
-      "Capacidad Total (L)": 10000,
-      "Nivel": 87.500,
-      "Porcentaje (%)": 75
+      "Nivel": 87.500
     },
     {
       "nombre": "Bomba de Transferencia",
@@ -76,10 +74,6 @@
       "latitud": 19.291000000000000,
       "longitud": -99.661000000000000,
       "Nivel": 2.35,
-      "Caudal (m³/s)": 1.8,
-      "Temperatura Agua (°C)": 18.5,
-      "pH": 7.2,
-      "Turbidez (NTU)": 15.3,
       "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/sensor_nivel.svg",
       "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/sensor_nivel.svg"
     },
@@ -100,9 +94,7 @@
       "en_linea": 1,
       "latitud": 19.280000000000000,
       "longitud": -99.650000000000000,
-      "Capacidad Total (L)": 10000,
       "Nivel": 3.500,
-      "Porcentaje (%)": 75,
       "Presión (kg/cm²)": 3.2,
       "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg",
       "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg"
