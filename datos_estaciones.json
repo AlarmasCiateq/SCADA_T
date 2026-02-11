@@ -49,9 +49,9 @@
       "nombre": "Tanque Principal",
       "tipo": "tanque",
       "en_linea": 1,
-      "latitud": 44.287000000000000,
+      "latitud": 19.287000000000000,
       "longitud": -99.657000000000000,
-      "Nivel": 35.200,
+      "Nivel": 44.200,
       "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg"
     },
     {
