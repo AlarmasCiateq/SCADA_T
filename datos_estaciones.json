@@ -3,8 +3,8 @@
     {
       "nombre": "Pozo 1 - Santa María",
       "tipo": "pozo",
-      "estado_bomba": 0,
-      "en_linea": 1,
+      "estado_bomba": 1,
+      "en_linea": 0,
       "latitud": 19.283352119712312,
       "longitud": -99.65310428742922,
       "Presión (bar)": 2.5,
@@ -57,8 +57,8 @@
     {
       "nombre": "Bomba de Transferencia",
       "tipo": "bomba",
-      "estado_bomba": 1,
-      "en_linea": 0,
+      "estado_bomba": 0,
+      "en_linea": 1,
       "latitud": 19.289000000000000,
       "longitud": -99.659000000000000,
       "Flujo (m³/h)": 45.5,
@@ -70,7 +70,7 @@
     {
       "nombre": "Sensor Nivel Río",
       "tipo": "sensor",
-      "en_linea": 1,
+      "en_linea": 0,
       "latitud": 19.291000000000000,
       "longitud": -99.661000000000000,
       "Nivel": 22.35,
@@ -80,8 +80,8 @@
     {
       "nombre": "Rebombo San Pedro",
       "tipo": "bomba",
-      "estado_bomba": 1,
-      "en_linea": 0,
+      "estado_bomba": 0,
+      "en_linea": 1,
       "latitud": 19.299000000000000,
       "longitud": -99.669000000000000,
       "Nivel": 2.35,
@@ -94,7 +94,7 @@
       "en_linea": 1,
       "latitud": 19.280000000000000,
       "longitud": -99.650000000000000,
-      "Nivel": 50.500,
+      "Nivel": 80.500,
       "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg",
       "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg"
     }
