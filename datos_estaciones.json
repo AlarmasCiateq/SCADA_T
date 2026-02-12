@@ -94,7 +94,7 @@
       "en_linea": 1,
       "latitud": 19.280000000000000,
       "longitud": -99.650000000000000,
-      "Nivel": 17.2,
+      "Nivel": 43.75,
       "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg",
       "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg"
     }
