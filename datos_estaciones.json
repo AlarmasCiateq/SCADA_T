@@ -52,7 +52,7 @@
       "etiqueta": "Total"
     },
     "reloj": {
-      "icono_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzJjM2U1MCIvPjxwYXRoIGQ9Ik0xMiA2djZoNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==",
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/update.svg",
       "color": "#2c3e50",
       "etiqueta": "Actualizado"
     },
