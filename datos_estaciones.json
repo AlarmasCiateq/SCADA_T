@@ -1,8 +1,8 @@
 {
   "tipos": {
     "pozo": {
-      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo2.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo1.svg",
+      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo_2.svg",
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo_1.svg",
       "color_on": "#27ae60",
       "color_off": "#e74c3c",
       "etiqueta": "Pozo",
