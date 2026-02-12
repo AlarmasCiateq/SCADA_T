@@ -57,7 +57,7 @@
       "etiqueta": "Actualizado"
     },
     "generico": {
-      "icono_url": "estacion.svg",
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/estacion.svg",
       "color": "#7f8c8d",
       "etiqueta": "Estación"
     }
