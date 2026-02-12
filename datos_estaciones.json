@@ -1,4 +1,63 @@
 {
+  "tipos": {
+    "pozo": {
+      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg",
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 1.svg",
+      "color_on": "#27ae60",
+      "color_off": "#e74c3c",
+      "etiqueta": "Pozo",
+      "etiqueta_plural": "Pozos"
+    },
+    "tanque": {
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg",
+      "color": "#3498db",
+      "etiqueta": "Tanque",
+      "etiqueta_plural": "Tanques"
+    },
+    "bomba": {
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/bomba.svg",
+      "color": "#9b59b6",
+      "etiqueta": "Bomba",
+      "etiqueta_plural": "Bombas"
+    },
+    "sensor": {
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/sensor_nivel.svg",
+      "color": "#f39c12",
+      "etiqueta": "Sensor",
+      "etiqueta_plural": "Sensores"
+    },
+    "rebombeo": {
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/bomba.svg",
+      "color": "#9b59b6",
+      "etiqueta": "Rebombeo",
+      "etiqueta_plural": "Rebombeos"
+    },
+    "offline": {
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/offline.svg",
+      "color": "#95a5a6",
+      "etiqueta": "Offline"
+    },
+    "online": {
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/online.svg",
+      "color": "#27ae60",
+      "etiqueta": "Online"
+    },
+    "total": {
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/total.svg",
+      "color": "#2c3e50",
+      "etiqueta": "Total"
+    },
+    "reloj": {
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/reloj.svg",
+      "color": "#2c3e50",
+      "etiqueta": "Actualizado"
+    },
+    "generico": {
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/estacion_generica.svg",
+      "color": "#7f8c8d",
+      "etiqueta": "Estación"
+    }
+  },
   "estaciones": [
     {
       "nombre": "Pozo 1 - Santa María",
@@ -11,9 +70,7 @@
       "Flujo Instantáneo (L/min)": 10.69,
       "Corriente Promedio (A)": 126.40,
       "Voltaje Promedio (V)": 429.25,
-      "Potencia Activa (kW)": 23.14,
-      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 1.svg"
+      "Potencia Activa (kW)": 23.14
     },
     {
       "nombre": "Pozo 2 - San Juan",
@@ -26,9 +83,7 @@
       "Flujo Instantáneo (L/min)": 0,
       "Corriente Promedio (A)": 0,
       "Voltaje Promedio (V)": 0,
-      "Potencia Activa (kW)": 0,
-      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 1.svg"
+      "Potencia Activa (kW)": 0
     },
     {
       "nombre": "Pozo 3 - La Esperanza",
@@ -41,9 +96,7 @@
       "Flujo Instantáneo (L/min)": 0,
       "Corriente Promedio (A)": 0,
       "Voltaje Promedio (V)": 0,
-      "Potencia Activa (kW)": 0,
-      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 1.svg"
+      "Potencia Activa (kW)": 0
     },
     {
       "nombre": "Tanque Principal",
@@ -51,8 +104,7 @@
       "en_linea": 1,
       "latitud": 19.287000000000000,
       "longitud": -99.657000000000000,
-      "Nivel": 44.200,
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg"
+      "Nivel": 44.200
     },
     {
       "nombre": "Bomba de Transferencia",
@@ -73,13 +125,11 @@
       "en_linea": 0,
       "latitud": 19.291000000000000,
       "longitud": -99.661000000000000,
-      "Nivel": 22.35,
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/sensor_nivel.svg",
-      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/sensor_nivel.svg"
+      "Nivel": 22.35
     },
     {
       "nombre": "Rebombo San Pedro",
-      "tipo": "bomba",
+      "tipo": "rebombeo",
       "estado_bomba": 0,
       "en_linea": 1,
       "latitud": 19.299000000000000,
@@ -94,14 +144,12 @@
       "en_linea": 1,
       "latitud": 19.280000000000000,
       "longitud": -99.650000000000000,
-      "Nivel": 43.75,
-      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/tanque_principal.svg"
+      "Nivel": 88.500
     }
   ],
   "metadata": {
     "ultima_actualizacion": "2026-01-29T10:40:00Z",
     "fuente": "Sistema SCADA",
-    "version": "1.0"
+    "version": "2.0"
   }
 }
