@@ -1,8 +1,8 @@
 {
   "tipos": {
     "pozo": {
-      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 2.svg",
-      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo 1.svg",
+      "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo2.svg",
+      "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/pozo1.svg",
       "color_on": "#27ae60",
       "color_off": "#e74c3c",
       "etiqueta": "Pozo",
@@ -20,40 +20,40 @@
       "etiqueta": "Bomba",
       "etiqueta_plural": "Bombas"
     },
-    "sensor": {
-      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/sensor_nivel.svg",
-      "color": "#f39c12",
-      "etiqueta": "Sensor",
-      "etiqueta_plural": "Sensores"
-    },
     "rebombeo": {
       "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/bomba.svg",
       "color": "#9b59b6",
       "etiqueta": "Rebombeo",
       "etiqueta_plural": "Rebombeos"
     },
+    "sensor": {
+      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/sensor_nivel.svg",
+      "color": "#f39c12",
+      "etiqueta": "Sensor",
+      "etiqueta_plural": "Sensores"
+    },
     "offline": {
-      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/offline.svg",
+      "icono_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTc0YzNjIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIzIiBmaWxsPSIjZTc0YzNjIi8+PC9zdmc+",
       "color": "#95a5a6",
       "etiqueta": "Offline"
     },
     "online": {
-      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/online.svg",
+      "icono_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjdhZTYwIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIzIiBmaWxsPSIjMjdhZTYwIi8+PC9zdmc+",
       "color": "#27ae60",
       "etiqueta": "Online"
     },
     "total": {
-      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/total.svg",
+      "icono_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzJjM2U1MCIvPjwvc3ZnPg==",
       "color": "#2c3e50",
       "etiqueta": "Total"
     },
     "reloj": {
-      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/reloj.svg",
+      "icono_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzJjM2U1MCIvPjxwYXRoIGQ9Ik0xMiA2djZoNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==",
       "color": "#2c3e50",
       "etiqueta": "Actualizado"
     },
     "generico": {
-      "icono_url": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/estacion_generica.svg",
+      "icono_url": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzc4OTE5YyIvPjwvc3ZnPg==",
       "color": "#7f8c8d",
       "etiqueta": "Estación"
     }
@@ -148,8 +148,9 @@
     }
   ],
   "metadata": {
-    "ultima_actualizacion": "2026-01-29T10:40:00Z",
-    "fuente": "Sistema SCADA",
-    "version": "2.0"
+    "ultima_actualizacion": "2026-02-12T15:30:00Z",
+    "fuente": "Sistema SCADA CIATEQ",
+    "version": "2.0",
+    "descripcion": "Estructura mejorada con sección 'tipos' para iconos centralizados"
   }
 }
