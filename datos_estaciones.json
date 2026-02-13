@@ -145,7 +145,7 @@
       "nombre": "Tanque Wilfrido",
       "tipo": "tanque",
       "estado_bomba": 1,
-      "en_linea": 1,
+      "en_linea": 0,
       "latitud": 19.280000000000000,
       "longitud": -99.650000000000000,
       "Nivel": 88.500
