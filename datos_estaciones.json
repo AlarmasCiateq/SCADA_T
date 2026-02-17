@@ -67,7 +67,7 @@
       "nombre": "Pozo 1 - Santa María",
       "tipo": "pozo",
       "estado_bomba": 0,
-      "en_linea": 0,
+      "en_linea": 1,
       "latitud": 19.283352119712312,
       "longitud": -99.65310428742922,
       "Presión (bar)": 2.5,
@@ -79,7 +79,7 @@
     {
       "nombre": "Pozo 2 - San Juan",
       "tipo": "pozo",
-      "estado_bomba": 0,
+      "estado_bomba": 1,
       "en_linea": 1,
       "latitud": 19.285000000000000,
       "longitud": -99.655000000000000,
@@ -126,7 +126,7 @@
     {
       "nombre": "Sensor Nivel Río",
       "tipo": "sensor",
-      "en_linea": 0,
+      "en_linea": 1,
       "latitud": 19.291000000000000,
       "longitud": -99.661000000000000,
       "Nivel": 98.35
@@ -134,7 +134,7 @@
     {
       "nombre": "Rebombo San Pedro",
       "tipo": "rebombeo",
-      "estado_bomba": 0,
+      "estado_bomba": 1,
       "en_linea": 1,
       "latitud": 19.299000000000000,
       "longitud": -99.669000000000000,
@@ -145,7 +145,7 @@
       "nombre": "Tanque Wilfrido",
       "tipo": "tanque",
       "estado_bomba": 1,
-      "en_linea": 0,
+      "en_linea": 1,
       "latitud": 19.280000000000000,
       "longitud": -99.650000000000000,
       "Nivel": 88.500
