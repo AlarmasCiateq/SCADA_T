@@ -1564,6 +1564,7 @@
 #     scrolling=False
 # )
 
+
 import streamlit as st
 import requests
 import json
@@ -2017,9 +2018,9 @@ html_completo = """
             if (iconoUrl) {
                 return L.divIcon({
                     html: `<div style="position:relative;width:32px;height:32px;${bordeStyle}">
-                        <div style="position:absolute;bottom:0;left:0;width:32px;height:${alturaLlenado}px;background:rgba(41,128,185,0.85);"></div>
+                        <div style="position:absolute;bottom:0;left:0;width:32px;height:${alturaLlenado}px;background:rgba(52,152,219,0.85);"></div>
                         <img src="${iconoUrl}" width="32" height="32" style="position:absolute;top:0;left:0;z-index:1;">
-                        <div style="position:absolute;bottom:4px;width:32px;text-align:center;font-size:11px;color:white;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,0.8)">${Math.round(nivel)}%</div>
+                        <div style="position:absolute;bottom:4px;width:32px;text-align:center;font-size:11px;color:blue;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,0.8)">${Math.round(nivel)}%</div>
                     </div>`,
                     iconSize: [32, 32],
                     iconAnchor: [16, 16],
@@ -2028,9 +2029,9 @@ html_completo = """
             } else {
                 const yInicio = 28 - alturaLlenado;
                 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                    <rect x="0" y="${yInicio}" width="32" height="${alturaLlenado}" fill="rgba(41,128,185,0.85)"/>
+                    <rect x="0" y="${yInicio}" width="32" height="${alturaLlenado}" fill="rgba(52,152,219,0.85)"/>
                     <path d="M4 18 Q16 12 28 18 L28 28 Q16 24 4 28 Z" fill="#2c3e50"/>
-                    <text x="16" y="20" font-family="Arial" font-size="9" fill="white" text-anchor="middle" font-weight="bold">${Math.round(nivel)}%</text>
+                    <text x="16" y="20" font-family="Arial" font-size="9" fill="blue" text-anchor="middle" font-weight="bold">${Math.round(nivel)}%</text>
                 </svg>`;
                 
                 return L.divIcon({
