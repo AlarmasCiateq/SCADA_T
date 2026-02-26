@@ -1574,28 +1574,59 @@ import os
 import time
 
 # ========================================
+# FUNCIÓN PARA OBTENER EL FAVICON DESDE GITHUB
+# ========================================
+def obtener_favicon_github():
+    """Descarga el icono de GitHub y lo convierte a base64"""
+    try:
+        GITHUB_USER = "AlarmasCiateq"
+        REPO_NAME = "SCADA_T"
+        BRANCH = "main"
+        ICON_PATH = "iconos/ICONO CIATEQ 256.ico"  # Ajusta la ruta si es necesario
+        
+        # URL para descargar el archivo RAW (no la API)
+        raw_url = f"https://raw.githubusercontent.com/{GITHUB_USER}/{REPO_NAME}/{BRANCH}/{ICON_PATH}"
+        
+        headers = {'User-Agent': 'SCADA-Monitor'}
+        response = requests.get(raw_url, headers=headers, timeout=10)
+        response.raise_for_status()
+        
+        # Convertir a base64
+        icon_base64 = base64.b64encode(response.content).decode('utf-8')
+        return f"data:image/x-icon;base64,{icon_base64}"
+    except Exception as e:
+        print(f"Error cargando favicon: {e}")
+        return None
+
+# ========================================
 # CONFIGURACIÓN DE PÁGINA
 # ========================================
-st.set_page_config(
-    page_title="SCADA CIATEQ",
-    page_icon="💧",        
-    layout="wide",
-    initial_sidebar_state="collapsed"
-)
-# ========================================
-# INYECTAR FAVICON PERSONALIZADO DESDE GITHUB
-# ========================================
-st.markdown("""
-<link rel="icon" href="https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/ICONO%20CIATEQ%20256.ico" type="image/x-icon">
-<link rel="shortcut icon" href="https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/ICONO%20CIATEQ%20256.ico" type="image/x-icon">
-<style>
-    /* Esto ayuda a asegurar que el favicon se aplique */
-    [data-testid="stAppViewContainer"] {
-        background-color: #0e1117;
-    }
-</style>
-""", unsafe_allow_html=True)
+# Intentar obtener el favicon de GitHub
+favicon_data = obtener_favicon_github()
 
+if favicon_data:
+    # Streamlit no soporta directamente data URLs en page_icon,
+    # pero podemos inyectarlo con HTML después
+    st.set_page_config(
+        page_title="SCADA CIATEQ",
+        page_icon="🏭",  # Usamos un emoji temporal
+        layout="wide",
+        initial_sidebar_state="collapsed"
+    )
+    
+    # Inyectar el favicon personalizado vía HTML
+    st.markdown(f"""
+    <link rel="icon" href="{favicon_data}" type="image/x-icon">
+    <link rel="shortcut icon" href="{favicon_data}" type="image/x-icon">
+    """, unsafe_allow_html=True)
+else:
+    # Fallback al emoji si no se pudo cargar el icono
+    st.set_page_config(
+        page_title="SCADA CIATEQ",
+        page_icon="🏭",
+        layout="wide",
+        initial_sidebar_state="collapsed"
+    )
 # CSS AGRESIVO
 st.markdown("""
 <style>
