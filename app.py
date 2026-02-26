@@ -1577,10 +1577,24 @@ import time
 # CONFIGURACIÓN DE PÁGINA
 # ========================================
 st.set_page_config(
-    page_title="SCADA Monitor",
+    page_title="SCADA CIATEQ",
+    page_icon="💧",        
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+# ========================================
+# INYECTAR FAVICON PERSONALIZADO DESDE GITHUB
+# ========================================
+st.markdown("""
+<link rel="icon" href="https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/ICONO%20CIATEQ%20256.ico" type="image/x-icon">
+<link rel="shortcut icon" href="https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/ICONO%20CIATEQ%20256.ico" type="image/x-icon">
+<style>
+    /* Esto ayuda a asegurar que el favicon se aplique */
+    [data-testid="stAppViewContainer"] {
+        background-color: #0e1117;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # CSS AGRESIVO
 st.markdown("""
