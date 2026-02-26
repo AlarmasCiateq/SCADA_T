@@ -23,8 +23,8 @@
     "etiqueta_plural": "Bombas"
   },
   "rebombeo": {
-    "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/rebombeo_on.svg",
-    "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/rebombeo_off.svg",
+    "icono_url_on": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/Rebom_On.svg",
+    "icono_url_off": "https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/Rebom_Off.svg",
     "color_on": "#8e44ad",
     "color_off": "#8e44ad",
     "etiqueta": "Rebombeo",
