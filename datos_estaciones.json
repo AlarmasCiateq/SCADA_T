@@ -134,7 +134,7 @@
     {
       "nombre": "Rebombo San Pedro",
       "tipo": "rebombeo",
-      "estado_bomba": 1,
+      "estado_bomba": 0,
       "en_linea": 1,
       "latitud": 19.299000000000000,
       "longitud": -99.669000000000000,
@@ -144,7 +144,6 @@
     {
       "nombre": "Tanque Wilfrido",
       "tipo": "tanque",
-      "estado_bomba": 1,
       "en_linea": 1,
       "latitud": 19.280000000000000,
       "longitud": -99.650000000000000,
