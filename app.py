@@ -1586,7 +1586,7 @@ def obtener_favicon_github():
         
         # URL para descargar el archivo RAW (no la API)
         raw_url = f"https://raw.githubusercontent.com/{GITHUB_USER}/{REPO_NAME}/{BRANCH}/{ICON_PATH}"
-        
+        print(raw_url)
         headers = {'User-Agent': 'SCADA-Monitor'}
         response = requests.get(raw_url, headers=headers, timeout=10)
         response.raise_for_status()
@@ -1609,7 +1609,7 @@ if favicon_data:
     # pero podemos inyectarlo con HTML después
     st.set_page_config(
         page_title="SCADA CIATEQ",
-        page_icon="🏭",  # Usamos un emoji temporal
+        page_icon="🌎",  # Usamos un emoji temporal
         layout="wide",
         initial_sidebar_state="collapsed"
     )
