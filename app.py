@@ -1565,942 +1565,6 @@
 # # )
 
 
-# import streamlit as st
-# import requests
-# import json
-# import base64
-# from datetime import datetime
-# import os
-# import time
-
-# # ========================================
-# # FUNCIÓN PARA OBTENER EL FAVICON DESDE GITHUB
-# # ========================================
-# def obtener_favicon_github():
-#     """Descarga el icono de GitHub y lo convierte a base64"""
-#     try:
-#         GITHUB_USER = "AlarmasCiateq"
-#         REPO_NAME = "SCADA_T"
-#         BRANCH = "main"
-#         ICON_PATH = "iconos/ICONO CIATEQ 256.ico"  # Ajusta la ruta si es necesario
-        
-#         # URL para descargar el archivo RAW (no la API)
-#         raw_url = f"https://raw.githubusercontent.com/{GITHUB_USER}/{REPO_NAME}/{BRANCH}/{ICON_PATH}"
-#         print(raw_url)
-#         headers = {'User-Agent': 'SCADA-Monitor'}
-#         response = requests.get(raw_url, headers=headers, timeout=10)
-#         response.raise_for_status()
-        
-#         # Convertir a base64
-#         icon_base64 = base64.b64encode(response.content).decode('utf-8')
-#         return f"data:image/x-icon;base64,{icon_base64}"
-#     except Exception as e:
-#         print(f"Error cargando favicon: {e}")
-#         return None
-
-# # ========================================
-# # CONFIGURACIÓN DE PÁGINA
-# # ========================================
-# # Intentar obtener el favicon de GitHub
-# favicon_data = obtener_favicon_github()
-
-# if favicon_data:
-#     # Streamlit no soporta directamente data URLs en page_icon,
-#     # pero podemos inyectarlo con HTML después
-#     st.set_page_config(
-#         page_title="SCADA CIATEQ",
-#         page_icon="🌎",  # Usamos un emoji temporal
-#         layout="wide",
-#         initial_sidebar_state="collapsed"
-#     )
-    
-#     # Inyectar el favicon personalizado vía HTML
-#     st.markdown(f"""
-#     <link rel="icon" href="{favicon_data}" type="image/x-icon">
-#     <link rel="shortcut icon" href="{favicon_data}" type="image/x-icon">
-#     """, unsafe_allow_html=True)
-# else:
-#     # Fallback al emoji si no se pudo cargar el icono
-#     st.set_page_config(
-#         page_title="SCADA CIATEQ",
-#         page_icon="🏭",
-#         layout="wide",
-#         initial_sidebar_state="collapsed"
-#     )
-# # CSS AGRESIVO
-# st.markdown("""
-# <style>
-# [data-testid="stSidebar"] { display: none !important; }
-# [data-testid="stHeader"] { display: none !important; }
-# [data-testid="stDecoration"] { display: none !important; }
-# header { display: none !important; }
-# #MainMenu { display: none !important; }
-# footer { display: none !important; }
-# .stApp { background-color: #0e1117; padding: 0 !important; margin: 0 !important; overflow: hidden !important; }
-# .block-container { padding: 0 !important; max-width: 100% !important; margin: 0 !important; overflow: hidden !important; }
-# .main { padding: 0 !important; margin: 0 !important; overflow: hidden !important; }
-# .block-container > div { padding: 0 !important; margin: 0 !important; }
-# ::-webkit-scrollbar { display: none !important; }
-# body { overflow: hidden !important; }
-# #loading {
-#     position: fixed;
-#     top: 0;
-#     left: 0;
-#     width: 100%;
-#     height: 100%;
-#     background: #0e1117;
-#     display: flex;
-#     justify-content: center;
-#     align-items: center;
-#     color: #3498db;
-#     font-family: Arial;
-#     font-size: 18px;
-#     z-index: 9999;
-#     transition: opacity 0.1s;
-# }
-# #loading.hidden {
-#     opacity: 0;
-#     pointer-events: none;
-# }
-# #debug-timestamp {
-#     position: fixed;
-#     bottom: 5px;
-#     right: 10px;
-#     background: rgba(0,0,0,0.7);
-#     color: #27ae60;
-#     padding: 3px 8px;
-#     font-family: monospace;
-#     font-size: 11px;
-#     border-radius: 3px;
-#     z-index: 1000;
-# }
-# </style>
-# """, unsafe_allow_html=True)
-
-# # ========================================
-# # OBTENER TOKEN DE GITHUB
-# # ========================================
-# def obtener_token_github():
-#     try:
-#         if hasattr(st, 'secrets') and "GITHUB_TOKEN" in st.secrets:
-#             return st.secrets["GITHUB_TOKEN"]
-#     except:
-#         pass
-#     return os.getenv("GITHUB_TOKEN", None)
-
-# # ========================================
-# # CARGAR DATOS FRESH DE GITHUB (CADA EJECUCIÓN)
-# # ========================================
-# def cargar_datos_github(max_intentos=3):
-#     token = obtener_token_github()
-#     for intento in range(max_intentos):
-#         try:
-#             GITHUB_USER = "AlarmasCiateq"
-#             REPO_NAME = "SCADA_T"
-#             BRANCH = "main"
-#             FILE_PATH = "datos_estaciones.json"
-            
-#             # URL CORREGIDA: SIN ESPACIOS
-#             api_url = f"https://api.github.com/repos/{GITHUB_USER}/{REPO_NAME}/contents/{FILE_PATH}?ref={BRANCH}"
-            
-#             headers = {
-#                 'User-Agent': f'SCADA-Monitor-{datetime.now().timestamp()}',
-#                 'Accept': 'application/vnd.github.v3+json'
-#             }
-            
-#             if token:
-#                 headers['Authorization'] = f'token {token}'
-            
-#             response = requests.get(api_url, headers=headers, timeout=10)
-#             response.raise_for_status()
-            
-#             data = response.json()
-#             content_bytes = base64.b64decode(data['content'])
-#             content_str = content_bytes.decode('utf-8')
-#             datos = json.loads(content_str)
-            
-#             datos['_timestamp_actualizacion'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-#             return datos, True
-            
-#         except Exception as e:
-#             print(f"Error cargando datos (intento {intento + 1}): {e}")
-#             if intento < max_intentos - 1:
-#                 time.sleep(1)
-#                 continue
-#             return None, False
-#     return None, False
-
-# # ========================================
-# # CARGAR DATOS FRESH EN CADA EJECUCIÓN
-# # ========================================
-# datos, exito = cargar_datos_github()
-
-# if not datos or not exito:
-#     st.markdown("""
-#     <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0e1117;color:white;
-#     display:flex;justify-content:center;align-items:center;font-family:Arial;">
-#         <div style="text-align:center;padding:20px;">
-#             <h2>🛢️ SCADA Monitor</h2>
-#             <p style="color:#e74c3c; margin-top:15px;">Error: No se pudieron cargar los datos de GitHub</p>
-#             <p style="font-size:14px; margin-top:10px; color:#95a5a6;">Verifique conexión a internet</p>
-#         </div>
-#     </div>
-#     """, unsafe_allow_html=True)
-#     time.sleep(60)
-#     st.rerun()
-
-# # ========================================
-# # PREPARAR DATOS PARA HTML
-# # ========================================
-# tiempo_str = datetime.now().strftime('%H:%M:%S')
-# timestamp_debug = datos.get('_timestamp_actualizacion', tiempo_str)
-
-# # Escapar JSON correctamente para JavaScript
-# datos_json_safe = json.dumps(datos, ensure_ascii=False)
-# datos_json_safe = (datos_json_safe.replace('\\', '\\\\')
-#     .replace("'", "\\'")
-#     .replace('</', '<\\/')
-#     .replace('\n', '\\n')
-#     .replace('\r', '\\r')
-#     .replace('\t', '\\t'))
-
-# # ========================================
-# # HTML + JAVASCRIPT (CORREGIDO - SENSOR CON BARRA DE NIVEL)
-# # ========================================
-# html_completo = """
-# <!DOCTYPE html>
-# <html lang="es">
-# <head>
-#     <meta charset="UTF-8">
-#     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-#     <title>SCADA Monitor</title>
-#     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-#     <style>
-#         * { margin: 0; padding: 0; box-sizing: border-box; }
-#         body { font-family: Arial, sans-serif; background: #0e1117; overflow: hidden; height: 100vh; width: 100vw; }
-#         #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        
-#         #stats-bar {
-#             position: fixed;
-#             top: 10px;
-#             right: 15px;
-#             background: rgba(255, 255, 255, 0.95);
-#             padding: 8px;
-#             border-radius: 6px;
-#             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-#             z-index: 1000;
-#             display: flex;
-#             gap: 12px;
-#             align-items: center;
-#             font-family: Arial, sans-serif;
-#             flex-wrap: nowrap;
-#             overflow-x: auto;
-#             max-width: 90%;
-#         }
-        
-#         .stat-item {
-#             display: flex;
-#             flex-direction: column;
-#             align-items: center;
-#             min-width: 65px;
-#         }
-        
-#         .stat-icon {
-#             width: 24px;
-#             height: 24px;
-#             margin-bottom: 2px;
-#             display: flex;
-#             align-items: center;
-#             justify-content: center;
-#         }
-        
-#         .stat-icon img {
-#             width: 100%;
-#             height: 100%;
-#             object-fit: contain;
-#         }
-        
-#         .stat-value {
-#             font-weight: bold;
-#             color: #2c3e50;
-#             font-size: 14px;
-#             text-align: center;
-#         }
-        
-#         .stat-label {
-#             font-size: 8px;
-#             color: #7f8c8d;
-#             text-align: center;
-#             white-space: nowrap;
-#             text-transform: uppercase;
-#             letter-spacing: 0.5px;
-#         }
-        
-#         .custom-popup {
-#             font-family: Arial;
-#             padding: 12px;
-#             min-width: 280px;
-#             background: white;
-#             border-radius: 6px;
-#         }
-        
-#         .custom-popup h4 {
-#             margin: 0 0 10px 0;
-#             color: #2c3e50;
-#             font-size: 16px;
-#             font-weight: bold;
-#         }
-        
-#         .custom-popup hr {
-#             margin: 8px 0;
-#             border-color: #ecf0f1;
-#         }
-        
-#         .custom-popup .var-row {
-#             margin: 6px 0;
-#             padding: 4px 0;
-#             display: flex;
-#             justify-content: space-between;
-#         }
-        
-#         .custom-popup .var-label {
-#             color: #2c3e50;
-#             font-weight: 600;
-#             font-size: 13px;
-#             min-width: 120px;
-#         }
-        
-#         .custom-popup .var-value {
-#             color: #2c3e50;
-#             font-weight: bold;
-#             font-size: 14px;
-#             text-align: right;
-#             min-width: 80px;
-#         }
-        
-#         .custom-popup .timestamp {
-#             font-size: 11px;
-#             color: #95a5a6;
-#             text-align: center;
-#             margin-top: 8px;
-#         }
-        
-#         .status-online { color: #27ae60; font-weight: bold; }
-#         .status-offline { color: #e74c3c; font-weight: bold; }
-        
-#         #loading {
-#             position: fixed;
-#             top: 0;
-#             left: 0;
-#             width: 100%;
-#             height: 100%;
-#             background: #0e1117;
-#             display: flex;
-#             justify-content: center;
-#             align-items: center;
-#             color: #3498db;
-#             font-family: Arial;
-#             font-size: 18px;
-#             z-index: 9999;
-#             transition: opacity 0.1s;
-#         }
-        
-#         #loading.hidden {
-#             opacity: 0;
-#             pointer-events: none;
-#         }
-        
-#         #debug-timestamp {
-#             position: fixed;
-#             bottom: 5px;
-#             right: 10px;
-#             background: rgba(0,0,0,0.7);
-#             color: #27ae60;
-#             padding: 3px 8px;
-#             font-family: monospace;
-#             font-size: 11px;
-#             border-radius: 3px;
-#             z-index: 1000;
-#         }
-        
-#         /* Botón de Vista General */
-#         .leaflet-control-zoom-all {
-#             background: #fff;
-#             border: 2px solid rgba(0,0,0,0.2);
-#             border-radius: 4px;
-#             box-shadow: 0 1px 5px rgba(0,0,0,0.4);
-#             cursor: pointer;
-#             margin-top: 5px;
-#             transition: all 0.2s;
-#         }
-        
-#         .leaflet-control-zoom-all:hover {
-#             background: #f4f4f4;
-#             box-shadow: 0 1px 7px rgba(0,0,0,0.45);
-#         }
-        
-#         .leaflet-control-zoom-all:active {
-#             background: #e8e8e8;
-#         }
-        
-#         .leaflet-control-zoom-all i {
-#             display: block;
-#             width: 30px;
-#             height: 30px;
-#             line-height: 30px;
-#             text-align: center;
-#             font-weight: bold;
-#             color: #333;
-#             font-size: 20px;
-#         }
-        
-#         .leaflet-control-zoom-all:hover i {
-#             color: #2c3e50;
-#         }
-#     </style>
-# </head>
-# <body>
-#     <div id="loading">Cargando...</div>
-#     <div id="map"></div>
-#     <div id="stats-bar"></div>
-#     <div id="debug-timestamp">""" + timestamp_debug + """</div>
-    
-#     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-#     <script>
-#         // ========================================
-#         // GUARDAR ESTADO ANTES DE RECARGAR
-#         // ========================================
-#         window.addEventListener('beforeunload', function() {
-#             if (window.map) {
-#                 try {
-#                     const zoom = window.map.getZoom();
-#                     const center = window.map.getCenter();
-#                     localStorage.setItem('scada_map_zoom', zoom.toString());
-#                     localStorage.setItem('scada_map_center', JSON.stringify({lat: center.lat, lng: center.lng}));
-#                     localStorage.setItem('scada_map_initialized', 'true');
-#                 } catch(e) {}
-#             }
-#         });
-        
-#         // ========================================
-#         // DATOS INYECTADOS POR PYTHON
-#         // ========================================
-#         const DATOS_INICIALES = """ + datos_json_safe + """;
-#         let map = null;
-#         let markers = new Map();
-        
-#         // ========================================
-#         // FUNCIONES AUXILIARES
-#         // ========================================
-#         function limpiarUrl(url) {
-#             if (!url) return null;
-#             return url.trim().replace(/\\s+/g, '%20');
-#         }
-        
-#         function esOffline(enLinea) {
-#             if (enLinea === undefined || enLinea === null) return false;
-#             const valor = String(enLinea).trim().toLowerCase();
-#             return valor === '0' || valor === 'false' || valor === 'off' || valor === 'no';
-#         }
-        
-#         function obtenerNivelTanque(estacion) {
-#             const campos = ['Porcentaje (%)', 'Porcentaje', 'Nivel (%)', 'nivel_%', 'Nivel', 'nivel'];
-#             for (let campo of campos) {
-#                 if (estacion[campo] !== undefined) {
-#                     let v = parseFloat(estacion[campo]);
-#                     return Math.max(0, Math.min(100, isNaN(v) ? 0 : v));
-#                 }
-#             }
-#             return 0;
-#         }
-        
-#         // ========================================
-#         // CREAR ÍCONO PARA TANQUE CON BARRA DE LLENADO
-#         // ========================================
-#         function crearIconoTanque(iconoUrl, nivel, offline = false) {
-#             const alturaLlenado = Math.round((nivel / 100) * 28);
-#             const bordeStyle = offline ?
-#                 'box-shadow: 0 0 0 3px #e74c3c, 0 2px 6px rgba(231, 76, 60, 0.5);' :
-#                 '';
-            
-#             if (iconoUrl) {
-#                 return L.divIcon({
-#                     html: `<div style="position:relative;width:32px;height:32px;${bordeStyle}">
-#                         <div style="position:absolute;bottom:0;left:0;width:32px;height:${alturaLlenado}px;background:rgba(52,152,219,0.85);"></div>
-#                         <img src="${iconoUrl}" width="32" height="32" style="position:absolute;top:0;left:0;z-index:1;">
-#                         <div style="position:absolute;bottom:4px;width:32px;text-align:center;font-size:11px;color:blue;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,0.8)">${Math.round(nivel)}%</div>
-#                     </div>`,
-#                     iconSize: [32, 32],
-#                     iconAnchor: [16, 16],
-#                     popupAnchor: [0, -16]
-#                 });
-#             } else {
-#                 const yInicio = 28 - alturaLlenado;
-#                 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-#                     <rect x="0" y="${yInicio}" width="32" height="${alturaLlenado}" fill="rgba(52,152,219,0.85)"/>
-#                     <rect x="2" y="4" width="28" height="24" fill="#2c3e50"/>
-#                     <text x="16" y="20" font-family="Arial" font-size="9" fill="white" text-anchor="middle" font-weight="bold">${Math.round(nivel)}%</text>
-#                 </svg>`;
-                
-#                 return L.divIcon({
-#                     html: `<div style="position:relative;width:32px;height:32px;${bordeStyle}">${svg}</div>`,
-#                     iconSize: [32, 32],
-#                     iconAnchor: [16, 16],
-#                     popupAnchor: [0, -16]
-#                 });
-#             }
-#         }
-        
-#         // ========================================
-#         // CREAR ÍCONO PARA SENSOR DE NIVEL DE RÍO CON BARRA DE LLENADO
-#         // ========================================
-#         function crearIconoRio(iconoUrl, nivel, offline = false) {
-#             const alturaLlenado = Math.round((nivel / 100) * 28);
-#             const bordeStyle = offline ?
-#                 'box-shadow: 0 0 0 3px #e74c3c, 0 2px 6px rgba(231, 76, 60, 0.5);' :
-#                 '';
-            
-#             if (iconoUrl) {
-#                 return L.divIcon({
-#                     html: `<div style="position:relative;width:32px;height:32px;${bordeStyle}">
-#                         <div style="position:absolute;bottom:0;left:0;width:32px;height:${alturaLlenado}px;background:rgba(52,152,219,0.85);"></div>
-#                         <img src="${iconoUrl}" width="32" height="32" style="position:absolute;top:0;left:0;z-index:1;">
-#                         <div style="position:absolute;bottom:4px;width:32px;text-align:center;font-size:11px;color:blue;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,0.8)">${Math.round(nivel)}%</div>
-#                     </div>`,
-#                     iconSize: [32, 32],
-#                     iconAnchor: [16, 16],
-#                     popupAnchor: [0, -16]
-#                 });
-#             } else {
-#                 const yInicio = 28 - alturaLlenado;
-#                 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-#                     <rect x="0" y="${yInicio}" width="32" height="${alturaLlenado}" fill="rgba(52,152,219,0.85)"/>
-#                     <path d="M4 18 Q16 12 28 18 L28 28 Q16 24 4 28 Z" fill="#2c3e50"/>
-#                     <text x="16" y="20" font-family="Arial" font-size="9" fill="blue" text-anchor="middle" font-weight="bold">${Math.round(nivel)}%</text>
-#                 </svg>`;
-                
-#                 return L.divIcon({
-#                     html: `<div style="position:relative;width:32px;height:32px;${bordeStyle}">${svg}</div>`,
-#                     iconSize: [32, 32],
-#                     iconAnchor: [16, 16],
-#                     popupAnchor: [0, -16]
-#                 });
-#             }
-#         }
-        
-#         // ========================================
-#         // OBTENER ICONO DE TIPO CON SOPORTE PARA ESTADO (POZO, BOMBA, REBOMBO)
-#         // ========================================
-#         function getIconoTipo(tipo, estado = null) {
-#             const tipos = DATOS_INICIALES.tipos || {};
-#             const config = tipos[tipo] || tipos['generico'] || {};
-            
-#             // Tipos que tienen estado ON/OFF: pozo, bomba, rebombeo
-#             if (tipo === 'pozo' || tipo === 'bomba' || tipo === 'rebombeo') {
-#                 if (estado === 1) {
-#                     return {
-#                         url: limpiarUrl(config.icono_url_on) || limpiarUrl(config.icono_url) || null,
-#                         color: config.color_on || config.color || (tipo === 'pozo' ? '#27ae60' : '#9b59b6')
-#                     };
-#                 } else {
-#                     return {
-#                         url: limpiarUrl(config.icono_url_off) || limpiarUrl(config.icono_url) || null,
-#                         color: config.color_off || config.color || (tipo === 'pozo' ? '#e74c3c' : '#9b59b6')
-#                     };
-#                 }
-#             }
-            
-#             // Tanque (manejado por función especial)
-#             if (tipo === 'tanque') {
-#                 return {
-#                     url: limpiarUrl(config.icono_url) || null,
-#                     color: config.color || '#3498db'
-#                 };
-#             }
-            
-#             // Otros tipos (sensor, etc.)
-#             return {
-#                 url: limpiarUrl(config.icono_url) || null,
-#                 color: config.color || '#7f8c8d'
-#             };
-#         }
-        
-#         // ========================================
-#         // CREAR ÍCONO PARA MARCADOR (CORREGIDO - SOPORTE COMPLETO DE ESTADO + SENSOR CON BARRA)
-#         // ========================================
-#         function crearIcono(estacion) {
-#             const tipo = estacion.tipo || 'generico';
-#             const offline = esOffline(estacion.en_linea);
-#             const estado = parseInt(estacion.estado_bomba || estacion.estado || 0);
-#             const nivel = obtenerNivelTanque(estacion);
-            
-#             // ESPECIAL: Tanques siempre usan icono de tanque + barra de llenado
-#             if (tipo === 'tanque') {
-#                 const configTanque = (DATOS_INICIALES.tipos || {}).tanque || {};
-#                 const iconoUrl = limpiarUrl(configTanque.icono_url) || null;
-#                 return crearIconoTanque(iconoUrl, nivel, offline);
-#             }
-            
-#             // ESPECIAL: Sensores de nivel de río también usan barra de llenado (color azul oscuro)
-#             if (tipo === 'sensor') {
-#                 const configSensor = (DATOS_INICIALES.tipos || {}).sensor || {};
-#                 const iconoUrl = limpiarUrl(configSensor.icono_url) || null;
-#                 return crearIconoRio(iconoUrl, nivel, offline);
-#             }
-            
-#             // Obtener icono según tipo y estado (para pozo, bomba, rebombeo)
-#             const iconoInfo = getIconoTipo(tipo, estado);
-            
-#             // Si está offline, envolver el icono con borde rojo
-#             if (offline && iconoInfo.url) {
-#                 return L.divIcon({
-#                     html: `<div style="
-#                         width: 32px;
-#                         height: 32px;
-#                         border: 3px solid #e74c3c;
-#                         border-radius: 4px;
-#                         display: flex;
-#                         align-items: center;
-#                         justify-content: center;
-#                         box-sizing: border-box;
-#                         box-shadow: 0 2px 6px rgba(231, 76, 60, 0.5);
-#                     ">
-#                         <img src="${iconoInfo.url}" width="26" height="26" style="display:block;">
-#                     </div>`,
-#                     iconSize: [32, 32],
-#                     iconAnchor: [16, 16],
-#                     popupAnchor: [0, -16]
-#                 });
-#             }
-            
-#             // Si tiene URL de icono, usarla directamente
-#             if (iconoInfo.url) {
-#                 return L.icon({
-#                     iconUrl: iconoInfo.url,
-#                     iconSize: [32, 32],
-#                     iconAnchor: [16, 16],
-#                     popupAnchor: [0, -16]
-#                 });
-#             }
-            
-#             // Fallback: icono genérico con color + borde rojo si offline
-#             const borderColor = offline ? '#e74c3c' : iconoInfo.color;
-#             const bgColor = offline ? 'rgba(231, 76, 60, 0.1)' : iconoInfo.color;
-#             return L.divIcon({
-#                 html: `<div style="
-#                     width: 32px;
-#                     height: 32px;
-#                     border: 2px solid ${borderColor};
-#                     border-radius: 50%;
-#                     display: flex;
-#                     align-items: center;
-#                     justify-content: center;
-#                     box-sizing: border-box;
-#                     background: ${bgColor};
-#                 ">
-#                     <div style="
-#                         width: 20px;
-#                         height: 20px;
-#                         border-radius: 50%;
-#                         background: white;
-#                     "></div>
-#                 </div>`,
-#                 iconSize: [32, 32],
-#                 iconAnchor: [16, 16],
-#                 popupAnchor: [0, -16]
-#             });
-#         }
-        
-#         // ========================================
-#         // CREAR POPUP
-#         // ========================================
-#         function crearPopupContent(estacion) {
-#             let html = `<div class="custom-popup"><h4>${estacion.nombre || 'Estación'}</h4><hr>`;
-            
-#             const offline = esOffline(estacion.en_linea);
-#             const estadoLinea = offline ? '<span class="status-offline">Fuera de línea</span>' : '<span class="status-online">En línea</span>';
-#             html += `<div class="var-row"><span class="var-label">Estado:</span><span class="var-value">${estadoLinea}</span></div>`;
-            
-#             if (estacion.tipo === 'tanque' || estacion.tipo === 'sensor') {
-#                 html += `<div class="var-row"><span class="var-label">Nivel:</span><span class="var-value">${obtenerNivelTanque(estacion)}%</span></div>`;
-#             } else if (estacion.tipo === 'pozo' || estacion.tipo === 'bomba' || estacion.tipo === 'rebombeo') {
-#                 const estadoBomba = parseInt(estacion.estado_bomba || estacion.estado || 0);
-#                 const estadoTexto = estadoBomba === 1 ? '<span style="color:#27ae60;font-weight:bold;">Encendido</span>' : '<span style="color:#e74c3c;font-weight:bold;">Apagado</span>';
-#                 html += `<div class="var-row"><span class="var-label">Estado Bomba:</span><span class="var-value">${estadoTexto}</span></div>`;
-#             }
-            
-#             for (const key in estacion) {
-#                 if (!['nombre', 'latitud', 'longitud', 'tipo', 'estado_bomba', 'en_linea', 'icono', 'icono_url', 'icono_url_on', 'icono_url_off', 'Nivel', 'nivel', 'Porcentaje (%)', 'Porcentaje', '_timestamp_actualizacion'].includes(key)) {
-#                     const value = typeof estacion[key] === 'number'
-#                         ? estacion[key].toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-#                         : estacion[key];
-#                     html += `<div class="var-row"><span class="var-label">${key}:</span><span class="var-value">${value}</span></div>`;
-#                 }
-#             }
-            
-#             html += `<hr><div class="timestamp">📅 ${new Date().toLocaleString('es-ES')}</div></div>`;
-#             return html;
-#         }
-        
-#         // ========================================
-#         // ACTUALIZAR ESTADÍSTICAS CON ICONOS DE TIPOS
-#         // ========================================
-#         function actualizarEstadisticas(datos) {
-#             if (!datos || !datos.estaciones) return;
-            
-#             // Contadores
-#             let total = 0;
-#             let pozos_encendidos = 0;
-#             let pozos_apagados = 0;
-#             let tanques = 0;
-#             let bombas_encendidas = 0;
-#             let bombas_apagadas = 0;
-#             let rebombeos_encendidos = 0;
-#             let rebombeos_apagados = 0;
-#             let sensores = 0;
-#             let offline_count = 0;
-#             let online = 0;
-            
-#             datos.estaciones.forEach(estacion => {
-#                 total++;
-#                 const offline = esOffline(estacion.en_linea);
-#                 const tipo = estacion.tipo || 'generico';
-#                 const estado = parseInt(estacion.estado_bomba || estacion.estado || 0);
-                
-#                 if (offline) {
-#                     offline_count++;
-#                 } else {
-#                     online++;
-#                     if (tipo === 'pozo') {
-#                         if (estado === 1) pozos_encendidos++;
-#                         else pozos_apagados++;
-#                     } else if (tipo === 'tanque') {
-#                         tanques++;
-#                     } else if (tipo === 'bomba') {
-#                         if (estado === 1) bombas_encendidas++;
-#                         else bombas_apagadas++;
-#                     } else if (tipo === 'rebombeo') {
-#                         if (estado === 1) rebombeos_encendidos++;
-#                         else rebombeos_apagados++;
-#                     } else if (tipo === 'sensor') {
-#                         sensores++;
-#                     }
-#                 }
-#             });
-            
-#             // Obtener configuración de tipos
-#             const tipos = datos.tipos || {};
-            
-#             // Definir las estadísticas a mostrar
-#             const stats = [
-#                 { tipo: 'total', value: total, label: 'Total' },
-#                 { tipo: 'pozo', estado: 1, value: pozos_encendidos, label: 'Pozos Enc.' },
-#                 { tipo: 'pozo', estado: 0, value: pozos_apagados, label: 'Pozos Apag.' },
-#                 { tipo: 'tanque', value: tanques, label: 'Tanques' },
-#                 { tipo: 'bomba', estado: 1, value: bombas_encendidas, label: 'Bombas Enc.' },
-#                 { tipo: 'bomba', estado: 0, value: bombas_apagadas, label: 'Bombas Apag.' },
-#                 { tipo: 'rebombeo', estado: 1, value: rebombeos_encendidos, label: 'Rebom. Enc.' },
-#                 { tipo: 'rebombeo', estado: 0, value: rebombeos_apagados, label: 'Rebom. Apag.' },
-#                 { tipo: 'sensor', value: sensores, label: 'Sensores Río' },
-#                 { tipo: 'offline', value: offline_count, label: 'Offline' },
-#                 { tipo: 'online', value: online, label: 'Online' },
-#                 { tipo: 'reloj', value: '""" + tiempo_str + """', label: 'Actualizado' }
-#             ];
-            
-#             // Crear barra de estadísticas
-#             const statsBar = document.getElementById('stats-bar');
-#             if (!statsBar) return;
-#             statsBar.innerHTML = '';
-            
-#             // Crear cada item
-#             stats.forEach(stat => {
-#                 const config = tipos[stat.tipo] || tipos['generico'] || {};
-#                 let iconoUrl = null;
-                
-#                 // Manejar tipos con estado
-#                 if (stat.tipo === 'pozo' || stat.tipo === 'bomba' || stat.tipo === 'rebombeo') {
-#                     iconoUrl = stat.estado === 1 ?
-#                         (limpiarUrl(config.icono_url_on) || limpiarUrl(config.icono_url) || null) :
-#                         (limpiarUrl(config.icono_url_off) || limpiarUrl(config.icono_url) || null);
-#                 }
-                
-#                 // Tipos especiales con iconos base64
-#                 else if (stat.tipo === 'offline') {
-#                     iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/Offline.svg';
-#                 } else if (stat.tipo === 'online') {
-#                     iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/Online_Alarma.svg';
-#                 } else if (stat.tipo === 'total') {
-#                     iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/transmite.svg';
-#                 } else if (stat.tipo === 'reloj') {
-#                     iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/update.svg';
-#                 }
-                
-#                 // Otros tipos
-#                 else {
-#                     iconoUrl = limpiarUrl(config.icono_url) || null;
-#                 }
-                
-#                 const item = document.createElement('div');
-#                 item.className = 'stat-item';
-                
-#                 let iconHtml = '';
-#                 if (iconoUrl) {
-#                     iconHtml = `<div class="stat-icon"><img src="${iconoUrl}" alt="${stat.tipo}"></div>`;
-#                 } else {
-#                     const color = config.color || '#7f8c8d';
-#                     iconHtml = `<div class="stat-icon" style="color:${color};font-size:20px;">●</div>`;
-#                 }
-                
-#                 item.innerHTML =
-#                     iconHtml +
-#                     '<div class="stat-value">' + stat.value + '</div>' +
-#                     '<div class="stat-label">' + stat.label + '</div>';
-                
-#                 statsBar.appendChild(item);
-#             });
-#         }
-        
-#         // ========================================
-#         // FUNCIÓN PARA ZOOM A TODOS LOS ICONOS
-#         // ========================================
-#         function zoomATodosLosIconos() {
-#             if (!map || markers.size === 0) return;
-#             const todasCoords = Array.from(markers.values()).map(m => m.getLatLng());
-#             map.fitBounds(todasCoords, { padding: [40, 40] });
-#             try {
-#                 localStorage.setItem('scada_map_zoom', map.getZoom().toString());
-#                 localStorage.setItem('scada_map_center', JSON.stringify({lat: map.getCenter().lat, lng: map.getCenter().lng}));
-#             } catch(e) {}
-#         }
-        
-#         // ========================================
-#         // CONTROL PERSONALIZADO DE LEAFLET
-#         // ========================================
-#         L.Control.ZoomAll = L.Control.extend({
-#             options: { position: 'topleft' },
-#             onAdd: function(map) {
-#                 const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-zoom-all');
-#                 const button = L.DomUtil.create('a', 'leaflet-control-zoom-all', container);
-#                 button.href = '#';
-#                 button.title = 'Ver todas las estaciones';
-#                 button.innerHTML = '<i>⌂</i>';
-#                 L.DomEvent.disableClickPropagation(button);
-#                 L.DomEvent.on(button, 'click', function(e) {
-#                     L.DomEvent.stopPropagation(e);
-#                     L.DomEvent.preventDefault(e);
-#                     zoomATodosLosIconos();
-#                 });
-#                 return container;
-#             }
-#         });
-        
-#         L.control.zoomAll = function(opts) { return new L.Control.ZoomAll(opts); };
-        
-#         // ========================================
-#         // INICIALIZAR MAPA
-#         // ========================================
-#         function initMap() {
-#             try {
-#                 map = L.map('map', {
-#                     zoomControl: true,
-#                     scrollWheelZoom: true,
-#                     dragging: true
-#                 });
-                
-#                 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-#                     attribution: '',
-#                     subdomains: 'abcd',
-#                     maxZoom: 19
-#                 }).addTo(map);
-                
-#                 L.control.zoomAll().addTo(map);
-                
-#                 // Restaurar zoom/centro
-#                 const savedZoom = localStorage.getItem('scada_map_zoom');
-#                 const savedCenter = localStorage.getItem('scada_map_center');
-#                 const wasInitialized = localStorage.getItem('scada_map_initialized') === 'true';
-#                 let hizoFitBounds = false;
-                
-#                 if (wasInitialized && savedZoom && savedCenter) {
-#                     try {
-#                         const center = JSON.parse(savedCenter);
-#                         map.setView([center.lat, center.lng], parseInt(savedZoom));
-#                         console.log('✓ Zoom restaurado:', savedZoom);
-#                     } catch(e) {
-#                         console.log('Error restaurando zoom:', e);
-#                     }
-#                 } else {
-#                     const todasCoords = [];
-#                     DATOS_INICIALES.estaciones.forEach(est => {
-#                         if (est.latitud && est.longitud) {
-#                             todasCoords.push([parseFloat(est.latitud), parseFloat(est.longitud)]);
-#                         }
-#                     });
-#                     if (todasCoords.length > 0) {
-#                         map.fitBounds(todasCoords, { padding: [40, 40] });
-#                         console.log('✓ Zoom inicial ajustado');
-#                         hizoFitBounds = true;
-#                     }
-#                 }
-                
-#                 // Agregar marcadores
-#                 DATOS_INICIALES.estaciones.forEach(estacion => {
-#                     if (!estacion.latitud || !estacion.longitud) return;
-#                     const id = estacion.nombre || `${estacion.latitud},${estacion.longitud}`;
-#                     const lat = parseFloat(estacion.latitud);
-#                     const lng = parseFloat(estacion.longitud);
-#                     const marker = L.marker([lat, lng], { icon: crearIcono(estacion) })
-#                         .bindPopup(crearPopupContent(estacion), { maxWidth: 320 })
-#                         .bindTooltip(estacion.nombre || 'Estación', { permanent: false, direction: 'top', opacity: 0.9 })
-#                         .addTo(map);
-#                     markers.set(id, marker);
-#                 });
-                
-#                 if (!hizoFitBounds && markers.size > 0 && !wasInitialized) {
-#                     const todasCoords = Array.from(markers.values()).map(m => m.getLatLng());
-#                     map.fitBounds(todasCoords, { padding: [40, 40] });
-#                     localStorage.setItem('scada_map_initialized', 'true');
-#                 }
-                
-#                 // Actualizar estadísticas
-#                 actualizarEstadisticas(DATOS_INICIALES);
-                
-#                 // Ocultar loading
-#                 document.getElementById('loading').classList.add('hidden');
-#                 window.map = map;
-                
-#             } catch(e) {
-#                 document.getElementById('loading').innerHTML = `<div style="color:#e74c3c;text-align:center;padding:20px;">❌ Error: ${e.message}</div>`;
-#                 console.error('Error:', e);
-#             }
-#         }
-        
-#         if (document.readyState === 'loading') {
-#             document.addEventListener('DOMContentLoaded', initMap);
-#         } else {
-#             initMap();
-#         }
-#     </script>
-# </body>
-# </html>
-# """
-
-# # Renderizar el mapa
-# st.components.v1.html(
-#     html_completo,
-#     width=1920,
-#     height=1080,
-#     scrolling=False
-# )
-
-# # ========================================
-# # FORZAR RECARGA COMPLETA CADA 60 SEGUNDOS (1 MINUTO)
-# # ========================================
-# time.sleep(60)
-# st.rerun()
-
-
-
 import streamlit as st
 import requests
 import json
@@ -2518,220 +1582,921 @@ def obtener_favicon_github():
         GITHUB_USER = "AlarmasCiateq"
         REPO_NAME = "SCADA_T"
         BRANCH = "main"
-        ICON_PATH = "iconos/ICONO CIATEQ 256.ico"
+        ICON_PATH = "iconos/ICONO CIATEQ 256.ico"  # Ajusta la ruta si es necesario
         
+        # URL para descargar el archivo RAW (no la API)
         raw_url = f"https://raw.githubusercontent.com/{GITHUB_USER}/{REPO_NAME}/{BRANCH}/{ICON_PATH}"
         print(raw_url)
-
         headers = {'User-Agent': 'SCADA-Monitor'}
         response = requests.get(raw_url, headers=headers, timeout=10)
         response.raise_for_status()
         
+        # Convertir a base64
         icon_base64 = base64.b64encode(response.content).decode('utf-8')
         return f"data:image/x-icon;base64,{icon_base64}"
-
     except Exception as e:
         print(f"Error cargando favicon: {e}")
         return None
 
-
 # ========================================
 # CONFIGURACIÓN DE PÁGINA
 # ========================================
+# Intentar obtener el favicon de GitHub
 favicon_data = obtener_favicon_github()
 
 if favicon_data:
+    # Streamlit no soporta directamente data URLs en page_icon,
+    # pero podemos inyectarlo con HTML después
     st.set_page_config(
         page_title="SCADA CIATEQ",
-        page_icon="🌎",
+        page_icon="🌎",  # Usamos un emoji temporal
         layout="wide",
         initial_sidebar_state="collapsed"
     )
     
+    # Inyectar el favicon personalizado vía HTML
     st.markdown(f"""
     <link rel="icon" href="{favicon_data}" type="image/x-icon">
     <link rel="shortcut icon" href="{favicon_data}" type="image/x-icon">
     """, unsafe_allow_html=True)
-
 else:
+    # Fallback al emoji si no se pudo cargar el icono
     st.set_page_config(
         page_title="SCADA CIATEQ",
         page_icon="🏭",
         layout="wide",
         initial_sidebar_state="collapsed"
     )
-
-
-# ========================================
-# CSS
-# ========================================
+# CSS AGRESIVO
 st.markdown("""
 <style>
-
 [data-testid="stSidebar"] { display: none !important; }
 [data-testid="stHeader"] { display: none !important; }
 [data-testid="stDecoration"] { display: none !important; }
-
 header { display: none !important; }
 #MainMenu { display: none !important; }
 footer { display: none !important; }
-
-.stApp {
-background-color: #0e1117;
-padding: 0 !important;
-margin: 0 !important;
-overflow: hidden !important;
+.stApp { background-color: #0e1117; padding: 0 !important; margin: 0 !important; overflow: hidden !important; }
+.block-container { padding: 0 !important; max-width: 100% !important; margin: 0 !important; overflow: hidden !important; }
+.main { padding: 0 !important; margin: 0 !important; overflow: hidden !important; }
+.block-container > div { padding: 0 !important; margin: 0 !important; }
+::-webkit-scrollbar { display: none !important; }
+body { overflow: hidden !important; }
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #0e1117;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #3498db;
+    font-family: Arial;
+    font-size: 18px;
+    z-index: 9999;
+    transition: opacity 0.1s;
 }
-
-.block-container {
-padding: 0 !important;
-max-width: 100% !important;
-margin: 0 !important;
-overflow: hidden !important;
+#loading.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
-
-.main {
-padding: 0 !important;
-margin: 0 !important;
-overflow: hidden !important;
+#debug-timestamp {
+    position: fixed;
+    bottom: 5px;
+    right: 10px;
+    background: rgba(0,0,0,0.7);
+    color: #27ae60;
+    padding: 3px 8px;
+    font-family: monospace;
+    font-size: 11px;
+    border-radius: 3px;
+    z-index: 1000;
 }
-
-.block-container > div {
-padding: 0 !important;
-margin: 0 !important;
-}
-
-::-webkit-scrollbar {
-display: none !important;
-}
-
-body {
-overflow: hidden !important;
-}
-
 </style>
 """, unsafe_allow_html=True)
-
 
 # ========================================
 # OBTENER TOKEN DE GITHUB
 # ========================================
 def obtener_token_github():
-
     try:
         if hasattr(st, 'secrets') and "GITHUB_TOKEN" in st.secrets:
             return st.secrets["GITHUB_TOKEN"]
     except:
         pass
-
     return os.getenv("GITHUB_TOKEN", None)
 
-
 # ========================================
-# CARGAR DATOS DESDE GITHUB
+# CARGAR DATOS FRESH DE GITHUB (CADA EJECUCIÓN)
 # ========================================
 def cargar_datos_github(max_intentos=3):
-
     token = obtener_token_github()
-
     for intento in range(max_intentos):
-
         try:
-
             GITHUB_USER = "AlarmasCiateq"
             REPO_NAME = "SCADA_T"
             BRANCH = "main"
             FILE_PATH = "datos_estaciones.json"
-
+            
+            # URL CORREGIDA: SIN ESPACIOS
             api_url = f"https://api.github.com/repos/{GITHUB_USER}/{REPO_NAME}/contents/{FILE_PATH}?ref={BRANCH}"
-
+            
             headers = {
                 'User-Agent': f'SCADA-Monitor-{datetime.now().timestamp()}',
                 'Accept': 'application/vnd.github.v3+json'
             }
-
+            
             if token:
                 headers['Authorization'] = f'token {token}'
-
+            
             response = requests.get(api_url, headers=headers, timeout=10)
             response.raise_for_status()
-
+            
             data = response.json()
-
             content_bytes = base64.b64decode(data['content'])
             content_str = content_bytes.decode('utf-8')
-
             datos = json.loads(content_str)
-
+            
             datos['_timestamp_actualizacion'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
             return datos, True
-
+            
         except Exception as e:
-
             print(f"Error cargando datos (intento {intento + 1}): {e}")
-
             if intento < max_intentos - 1:
                 time.sleep(1)
                 continue
-
             return None, False
-
     return None, False
 
-
+# ========================================
+# CARGAR DATOS FRESH EN CADA EJECUCIÓN
+# ========================================
 datos, exito = cargar_datos_github()
 
 if not datos or not exito:
-
-    st.error("No se pudieron cargar los datos desde GitHub")
-
+    st.markdown("""
+    <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0e1117;color:white;
+    display:flex;justify-content:center;align-items:center;font-family:Arial;">
+        <div style="text-align:center;padding:20px;">
+            <h2>🛢️ SCADA Monitor</h2>
+            <p style="color:#e74c3c; margin-top:15px;">Error: No se pudieron cargar los datos de GitHub</p>
+            <p style="font-size:14px; margin-top:10px; color:#95a5a6;">Verifique conexión a internet</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     time.sleep(60)
     st.rerun()
 
-
 # ========================================
-# PREPARAR DATOS
+# PREPARAR DATOS PARA HTML
 # ========================================
 tiempo_str = datetime.now().strftime('%H:%M:%S')
+timestamp_debug = datos.get('_timestamp_actualizacion', tiempo_str)
 
+# Escapar JSON correctamente para JavaScript
 datos_json_safe = json.dumps(datos, ensure_ascii=False)
-
-datos_json_safe = (
-datos_json_safe
-.replace('\\', '\\\\')
-.replace("'", "\\'")
-.replace('</', '<\\/')
-.replace('\n', '\\n')
-.replace('\r', '\\r')
-.replace('\t', '\\t')
-)
-
+datos_json_safe = (datos_json_safe.replace('\\', '\\\\')
+    .replace("'", "\\'")
+    .replace('</', '<\\/')
+    .replace('\n', '\\n')
+    .replace('\r', '\\r')
+    .replace('\t', '\\t'))
 
 # ========================================
-# HTML + JAVASCRIPT
+# HTML + JAVASCRIPT (CORREGIDO - SENSOR CON BARRA DE NIVEL)
 # ========================================
-html_completo = f"""
-<script>
-
-const DATOS_INICIALES = {datos_json_safe};
-
-
-// =====================================================
-// CAMBIO IMPORTANTE (SOLO AQUÍ)
-// =====================================================
-
-function estadoON(estacion) {{
-
-    const estado = estacion["Estado del Arrancador"] || estacion.estado_bomba || 0;
-
-    const v = String(estado).trim().toLowerCase();
-
-    return v === "1" || v === "encendido" || v === "on" || v === "true";
-}}
-
-</script>
+html_completo = """
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCADA Monitor</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #0e1117; overflow: hidden; height: 100vh; width: 100vw; }
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        
+        #stats-bar {
+            position: fixed;
+            top: 10px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            max-width: 90%;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 65px;
+        }
+        
+        .stat-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .stat-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 8px;
+            color: #7f8c8d;
+            text-align: center;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .custom-popup {
+            font-family: Arial;
+            padding: 12px;
+            min-width: 280px;
+            background: white;
+            border-radius: 6px;
+        }
+        
+        .custom-popup h4 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .custom-popup hr {
+            margin: 8px 0;
+            border-color: #ecf0f1;
+        }
+        
+        .custom-popup .var-row {
+            margin: 6px 0;
+            padding: 4px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .custom-popup .var-label {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 13px;
+            min-width: 120px;
+        }
+        
+        .custom-popup .var-value {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: right;
+            min-width: 80px;
+        }
+        
+        .custom-popup .timestamp {
+            font-size: 11px;
+            color: #95a5a6;
+            text-align: center;
+            margin-top: 8px;
+        }
+        
+        .status-online { color: #27ae60; font-weight: bold; }
+        .status-offline { color: #e74c3c; font-weight: bold; }
+        
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0e1117;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #3498db;
+            font-family: Arial;
+            font-size: 18px;
+            z-index: 9999;
+            transition: opacity 0.1s;
+        }
+        
+        #loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        #debug-timestamp {
+            position: fixed;
+            bottom: 5px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: #27ae60;
+            padding: 3px 8px;
+            font-family: monospace;
+            font-size: 11px;
+            border-radius: 3px;
+            z-index: 1000;
+        }
+        
+        /* Botón de Vista General */
+        .leaflet-control-zoom-all {
+            background: #fff;
+            border: 2px solid rgba(0,0,0,0.2);
+            border-radius: 4px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+            cursor: pointer;
+            margin-top: 5px;
+            transition: all 0.2s;
+        }
+        
+        .leaflet-control-zoom-all:hover {
+            background: #f4f4f4;
+            box-shadow: 0 1px 7px rgba(0,0,0,0.45);
+        }
+        
+        .leaflet-control-zoom-all:active {
+            background: #e8e8e8;
+        }
+        
+        .leaflet-control-zoom-all i {
+            display: block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            font-size: 20px;
+        }
+        
+        .leaflet-control-zoom-all:hover i {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">Cargando...</div>
+    <div id="map"></div>
+    <div id="stats-bar"></div>
+    <div id="debug-timestamp">""" + timestamp_debug + """</div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // ========================================
+        // GUARDAR ESTADO ANTES DE RECARGAR
+        // ========================================
+        window.addEventListener('beforeunload', function() {
+            if (window.map) {
+                try {
+                    const zoom = window.map.getZoom();
+                    const center = window.map.getCenter();
+                    localStorage.setItem('scada_map_zoom', zoom.toString());
+                    localStorage.setItem('scada_map_center', JSON.stringify({lat: center.lat, lng: center.lng}));
+                    localStorage.setItem('scada_map_initialized', 'true');
+                } catch(e) {}
+            }
+        });
+        
+        // ========================================
+        // DATOS INYECTADOS POR PYTHON
+        // ========================================
+        const DATOS_INICIALES = """ + datos_json_safe + """;
+        let map = null;
+        let markers = new Map();
+        
+        // ========================================
+        // FUNCIONES AUXILIARES
+        // ========================================
+        function limpiarUrl(url) {
+            if (!url) return null;
+            return url.trim().replace(/\\s+/g, '%20');
+        }
+        
+        function esOffline(enLinea) {
+            if (enLinea === undefined || enLinea === null) return false;
+            const valor = String(enLinea).trim().toLowerCase();
+            return valor === '0' || valor === 'false' || valor === 'off' || valor === 'no';
+        }
+        
+        function obtenerNivelTanque(estacion) {
+            const campos = ['Porcentaje (%)', 'Porcentaje', 'Nivel (%)', 'nivel_%', 'Nivel', 'nivel'];
+            for (let campo of campos) {
+                if (estacion[campo] !== undefined) {
+                    let v = parseFloat(estacion[campo]);
+                    return Math.max(0, Math.min(100, isNaN(v) ? 0 : v));
+                }
+            }
+            return 0;
+        }
+        
+        // ========================================
+        // CREAR ÍCONO PARA TANQUE CON BARRA DE LLENADO
+        // ========================================
+        function crearIconoTanque(iconoUrl, nivel, offline = false) {
+            const alturaLlenado = Math.round((nivel / 100) * 28);
+            const bordeStyle = offline ?
+                'box-shadow: 0 0 0 3px #e74c3c, 0 2px 6px rgba(231, 76, 60, 0.5);' :
+                '';
+            
+            if (iconoUrl) {
+                return L.divIcon({
+                    html: `<div style="position:relative;width:32px;height:32px;${bordeStyle}">
+                        <div style="position:absolute;bottom:0;left:0;width:32px;height:${alturaLlenado}px;background:rgba(52,152,219,0.85);"></div>
+                        <img src="${iconoUrl}" width="32" height="32" style="position:absolute;top:0;left:0;z-index:1;">
+                        <div style="position:absolute;bottom:4px;width:32px;text-align:center;font-size:11px;color:blue;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,0.8)">${Math.round(nivel)}%</div>
+                    </div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16],
+                    popupAnchor: [0, -16]
+                });
+            } else {
+                const yInicio = 28 - alturaLlenado;
+                const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                    <rect x="0" y="${yInicio}" width="32" height="${alturaLlenado}" fill="rgba(52,152,219,0.85)"/>
+                    <rect x="2" y="4" width="28" height="24" fill="#2c3e50"/>
+                    <text x="16" y="20" font-family="Arial" font-size="9" fill="white" text-anchor="middle" font-weight="bold">${Math.round(nivel)}%</text>
+                </svg>`;
+                
+                return L.divIcon({
+                    html: `<div style="position:relative;width:32px;height:32px;${bordeStyle}">${svg}</div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16],
+                    popupAnchor: [0, -16]
+                });
+            }
+        }
+        
+        // ========================================
+        // CREAR ÍCONO PARA SENSOR DE NIVEL DE RÍO CON BARRA DE LLENADO
+        // ========================================
+        function crearIconoRio(iconoUrl, nivel, offline = false) {
+            const alturaLlenado = Math.round((nivel / 100) * 28);
+            const bordeStyle = offline ?
+                'box-shadow: 0 0 0 3px #e74c3c, 0 2px 6px rgba(231, 76, 60, 0.5);' :
+                '';
+            
+            if (iconoUrl) {
+                return L.divIcon({
+                    html: `<div style="position:relative;width:32px;height:32px;${bordeStyle}">
+                        <div style="position:absolute;bottom:0;left:0;width:32px;height:${alturaLlenado}px;background:rgba(52,152,219,0.85);"></div>
+                        <img src="${iconoUrl}" width="32" height="32" style="position:absolute;top:0;left:0;z-index:1;">
+                        <div style="position:absolute;bottom:4px;width:32px;text-align:center;font-size:11px;color:blue;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,0.8)">${Math.round(nivel)}%</div>
+                    </div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16],
+                    popupAnchor: [0, -16]
+                });
+            } else {
+                const yInicio = 28 - alturaLlenado;
+                const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                    <rect x="0" y="${yInicio}" width="32" height="${alturaLlenado}" fill="rgba(52,152,219,0.85)"/>
+                    <path d="M4 18 Q16 12 28 18 L28 28 Q16 24 4 28 Z" fill="#2c3e50"/>
+                    <text x="16" y="20" font-family="Arial" font-size="9" fill="blue" text-anchor="middle" font-weight="bold">${Math.round(nivel)}%</text>
+                </svg>`;
+                
+                return L.divIcon({
+                    html: `<div style="position:relative;width:32px;height:32px;${bordeStyle}">${svg}</div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16],
+                    popupAnchor: [0, -16]
+                });
+            }
+        }
+        
+        // ========================================
+        // OBTENER ICONO DE TIPO CON SOPORTE PARA ESTADO (POZO, BOMBA, REBOMBO)
+        // ========================================
+        function getIconoTipo(tipo, estado = null) {
+            const tipos = DATOS_INICIALES.tipos || {};
+            const config = tipos[tipo] || tipos['generico'] || {};
+            
+            // Tipos que tienen estado ON/OFF: pozo, bomba, rebombeo
+            if (tipo === 'pozo' || tipo === 'bomba' || tipo === 'rebombeo') {
+                if (estado === 1) {
+                    return {
+                        url: limpiarUrl(config.icono_url_on) || limpiarUrl(config.icono_url) || null,
+                        color: config.color_on || config.color || (tipo === 'pozo' ? '#27ae60' : '#9b59b6')
+                    };
+                } else {
+                    return {
+                        url: limpiarUrl(config.icono_url_off) || limpiarUrl(config.icono_url) || null,
+                        color: config.color_off || config.color || (tipo === 'pozo' ? '#e74c3c' : '#9b59b6')
+                    };
+                }
+            }
+            
+            // Tanque (manejado por función especial)
+            if (tipo === 'tanque') {
+                return {
+                    url: limpiarUrl(config.icono_url) || null,
+                    color: config.color || '#3498db'
+                };
+            }
+            
+            // Otros tipos (sensor, etc.)
+            return {
+                url: limpiarUrl(config.icono_url) || null,
+                color: config.color || '#7f8c8d'
+            };
+        }
+        
+        // ========================================
+        // CREAR ÍCONO PARA MARCADOR (CORREGIDO - SOPORTE COMPLETO DE ESTADO + SENSOR CON BARRA)
+        // ========================================
+        function crearIcono(estacion) {
+            const tipo = estacion.tipo || 'generico';
+            const offline = esOffline(estacion.en_linea);
+            const estado = parseInt(estacion.estado_bomba || estacion.estado || 0);
+            const nivel = obtenerNivelTanque(estacion);
+            
+            // ESPECIAL: Tanques siempre usan icono de tanque + barra de llenado
+            if (tipo === 'tanque') {
+                const configTanque = (DATOS_INICIALES.tipos || {}).tanque || {};
+                const iconoUrl = limpiarUrl(configTanque.icono_url) || null;
+                return crearIconoTanque(iconoUrl, nivel, offline);
+            }
+            
+            // ESPECIAL: Sensores de nivel de río también usan barra de llenado (color azul oscuro)
+            if (tipo === 'sensor') {
+                const configSensor = (DATOS_INICIALES.tipos || {}).sensor || {};
+                const iconoUrl = limpiarUrl(configSensor.icono_url) || null;
+                return crearIconoRio(iconoUrl, nivel, offline);
+            }
+            
+            // Obtener icono según tipo y estado (para pozo, bomba, rebombeo)
+            const iconoInfo = getIconoTipo(tipo, estado);
+            
+            // Si está offline, envolver el icono con borde rojo
+            if (offline && iconoInfo.url) {
+                return L.divIcon({
+                    html: `<div style="
+                        width: 32px;
+                        height: 32px;
+                        border: 3px solid #e74c3c;
+                        border-radius: 4px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-sizing: border-box;
+                        box-shadow: 0 2px 6px rgba(231, 76, 60, 0.5);
+                    ">
+                        <img src="${iconoInfo.url}" width="26" height="26" style="display:block;">
+                    </div>`,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16],
+                    popupAnchor: [0, -16]
+                });
+            }
+            
+            // Si tiene URL de icono, usarla directamente
+            if (iconoInfo.url) {
+                return L.icon({
+                    iconUrl: iconoInfo.url,
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 16],
+                    popupAnchor: [0, -16]
+                });
+            }
+            
+            // Fallback: icono genérico con color + borde rojo si offline
+            const borderColor = offline ? '#e74c3c' : iconoInfo.color;
+            const bgColor = offline ? 'rgba(231, 76, 60, 0.1)' : iconoInfo.color;
+            return L.divIcon({
+                html: `<div style="
+                    width: 32px;
+                    height: 32px;
+                    border: 2px solid ${borderColor};
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-sizing: border-box;
+                    background: ${bgColor};
+                ">
+                    <div style="
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 50%;
+                        background: white;
+                    "></div>
+                </div>`,
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            });
+        }
+        
+        // ========================================
+        // CREAR POPUP
+        // ========================================
+        function crearPopupContent(estacion) {
+            let html = `<div class="custom-popup"><h4>${estacion.nombre || 'Estación'}</h4><hr>`;
+            
+            const offline = esOffline(estacion.en_linea);
+            const estadoLinea = offline ? '<span class="status-offline">Fuera de línea</span>' : '<span class="status-online">En línea</span>';
+            html += `<div class="var-row"><span class="var-label">Estado:</span><span class="var-value">${estadoLinea}</span></div>`;
+            
+            if (estacion.tipo === 'tanque' || estacion.tipo === 'sensor') {
+                html += `<div class="var-row"><span class="var-label">Nivel:</span><span class="var-value">${obtenerNivelTanque(estacion)}%</span></div>`;
+            } else if (estacion.tipo === 'pozo' || estacion.tipo === 'bomba' || estacion.tipo === 'rebombeo') {
+                const estadoBomba = parseInt(estacion.estado_bomba || estacion.estado || 0);
+                const estadoTexto = estadoBomba === 1 ? '<span style="color:#27ae60;font-weight:bold;">Encendido</span>' : '<span style="color:#e74c3c;font-weight:bold;">Apagado</span>';
+                html += `<div class="var-row"><span class="var-label">Estado Bomba:</span><span class="var-value">${estadoTexto}</span></div>`;
+            }
+            
+            for (const key in estacion) {
+                if (!['nombre', 'latitud', 'longitud', 'tipo', 'estado_bomba', 'en_linea', 'icono', 'icono_url', 'icono_url_on', 'icono_url_off', 'Nivel', 'nivel', 'Porcentaje (%)', 'Porcentaje', '_timestamp_actualizacion'].includes(key)) {
+                    const value = typeof estacion[key] === 'number'
+                        ? estacion[key].toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                        : estacion[key];
+                    html += `<div class="var-row"><span class="var-label">${key}:</span><span class="var-value">${value}</span></div>`;
+                }
+            }
+            
+            html += `<hr><div class="timestamp">📅 ${new Date().toLocaleString('es-ES')}</div></div>`;
+            return html;
+        }
+        
+        // ========================================
+        // ACTUALIZAR ESTADÍSTICAS CON ICONOS DE TIPOS
+        // ========================================
+        function actualizarEstadisticas(datos) {
+            if (!datos || !datos.estaciones) return;
+            
+            // Contadores
+            let total = 0;
+            let pozos_encendidos = 0;
+            let pozos_apagados = 0;
+            let tanques = 0;
+            let bombas_encendidas = 0;
+            let bombas_apagadas = 0;
+            let rebombeos_encendidos = 0;
+            let rebombeos_apagados = 0;
+            let sensores = 0;
+            let offline_count = 0;
+            let online = 0;
+            
+            datos.estaciones.forEach(estacion => {
+                total++;
+                const offline = esOffline(estacion.en_linea);
+                const tipo = estacion.tipo || 'generico';
+                const estado = parseInt(estacion.estado_bomba || estacion.estado || 0);
+                
+                if (offline) {
+                    offline_count++;
+                } else {
+                    online++;
+                    if (tipo === 'pozo') {
+                        if (estado === 1) pozos_encendidos++;
+                        else pozos_apagados++;
+                    } else if (tipo === 'tanque') {
+                        tanques++;
+                    } else if (tipo === 'bomba') {
+                        if (estado === 1) bombas_encendidas++;
+                        else bombas_apagadas++;
+                    } else if (tipo === 'rebombeo') {
+                        if (estado === 1) rebombeos_encendidos++;
+                        else rebombeos_apagados++;
+                    } else if (tipo === 'sensor') {
+                        sensores++;
+                    }
+                }
+            });
+            
+            // Obtener configuración de tipos
+            const tipos = datos.tipos || {};
+            
+            // Definir las estadísticas a mostrar
+            const stats = [
+                { tipo: 'total', value: total, label: 'Total' },
+                { tipo: 'pozo', estado: 1, value: pozos_encendidos, label: 'Pozos Enc.' },
+                { tipo: 'pozo', estado: 0, value: pozos_apagados, label: 'Pozos Apag.' },
+                { tipo: 'tanque', value: tanques, label: 'Tanques' },
+                { tipo: 'bomba', estado: 1, value: bombas_encendidas, label: 'Bombas Enc.' },
+                { tipo: 'bomba', estado: 0, value: bombas_apagadas, label: 'Bombas Apag.' },
+                { tipo: 'rebombeo', estado: 1, value: rebombeos_encendidos, label: 'Rebom. Enc.' },
+                { tipo: 'rebombeo', estado: 0, value: rebombeos_apagados, label: 'Rebom. Apag.' },
+                { tipo: 'sensor', value: sensores, label: 'Sensores Río' },
+                { tipo: 'offline', value: offline_count, label: 'Offline' },
+                { tipo: 'online', value: online, label: 'Online' },
+                { tipo: 'reloj', value: '""" + tiempo_str + """', label: 'Actualizado' }
+            ];
+            
+            // Crear barra de estadísticas
+            const statsBar = document.getElementById('stats-bar');
+            if (!statsBar) return;
+            statsBar.innerHTML = '';
+            
+            // Crear cada item
+            stats.forEach(stat => {
+                const config = tipos[stat.tipo] || tipos['generico'] || {};
+                let iconoUrl = null;
+                
+                // Manejar tipos con estado
+                if (stat.tipo === 'pozo' || stat.tipo === 'bomba' || stat.tipo === 'rebombeo') {
+                    iconoUrl = stat.estado === 1 ?
+                        (limpiarUrl(config.icono_url_on) || limpiarUrl(config.icono_url) || null) :
+                        (limpiarUrl(config.icono_url_off) || limpiarUrl(config.icono_url) || null);
+                }
+                
+                // Tipos especiales con iconos base64
+                else if (stat.tipo === 'offline') {
+                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/Offline.svg';
+                } else if (stat.tipo === 'online') {
+                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/Online_Alarma.svg';
+                } else if (stat.tipo === 'total') {
+                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/transmite.svg';
+                } else if (stat.tipo === 'reloj') {
+                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/update.svg';
+                }
+                
+                // Otros tipos
+                else {
+                    iconoUrl = limpiarUrl(config.icono_url) || null;
+                }
+                
+                const item = document.createElement('div');
+                item.className = 'stat-item';
+                
+                let iconHtml = '';
+                if (iconoUrl) {
+                    iconHtml = `<div class="stat-icon"><img src="${iconoUrl}" alt="${stat.tipo}"></div>`;
+                } else {
+                    const color = config.color || '#7f8c8d';
+                    iconHtml = `<div class="stat-icon" style="color:${color};font-size:20px;">●</div>`;
+                }
+                
+                item.innerHTML =
+                    iconHtml +
+                    '<div class="stat-value">' + stat.value + '</div>' +
+                    '<div class="stat-label">' + stat.label + '</div>';
+                
+                statsBar.appendChild(item);
+            });
+        }
+        
+        // ========================================
+        // FUNCIÓN PARA ZOOM A TODOS LOS ICONOS
+        // ========================================
+        function zoomATodosLosIconos() {
+            if (!map || markers.size === 0) return;
+            const todasCoords = Array.from(markers.values()).map(m => m.getLatLng());
+            map.fitBounds(todasCoords, { padding: [40, 40] });
+            try {
+                localStorage.setItem('scada_map_zoom', map.getZoom().toString());
+                localStorage.setItem('scada_map_center', JSON.stringify({lat: map.getCenter().lat, lng: map.getCenter().lng}));
+            } catch(e) {}
+        }
+        
+        // ========================================
+        // CONTROL PERSONALIZADO DE LEAFLET
+        // ========================================
+        L.Control.ZoomAll = L.Control.extend({
+            options: { position: 'topleft' },
+            onAdd: function(map) {
+                const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-zoom-all');
+                const button = L.DomUtil.create('a', 'leaflet-control-zoom-all', container);
+                button.href = '#';
+                button.title = 'Ver todas las estaciones';
+                button.innerHTML = '<i>⌂</i>';
+                L.DomEvent.disableClickPropagation(button);
+                L.DomEvent.on(button, 'click', function(e) {
+                    L.DomEvent.stopPropagation(e);
+                    L.DomEvent.preventDefault(e);
+                    zoomATodosLosIconos();
+                });
+                return container;
+            }
+        });
+        
+        L.control.zoomAll = function(opts) { return new L.Control.ZoomAll(opts); };
+        
+        // ========================================
+        // INICIALIZAR MAPA
+        // ========================================
+        function initMap() {
+            try {
+                map = L.map('map', {
+                    zoomControl: true,
+                    scrollWheelZoom: true,
+                    dragging: true
+                });
+                
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '',
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                }).addTo(map);
+                
+                L.control.zoomAll().addTo(map);
+                
+                // Restaurar zoom/centro
+                const savedZoom = localStorage.getItem('scada_map_zoom');
+                const savedCenter = localStorage.getItem('scada_map_center');
+                const wasInitialized = localStorage.getItem('scada_map_initialized') === 'true';
+                let hizoFitBounds = false;
+                
+                if (wasInitialized && savedZoom && savedCenter) {
+                    try {
+                        const center = JSON.parse(savedCenter);
+                        map.setView([center.lat, center.lng], parseInt(savedZoom));
+                        console.log('✓ Zoom restaurado:', savedZoom);
+                    } catch(e) {
+                        console.log('Error restaurando zoom:', e);
+                    }
+                } else {
+                    const todasCoords = [];
+                    DATOS_INICIALES.estaciones.forEach(est => {
+                        if (est.latitud && est.longitud) {
+                            todasCoords.push([parseFloat(est.latitud), parseFloat(est.longitud)]);
+                        }
+                    });
+                    if (todasCoords.length > 0) {
+                        map.fitBounds(todasCoords, { padding: [40, 40] });
+                        console.log('✓ Zoom inicial ajustado');
+                        hizoFitBounds = true;
+                    }
+                }
+                
+                // Agregar marcadores
+                DATOS_INICIALES.estaciones.forEach(estacion => {
+                    if (!estacion.latitud || !estacion.longitud) return;
+                    const id = estacion.nombre || `${estacion.latitud},${estacion.longitud}`;
+                    const lat = parseFloat(estacion.latitud);
+                    const lng = parseFloat(estacion.longitud);
+                    const marker = L.marker([lat, lng], { icon: crearIcono(estacion) })
+                        .bindPopup(crearPopupContent(estacion), { maxWidth: 320 })
+                        .bindTooltip(estacion.nombre || 'Estación', { permanent: false, direction: 'top', opacity: 0.9 })
+                        .addTo(map);
+                    markers.set(id, marker);
+                });
+                
+                if (!hizoFitBounds && markers.size > 0 && !wasInitialized) {
+                    const todasCoords = Array.from(markers.values()).map(m => m.getLatLng());
+                    map.fitBounds(todasCoords, { padding: [40, 40] });
+                    localStorage.setItem('scada_map_initialized', 'true');
+                }
+                
+                // Actualizar estadísticas
+                actualizarEstadisticas(DATOS_INICIALES);
+                
+                // Ocultar loading
+                document.getElementById('loading').classList.add('hidden');
+                window.map = map;
+                
+            } catch(e) {
+                document.getElementById('loading').innerHTML = `<div style="color:#e74c3c;text-align:center;padding:20px;">❌ Error: ${e.message}</div>`;
+                console.error('Error:', e);
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMap);
+        } else {
+            initMap();
+        }
+    </script>
+</body>
+</html>
 """
 
+# Renderizar el mapa
+st.components.v1.html(
+    html_completo,
+    width=1920,
+    height=1080,
+    scrolling=False
+)
 
-st.components.v1.html(html_completo, height=900)
+# ========================================
+# FORZAR RECARGA COMPLETA CADA 60 SEGUNDOS (1 MINUTO)
+# ========================================
+time.sleep(60)
+st.rerun()
+
+
