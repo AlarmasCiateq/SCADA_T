@@ -3434,7 +3434,6 @@
 # # ========================================
 # time.sleep(60)
 # st.rerun()
-
 import streamlit as st
 import requests
 import json
@@ -3452,16 +3451,18 @@ def obtener_favicon_github():
         GITHUB_USER = "AlarmasCiateq"
         REPO_NAME = "SCADA_T"
         BRANCH = "main"
-        ICON_PATH = "iconos/ICONO CIATEQ 256.ico"
+        ICON_PATH = "iconos/ICONO CIATEQ 256.ico"  # Ajusta la ruta si es necesario
         
+        # URL para descargar el archivo RAW (no la API)
         raw_url = f"https://raw.githubusercontent.com/  {GITHUB_USER}/{REPO_NAME}/{BRANCH}/{ICON_PATH}"
         print(raw_url)
         headers = {'User-Agent': 'SCADA-Monitor'}
         response = requests.get(raw_url, headers=headers, timeout=10)
         response.raise_for_status()
         
+        # Convertir a base64
         icon_base64 = base64.b64encode(response.content).decode('utf-8')
-        return f"image/x-icon;base64,{icon_base64}"
+        return f"data:image/x-icon;base64,{icon_base64}"
     except Exception as e:
         print(f"Error cargando favicon: {e}")
         return None
@@ -3469,28 +3470,33 @@ def obtener_favicon_github():
 # ========================================
 # CONFIGURACIÓN DE PÁGINA
 # ========================================
+# Intentar obtener el favicon de GitHub
 favicon_data = obtener_favicon_github()
 
 if favicon_data:
+    # Streamlit no soporta directamente data URLs en page_icon,
+    # pero podemos inyectarlo con HTML después
     st.set_page_config(
         page_title="SCADA CIATEQ",
-        page_icon="🌎",
+        page_icon="🌎",  # Usamos un emoji temporal
         layout="wide",
         initial_sidebar_state="collapsed"
     )
     
+    # Inyectar el favicon personalizado vía HTML
     st.markdown(f"""
     <link rel="icon" href="{favicon_data}" type="image/x-icon">
     <link rel="shortcut icon" href="{favicon_data}" type="image/x-icon">
     """, unsafe_allow_html=True)
 else:
+    # Fallback al emoji si no se pudo cargar el icono
     st.set_page_config(
         page_title="SCADA CIATEQ",
         page_icon="🏭",
         layout="wide",
         initial_sidebar_state="collapsed"
     )
-
+# CSS AGRESIVO
 st.markdown("""
 <style>
 [data-testid="stSidebar"] { display: none !important; }
@@ -3563,6 +3569,7 @@ def cargar_datos_github(max_intentos=3):
             BRANCH = "main"
             FILE_PATH = "datos_estaciones.json"
             
+            # URL CORREGIDA: SIN ESPACIOS
             api_url = f"https://api.github.com/repos/  {GITHUB_USER}/{REPO_NAME}/contents/{FILE_PATH}?ref={BRANCH}"
             
             headers = {
@@ -3617,6 +3624,7 @@ if not datos or not exito:
 tiempo_str = datetime.now().strftime('%H:%M:%S')
 timestamp_debug = datos.get('_timestamp_actualizacion', tiempo_str)
 
+# Escapar JSON correctamente para JavaScript
 datos_json_safe = json.dumps(datos, ensure_ascii=False)
 datos_json_safe = (datos_json_safe.replace('\\', '\\\\')
     .replace("'", "\\'")
@@ -3626,7 +3634,7 @@ datos_json_safe = (datos_json_safe.replace('\\', '\\\\')
     .replace('\t', '\\t'))
 
 # ========================================
-# HTML + JAVASCRIPT
+# HTML + JAVASCRIPT (CORREGIDO - SENSOR CON BARRA DE NIVEL)
 # ========================================
 html_completo = """
 <!DOCTYPE html>
@@ -3784,6 +3792,7 @@ html_completo = """
             z-index: 1000;
         }
         
+        /* Botón de Vista General */
         .leaflet-control-zoom-all {
             background: #fff;
             border: 2px solid rgba(0,0,0,0.2);
@@ -3827,6 +3836,9 @@ html_completo = """
     
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js  "></script>
     <script>
+        // ========================================
+        // GUARDAR ESTADO ANTES DE RECARGAR
+        // ========================================
         window.addEventListener('beforeunload', function() {
             if (window.map) {
                 try {
@@ -3839,17 +3851,19 @@ html_completo = """
             }
         });
         
+        // ========================================
+        // DATOS INYECTADOS POR PYTHON
+        // ========================================
         const DATOS_INICIALES = """ + datos_json_safe + """;
         let map = null;
         let markers = new Map();
         
         // ========================================
-        // CAMBIO CLAVE: Función limpiarUrl mejorada
+        // FUNCIONES AUXILIARES
         // ========================================
         function limpiarUrl(url) {
             if (!url) return null;
-            // Trim agresivo + eliminar espacios al inicio y final + codificar solo espacios internos
-            return url.trim().replace(/^\\s+|\\s+$/g, '').replace(/\\s+/g, '%20');
+            return url.trim().replace(/\\s+/g, '%20');
         }
         
         function esOffline(enLinea) {
@@ -3869,6 +3883,9 @@ html_completo = """
             return 0;
         }
         
+        // ========================================
+        // CREAR ÍCONO PARA TANQUE CON BARRA DE LLENADO
+        // ========================================
         function crearIconoTanque(iconoUrl, nivel, offline = false) {
             const alturaLlenado = Math.round((nivel / 100) * 28);
             const bordeStyle = offline ?
@@ -3903,6 +3920,9 @@ html_completo = """
             }
         }
         
+        // ========================================
+        // CREAR ÍCONO PARA SENSOR DE NIVEL DE RÍO CON BARRA DE LLENADO
+        // ========================================
         function crearIconoRio(iconoUrl, nivel, offline = false) {
             const alturaLlenado = Math.round((nivel / 100) * 28);
             const bordeStyle = offline ?
@@ -3937,10 +3957,14 @@ html_completo = """
             }
         }
         
+        // ========================================
+        // OBTENER ICONO DE TIPO CON SOPORTE PARA ESTADO (POZO, BOMBA, REBOMBO)
+        // ========================================
         function getIconoTipo(tipo, estado = null) {
             const tipos = DATOS_INICIALES.tipos || {};
             const config = tipos[tipo] || tipos['generico'] || {};
             
+            // Tipos que tienen estado ON/OFF: pozo, bomba, rebombeo
             if (tipo === 'pozo' || tipo === 'bomba' || tipo === 'rebombeo') {
                 if (estado === "Encendido") {
                     return {
@@ -3955,6 +3979,7 @@ html_completo = """
                 }
             }
             
+            // Tanque (manejado por función especial)
             if (tipo === 'tanque') {
                 return {
                     url: limpiarUrl(config.icono_url) || null,
@@ -3962,32 +3987,40 @@ html_completo = """
                 };
             }
             
+            // Otros tipos (sensor, etc.)
             return {
                 url: limpiarUrl(config.icono_url) || null,
                 color: config.color || '#7f8c8d'
             };
         }
         
+        // ========================================
+        // CREAR ÍCONO PARA MARCADOR (CORREGIDO - SOPORTE COMPLETO DE ESTADO + SENSOR CON BARRA)
+        // ========================================
         function crearIcono(estacion) {
             const tipo = estacion.tipo || 'generico';
             const offline = esOffline(estacion.en_linea);
             const estado = estacion["Estado del Arrancador"] || estacion.estado || "Apagado";
             const nivel = obtenerNivelTanque(estacion);
             
+            // ESPECIAL: Tanques siempre usan icono de tanque + barra de llenado
             if (tipo === 'tanque') {
                 const configTanque = (DATOS_INICIALES.tipos || {}).tanque || {};
                 const iconoUrl = limpiarUrl(configTanque.icono_url) || null;
                 return crearIconoTanque(iconoUrl, nivel, offline);
             }
             
+            // ESPECIAL: Sensores de nivel de río también usan barra de llenado (color azul oscuro)
             if (tipo === 'sensor') {
                 const configSensor = (DATOS_INICIALES.tipos || {}).sensor || {};
                 const iconoUrl = limpiarUrl(configSensor.icono_url) || null;
                 return crearIconoRio(iconoUrl, nivel, offline);
             }
             
+            // Obtener icono según tipo y estado (para pozo, bomba, rebombeo)
             const iconoInfo = getIconoTipo(tipo, estado);
             
+            // Si está offline, envolver el icono con borde rojo
             if (offline && iconoInfo.url) {
                 return L.divIcon({
                     html: `<div style="
@@ -4009,6 +4042,7 @@ html_completo = """
                 });
             }
             
+            // Si tiene URL de icono, usarla directamente
             if (iconoInfo.url) {
                 return L.icon({
                     iconUrl: iconoInfo.url,
@@ -4018,6 +4052,7 @@ html_completo = """
                 });
             }
             
+            // Fallback: icono genérico con color + borde rojo si offline
             const borderColor = offline ? '#e74c3c' : iconoInfo.color;
             const bgColor = offline ? 'rgba(231, 76, 60, 0.1)' : iconoInfo.color;
             return L.divIcon({
@@ -4045,6 +4080,9 @@ html_completo = """
             });
         }
         
+        // ========================================
+        // CREAR POPUP
+        // ========================================
         function crearPopupContent(estacion) {
             let html = `<div class="custom-popup"><h4>${estacion.nombre || 'Estación'}</h4><hr>`;
             
@@ -4073,9 +4111,13 @@ html_completo = """
             return html;
         }
         
+        // ========================================
+        // ACTUALIZAR ESTADÍSTICAS CON ICONOS DE TIPOS
+        // ========================================
         function actualizarEstadisticas(datos) {
             if (!datos || !datos.estaciones) return;
             
+            // Contadores
             let total = 0;
             let pozos_encendidos = 0;
             let pozos_apagados = 0;
@@ -4115,8 +4157,10 @@ html_completo = """
                 }
             });
             
+            // Obtener configuración de tipos
             const tipos = datos.tipos || {};
             
+            // Definir las estadísticas a mostrar
             const stats = [
                 { tipo: 'total', value: total, label: 'Total' },
                 { tipo: 'pozo', estado: "Encendido", value: pozos_encendidos, label: 'Pozos Enc.' },
@@ -4132,28 +4176,35 @@ html_completo = """
                 { tipo: 'reloj', value: '""" + tiempo_str + """', label: 'Actualizado' }
             ];
             
+            // Crear barra de estadísticas
             const statsBar = document.getElementById('stats-bar');
             if (!statsBar) return;
             statsBar.innerHTML = '';
             
+            // Crear cada item
             stats.forEach(stat => {
                 const config = tipos[stat.tipo] || tipos['generico'] || {};
                 let iconoUrl = null;
                 
+                // Manejar tipos con estado
                 if (stat.tipo === 'pozo' || stat.tipo === 'bomba' || stat.tipo === 'rebombeo') {
                     iconoUrl = stat.estado === "Encendido" ?
                         (limpiarUrl(config.icono_url_on) || limpiarUrl(config.icono_url) || null) :
                         (limpiarUrl(config.icono_url_off) || limpiarUrl(config.icono_url) || null);
                 }
+                
+                // Tipos especiales con iconos base64
                 else if (stat.tipo === 'offline') {
-                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/Offline.svg';
+                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/Offline.svg  ';
                 } else if (stat.tipo === 'online') {
-                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/Online_Alarma.svg';
+                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/Online_Alarma.svg  ';
                 } else if (stat.tipo === 'total') {
-                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/transmite.svg';
+                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/transmite.svg  ';
                 } else if (stat.tipo === 'reloj') {
-                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/update.svg';
+                    iconoUrl = 'https://raw.githubusercontent.com/AlarmasCiateq/SCADA_T/main/iconos/update.svg  ';
                 }
+                
+                // Otros tipos
                 else {
                     iconoUrl = limpiarUrl(config.icono_url) || null;
                 }
@@ -4178,6 +4229,9 @@ html_completo = """
             });
         }
         
+        // ========================================
+        // FUNCIÓN PARA ZOOM A TODOS LOS ICONOS
+        // ========================================
         function zoomATodosLosIconos() {
             if (!map || markers.size === 0) return;
             const todasCoords = Array.from(markers.values()).map(m => m.getLatLng());
@@ -4188,6 +4242,9 @@ html_completo = """
             } catch(e) {}
         }
         
+        // ========================================
+        // CONTROL PERSONALIZADO DE LEAFLET
+        // ========================================
         L.Control.ZoomAll = L.Control.extend({
             options: { position: 'topleft' },
             onAdd: function(map) {
@@ -4208,6 +4265,9 @@ html_completo = """
         
         L.control.zoomAll = function(opts) { return new L.Control.ZoomAll(opts); };
         
+        // ========================================
+        // INICIALIZAR MAPA
+        // ========================================
         function initMap() {
             try {
                 map = L.map('map', {
@@ -4224,6 +4284,7 @@ html_completo = """
                 
                 L.control.zoomAll().addTo(map);
                 
+                // Restaurar zoom/centro
                 const savedZoom = localStorage.getItem('scada_map_zoom');
                 const savedCenter = localStorage.getItem('scada_map_center');
                 const wasInitialized = localStorage.getItem('scada_map_initialized') === 'true';
@@ -4251,6 +4312,7 @@ html_completo = """
                     }
                 }
                 
+                // Agregar marcadores
                 DATOS_INICIALES.estaciones.forEach(estacion => {
                     if (!estacion.latitud || !estacion.longitud) return;
                     const id = estacion.nombre || `${estacion.latitud},${estacion.longitud}`;
@@ -4269,8 +4331,10 @@ html_completo = """
                     localStorage.setItem('scada_map_initialized', 'true');
                 }
                 
+                // Actualizar estadísticas
                 actualizarEstadisticas(DATOS_INICIALES);
                 
+                // Ocultar loading
                 document.getElementById('loading').classList.add('hidden');
                 window.map = map;
                 
@@ -4290,6 +4354,7 @@ html_completo = """
 </html>
 """
 
+# Renderizar el mapa
 st.components.v1.html(
     html_completo,
     width=1920,
@@ -4297,5 +4362,8 @@ st.components.v1.html(
     scrolling=False
 )
 
+# ========================================
+# FORZAR RECARGA COMPLETA CADA 60 SEGUNDOS (1 MINUTO)
+# ========================================
 time.sleep(60)
 st.rerun()
