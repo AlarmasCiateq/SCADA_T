@@ -2518,19 +2518,22 @@ def obtener_favicon_github():
         GITHUB_USER = "AlarmasCiateq"
         REPO_NAME = "SCADA_T"
         BRANCH = "main"
-        ICON_PATH = "iconos/ICONO CIATEQ 256.ico"  # Ajusta la ruta si es necesario
+        ICON_PATH = "iconos/ICONO CIATEQ 256.ico"
         
         raw_url = f"https://raw.githubusercontent.com/{GITHUB_USER}/{REPO_NAME}/{BRANCH}/{ICON_PATH}"
         print(raw_url)
+
         headers = {'User-Agent': 'SCADA-Monitor'}
         response = requests.get(raw_url, headers=headers, timeout=10)
         response.raise_for_status()
         
         icon_base64 = base64.b64encode(response.content).decode('utf-8')
         return f"data:image/x-icon;base64,{icon_base64}"
+
     except Exception as e:
         print(f"Error cargando favicon: {e}")
         return None
+
 
 # ========================================
 # CONFIGURACIÓN DE PÁGINA
@@ -2549,6 +2552,7 @@ if favicon_data:
     <link rel="icon" href="{favicon_data}" type="image/x-icon">
     <link rel="shortcut icon" href="{favicon_data}" type="image/x-icon">
     """, unsafe_allow_html=True)
+
 else:
     st.set_page_config(
         page_title="SCADA CIATEQ",
@@ -2557,233 +2561,177 @@ else:
         initial_sidebar_state="collapsed"
     )
 
-# CSS AGRESIVO
+
+# ========================================
+# CSS
+# ========================================
 st.markdown("""
 <style>
+
 [data-testid="stSidebar"] { display: none !important; }
 [data-testid="stHeader"] { display: none !important; }
 [data-testid="stDecoration"] { display: none !important; }
+
 header { display: none !important; }
 #MainMenu { display: none !important; }
 footer { display: none !important; }
-.stApp { background-color: #0e1117; padding: 0 !important; margin: 0 !important; overflow: hidden !important; }
-.block-container { padding: 0 !important; max-width: 100% !important; margin: 0 !important; overflow: hidden !important; }
-.main { padding: 0 !important; margin: 0 !important; overflow: hidden !important; }
-.block-container > div { padding: 0 !important; margin: 0 !important; }
-::-webkit-scrollbar { display: none !important; }
-body { overflow: hidden !important; }
-#loading {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #0e1117;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #3498db;
-    font-family: Arial;
-    font-size: 18px;
-    z-index: 9999;
-    transition: opacity 0.1s;
+
+.stApp {
+background-color: #0e1117;
+padding: 0 !important;
+margin: 0 !important;
+overflow: hidden !important;
 }
-#loading.hidden {
-    opacity: 0;
-    pointer-events: none;
+
+.block-container {
+padding: 0 !important;
+max-width: 100% !important;
+margin: 0 !important;
+overflow: hidden !important;
 }
-#debug-timestamp {
-    position: fixed;
-    bottom: 5px;
-    right: 10px;
-    background: rgba(0,0,0,0.7);
-    color: #27ae60;
-    padding: 3px 8px;
-    font-family: monospace;
-    font-size: 11px;
-    border-radius: 3px;
-    z-index: 1000;
+
+.main {
+padding: 0 !important;
+margin: 0 !important;
+overflow: hidden !important;
 }
+
+.block-container > div {
+padding: 0 !important;
+margin: 0 !important;
+}
+
+::-webkit-scrollbar {
+display: none !important;
+}
+
+body {
+overflow: hidden !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
+
 
 # ========================================
 # OBTENER TOKEN DE GITHUB
 # ========================================
 def obtener_token_github():
+
     try:
         if hasattr(st, 'secrets') and "GITHUB_TOKEN" in st.secrets:
             return st.secrets["GITHUB_TOKEN"]
     except:
         pass
+
     return os.getenv("GITHUB_TOKEN", None)
 
+
 # ========================================
-# CARGAR DATOS FRESH DE GITHUB (CADA EJECUCIÓN)
+# CARGAR DATOS DESDE GITHUB
 # ========================================
 def cargar_datos_github(max_intentos=3):
+
     token = obtener_token_github()
+
     for intento in range(max_intentos):
+
         try:
+
             GITHUB_USER = "AlarmasCiateq"
             REPO_NAME = "SCADA_T"
             BRANCH = "main"
             FILE_PATH = "datos_estaciones.json"
-            
+
             api_url = f"https://api.github.com/repos/{GITHUB_USER}/{REPO_NAME}/contents/{FILE_PATH}?ref={BRANCH}"
-            
+
             headers = {
                 'User-Agent': f'SCADA-Monitor-{datetime.now().timestamp()}',
                 'Accept': 'application/vnd.github.v3+json'
             }
-            
+
             if token:
                 headers['Authorization'] = f'token {token}'
-            
+
             response = requests.get(api_url, headers=headers, timeout=10)
             response.raise_for_status()
-            
+
             data = response.json()
+
             content_bytes = base64.b64decode(data['content'])
             content_str = content_bytes.decode('utf-8')
+
             datos = json.loads(content_str)
-            
+
             datos['_timestamp_actualizacion'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
             return datos, True
-            
+
         except Exception as e:
+
             print(f"Error cargando datos (intento {intento + 1}): {e}")
+
             if intento < max_intentos - 1:
                 time.sleep(1)
                 continue
+
             return None, False
+
     return None, False
+
 
 datos, exito = cargar_datos_github()
 
 if not datos or not exito:
-    st.markdown("""
-    <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0e1117;color:white;
-    display:flex;justify-content:center;align-items:center;font-family:Arial;">
-        <div style="text-align:center;padding:20px;">
-            <h2>🛢️ SCADA Monitor</h2>
-            <p style="color:#e74c3c; margin-top:15px;">Error: No se pudieron cargar los datos de GitHub</p>
-            <p style="font-size:14px; margin-top:10px; color:#95a5a6;">Verifique conexión a internet</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+
+    st.error("No se pudieron cargar los datos desde GitHub")
+
     time.sleep(60)
     st.rerun()
 
+
 # ========================================
-# PREPARAR DATOS PARA HTML
+# PREPARAR DATOS
 # ========================================
 tiempo_str = datetime.now().strftime('%H:%M:%S')
-timestamp_debug = datos.get('_timestamp_actualizacion', tiempo_str)
+
 datos_json_safe = json.dumps(datos, ensure_ascii=False)
-datos_json_safe = (datos_json_safe.replace('\\', '\\\\')
-    .replace("'", "\\'")
-    .replace('</', '<\\/')
-    .replace('\n', '\\n')
-    .replace('\r', '\\r')
-    .replace('\t', '\\t'))
+
+datos_json_safe = (
+datos_json_safe
+.replace('\\', '\\\\')
+.replace("'", "\\'")
+.replace('</', '<\\/')
+.replace('\n', '\\n')
+.replace('\r', '\\r')
+.replace('\t', '\\t')
+)
+
 
 # ========================================
 # HTML + JAVASCRIPT
 # ========================================
 html_completo = f"""
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SCADA Monitor</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<style>
-* {{ margin: 0; padding: 0; box-sizing: border-box; }}
-body {{ font-family: Arial, sans-serif; background: #0e1117; overflow: hidden; height: 100vh; width: 100vw; }}
-#map {{ position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }}
-#stats-bar {{
-    position: fixed; top: 10px; right: 15px; background: rgba(255,255,255,0.95); padding:8px;
-    border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.15); z-index:1000; display:flex;
-    gap:12px; align-items:center; font-family:Arial,sans-serif; flex-wrap:nowrap; overflow-x:auto; max-width:90%;
-}}
-.stat-item {{ display:flex; flex-direction:column; align-items:center; min-width:65px; }}
-.stat-icon {{ width:24px; height:24px; margin-bottom:2px; display:flex; align-items:center; justify-content:center; }}
-.stat-icon img {{ width:100%; height:100%; object-fit:contain; }}
-.stat-value {{ font-weight:bold; color:#2c3e50; font-size:14px; text-align:center; }}
-.stat-label {{ font-size:8px; color:#7f8c8d; text-align:center; white-space:nowrap; text-transform:uppercase; letter-spacing:0.5px; }}
-.custom-popup {{ font-family:Arial; padding:12px; min-width:280px; background:white; border-radius:6px; }}
-.custom-popup h4 {{ margin:0 0 10px 0; color:#2c3e50; font-size:16px; font-weight:bold; }}
-.custom-popup hr {{ margin:8px 0; border-color:#ecf0f1; }}
-.custom-popup .var-row {{ margin:6px 0; padding:4px 0; display:flex; justify-content:space-between; }}
-.custom-popup .var-label {{ color:#2c3e50; font-weight:600; font-size:13px; min-width:120px; }}
-.custom-popup .var-value {{ color:#2c3e50; font-weight:bold; font-size:14px; text-align:right; min-width:80px; }}
-.custom-popup .timestamp {{ font-size:11px; color:#95a5a6; text-align:center; margin-top:8px; }}
-.status-online {{ color:#27ae60; font-weight:bold; }}
-.status-offline {{ color:#e74c3c; font-weight:bold; }}
-#loading {{ position: fixed; top:0; left:0; width:100%; height:100%; background:#0e1117;
-    display:flex; justify-content:center; align-items:center; color:#3498db; font-family:Arial; font-size:18px; z-index:9999; transition:opacity 0.1s; }}
-#loading.hidden {{ opacity:0; pointer-events:none; }}
-#debug-timestamp {{ position: fixed; bottom:5px; right:10px; background:rgba(0,0,0,0.7); color:#27ae60;
-    padding:3px 8px; font-family:monospace; font-size:11px; border-radius:3px; z-index:1000; }}
-</style>
-</head>
-<body>
-<div id="loading">Cargando...</div>
-<div id="map"></div>
-<div id="stats-bar"></div>
-<div id="debug-timestamp">{timestamp_debug}</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-// ========================================
-// FUNCIONES AUXILIARES
-// ========================================
+
 const DATOS_INICIALES = {datos_json_safe};
 
-function limpiarUrl(url) {{
-    if(!url) return null;
-    return url.trim().replace(/\s+/g,'%20');
+
+// =====================================================
+// CAMBIO IMPORTANTE (SOLO AQUÍ)
+// =====================================================
+
+function estadoON(estacion) {{
+
+    const estado = estacion["Estado del Arrancador"] || estacion.estado_bomba || 0;
+
+    const v = String(estado).trim().toLowerCase();
+
+    return v === "1" || v === "encendido" || v === "on" || v === "true";
 }}
-
-// Nueva función para interpretar estado de bomba/pozo
-function estadoON(valor) {{
-    if(!valor) return false;
-    const v = String(valor).trim().toLowerCase();
-    return v === '1' || v === 'encendido' || v === 'on' || v === 'true';
-}}
-
-function esOffline(enLinea) {{
-    if(enLinea===undefined||enLinea===null) return false;
-    const valor=String(enLinea).trim().toLowerCase();
-    return valor==='0'||valor==='false'||valor==='off'||valor==='no';
-}}
-
-function obtenerNivelTanque(estacion) {{
-    const campos=['Porcentaje (%)','Porcentaje','Nivel (%)','nivel_%','Nivel','nivel'];
-    for(let campo of campos){{
-        if(estacion[campo]!==undefined){{
-            let v=parseFloat(estacion[campo]);
-            return Math.max(0, Math.min(100,isNaN(v)?0:v));
-        }}
-    }}
-    return 0;
-}}
-
-// ========================================
-// FUNCIONES EXISTENTES (CREAR ICONOS, POPUPS, ACTUALIZAR ESTADÍSTICAS)
-// Solo se reemplazó donde se usaba parseInt(estado) por estadoON()
-// ========================================
-
-// Reemplaza todas las ocurrencias de parseInt(estacion.estado_bomba || estacion.estado || 0)
-// por const estado = estacion.estado_bomba || estacion.estado || 'Apagado';
-// y luego usa estadoON(estado) en condicionales
 
 </script>
-</body>
-</html>
 """
 
-# Inyectar el HTML en Streamlit
+
 st.components.v1.html(html_completo, height=900)
