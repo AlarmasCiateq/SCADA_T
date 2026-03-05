@@ -234,11 +234,18 @@
     },
     {
       "nombre": "Loma de la Providencia",
-      "tipo": "tanque elevado",
+      "tipo": "tanque",
       "en_linea": 0,
-      "latitud": 19.395842,
-      "longitud": -99.625887,
-      "Nivel Tanque Elevado": "0.00 Mts",
+      "latitud": 19.395442,
+      "longitud": -99.626287,
+      "Nivel Tanque Elevado": "0.00 Mts"
+    },
+    {
+      "nombre": "Loma de la Providencia",
+      "tipo": "bomba",
+      "en_linea": 0,
+      "latitud": 19.396241999999997,
+      "longitud": -99.625487,
       "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
       "Alarma de Falla de Fase": "Normal",
@@ -300,33 +307,47 @@
     },
     {
       "nombre": "Rebombeo Jesús García Lovera",
-      "tipo": "tanque superficial",
+      "tipo": "tanque",
       "en_linea": 1,
-      "latitud": 19.307815,
-      "longitud": -99.584318,
+      "latitud": 19.307415000000002,
+      "longitud": -99.584718,
       "Nivel Tanque Superficial": "3.18 Mts",
-      "Gasto Instanáneo": "43.76 Lts/s",
       "Nivel Tanque Elevado": "15.37 Mts",
-      "Presión de Bomba": "1.64 Kg/cm²",
       "Estado del Arrancador Rebombeo 2": "Apagado",
-      "Estado del Arrancador": "Encendido",
       "Estado del Arrancador Rebombeo 1": "Encendido"
     },
     {
+      "nombre": "Rebombeo Jesús García Lovera",
+      "tipo": "bomba",
+      "en_linea": 1,
+      "latitud": 19.308215,
+      "longitud": -99.583918,
+      "Gasto Instanáneo": "43.76 Lts/s",
+      "Presión de Bomba": "1.64 Kg/cm²",
+      "Estado del Arrancador": "Encendido"
+    },
+    {
       "nombre": "Rebombeo Olimpo",
-      "tipo": "tanque elevado",
+      "tipo": "tanque",
       "en_linea": 0,
-      "latitud": 19.298988,
-      "longitud": -99.589281,
+      "latitud": 19.298588000000002,
+      "longitud": -99.589681,
       "Nivel Tanque Elevado": "0.00 Mts",
       "Nivel Tanque Superficial": "0.00 Mts",
-      "Gasto Instantáneo de Red": "0.00 Lts/s",
       "Estado del Arrancador Rebombeo 2": "Apagado",
-      "Alarma Falla de Fase Pozo": "Normal",
       "Alarma Falla Fase  Rebombeo Tnqe Elev.": "Normal",
-      "Estado del Arrancador": "Apagado",
       "Selector Una o Dos Rebombeos": "Una Bomba",
       "Estado del Arrancador Rebombeo 1": "Apagado"
+    },
+    {
+      "nombre": "Rebombeo Olimpo",
+      "tipo": "bomba",
+      "en_linea": 0,
+      "latitud": 19.299388,
+      "longitud": -99.588881,
+      "Gasto Instantáneo de Red": "0.00 Lts/s",
+      "Alarma Falla de Fase Pozo": "Normal",
+      "Estado del Arrancador": "Apagado"
     },
     {
       "nombre": "San Cayetano Morelos",
@@ -358,17 +379,24 @@
       "nombre": "San Nicolas Tolentino ",
       "tipo": "bomba",
       "en_linea": 0,
-      "latitud": 19.34326,
-      "longitud": -99.583221,
+      "latitud": 19.34286,
+      "longitud": -99.583621,
       "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Nivel Tanque Elevado": "0.00 Mts",
-      "Alarma de Nivel Máximo Tanque": "Normal",
-      "Alarma de Nivel Mínimo Tanque": "Normal",
       "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Apagado",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma de Alimentación del Gabinete": "Normal"
+    },
+    {
+      "nombre": "San Nicolas Tolentino ",
+      "tipo": "tanque",
+      "en_linea": 0,
+      "latitud": 19.34366,
+      "longitud": -99.582821,
+      "Nivel Tanque Elevado": "0.00 Mts",
+      "Alarma de Nivel Máximo Tanque": "Normal",
+      "Alarma de Nivel Mínimo Tanque": "Normal"
     },
     {
       "nombre": "San Salvador Huichochitlán",
@@ -437,9 +465,9 @@
     }
   ],
   "metadata": {
-    "ultima_actualizacion": "2026-03-05T21:50:01.012260Z",
+    "ultima_actualizacion": "2026-03-05T21:52:53.428257Z",
     "fuente": "Sistema SCADA CIATEQ",
-    "version": "2.0",
-    "descripcion": "Estructura mejorada con sección 'tipos' para iconos centralizados"
+    "version": "2.1",
+    "descripcion": "Soporte para múltiples iconos por estación con offset de coordenadas"
   }
 }
