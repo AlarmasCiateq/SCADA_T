@@ -454,7 +454,7 @@
     }
   ],
   "metadata": {
-    "version": "5.0-FIX-INVISIBLE-CHARS",
+    "version": "6.0-FULL-SANITIZATION",
     "total": 34
   }
 }
