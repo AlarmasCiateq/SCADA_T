@@ -52,7 +52,7 @@
       "Alarma de Alimentación del Gabinete": "Normal"
     },
     {
-      "nombre": "San Salvador Huichochitlán",
+      "nombre": "San Salvador Huichochitlán",
       "tipo": "bomba",
       "en_linea": 0,
       "latitud": 19.323792,
@@ -91,7 +91,7 @@
       "Alarma Intruso en Gabinete": "No Intruso"
     },
     {
-      "nombre": "Jicaltepec Tepeltitlán",
+      "nombre": "Jicaltepec Tepeltitlán",
       "tipo": "bomba",
       "en_linea": 1,
       "latitud": 19.397353,
@@ -147,7 +147,7 @@
       "Nivel Tanque Superficial": "0.00 Mts"
     },
     {
-      "nombre": "Rebombeo Jesús García Lovera",
+      "nombre": "Rebombeo Jesús García Lovera",
       "tipo": "bomba",
       "en_linea": 1,
       "latitud": 19.307365,
@@ -157,7 +157,7 @@
       "Estado del Arrancador": "Encendido"
     },
     {
-      "nombre": "Rebombeo Jesús García Lovera",
+      "nombre": "Rebombeo Jesús García Lovera",
       "tipo": "rebombeo",
       "en_linea": 1,
       "latitud": 19.308265,
@@ -165,7 +165,7 @@
       "Estado del Arrancador Rebombeo 1": "Encendido"
     },
     {
-      "nombre": "Rebombeo Jesús García Lovera",
+      "nombre": "Rebombeo Jesús García Lovera",
       "tipo": "rebombeo",
       "en_linea": 1,
       "latitud": 19.307365,
@@ -173,7 +173,7 @@
       "Estado del Arrancador Rebombeo 2": "Apagado"
     },
     {
-      "nombre": "Rebombeo Jesús García Lovera",
+      "nombre": "Rebombeo Jesús García Lovera",
       "tipo": "tanque",
       "en_linea": 1,
       "latitud": 19.308265,
@@ -181,7 +181,7 @@
       "Nivel Tanque Elevado": "15.37 Mts"
     },
     {
-      "nombre": "Rebombeo Jesús García Lovera",
+      "nombre": "Rebombeo Jesús García Lovera",
       "tipo": "tanque",
       "en_linea": 1,
       "latitud": 19.307365,
@@ -189,7 +189,7 @@
       "Nivel Tanque Superficial": "3.18 Mts"
     },
     {
-      "nombre": "Sn Cristóbal Huichochitlán Centro",
+      "nombre": "Sn Cristóbal Huichochitlán Centro",
       "tipo": "bomba",
       "en_linea": 0,
       "latitud": 19.336818,
@@ -201,7 +201,7 @@
       "Alarma Intruso en Gabinete": "No Intruso"
     },
     {
-      "nombre": "Sn Andrés Cuexcontitlan Secc III",
+      "nombre": "Sn Andrés Cuexcontitlan Secc III",
       "tipo": "bomba",
       "en_linea": 0,
       "latitud": 19.351898,
@@ -240,7 +240,7 @@
       "Estado del Arrancador": "Apagado"
     },
     {
-      "nombre": "Constitución Totoltepec",
+      "nombre": "Constitución Totoltepec",
       "tipo": "bomba",
       "en_linea": 1,
       "latitud": 19.347579,
@@ -336,7 +336,7 @@
       "Nivel Tanque Elevado": "0.00 Mts"
     },
     {
-      "nombre": "Panteón Cuexcontitlán",
+      "nombre": "Panteón Cuexcontitlán",
       "tipo": "bomba",
       "en_linea": 0,
       "latitud": 19.373622,
@@ -428,7 +428,7 @@
       "Estado del Arrancador": "Apagado"
     },
     {
-      "nombre": "Sta. María de las Rosas",
+      "nombre": "Sta. María de las Rosas",
       "tipo": "bomba",
       "en_linea": 1,
       "latitud": 19.270155,
@@ -482,9 +482,10 @@
     }
   ],
   "metadata": {
-    "version": "10.0-ID-BASED-GROUPING",
+    "version": "12.0-FINAL-ID-BASED",
     "total": 38,
     "estaciones_unicas": 28,
-    "dispositivos_unicos": 38
+    "dispositivos_unicos": 38,
+    "fuente": "MySQL Database Directa"
   }
 }
