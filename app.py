@@ -4339,7 +4339,6 @@ def obtener_favicon_github():
 # ========================================
 favicon_data = obtener_favicon_github()
 
-# CORRECCIÓN AQUÍ: Se completó la condición del if
 if favicon_data:
     st.set_page_config(page_title="SCADA CIATEQ", page_icon="🌎", layout="wide", initial_sidebar_state="collapsed")
     st.markdown(f"""
@@ -4375,6 +4374,11 @@ body { overflow: hidden !important; }
     background: rgba(0,0,0,0.7); color: #27ae60;
     padding: 3px 8px; font-family: monospace; font-size: 11px;
     border-radius: 3px; z-index: 1000;
+}
+/* Forzar transparencia en iconos de leaflet */
+.leaflet-div-icon {
+    background: transparent !important;
+    border: none !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -4449,7 +4453,7 @@ datos_json_safe = json.dumps(datos, ensure_ascii=False)
 datos_json_safe = (datos_json_safe.replace('\\', '\\\\').replace("'", "\\'").replace('</', '<\\/').replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t'))
 
 # ========================================
-# HTML + JAVASCRIPT (CORREGIDO: FONDO TRANSPARENTE)
+# HTML + JAVASCRIPT (CORREGIDO: TRANSPARENCIA TOTAL)
 # ========================================
 html_completo = f"""
 <!DOCTYPE html>
@@ -4494,6 +4498,15 @@ html_completo = f"""
         .leaflet-control-zoom-all {{ background: #fff; border: 2px solid rgba(0,0,0,0.2); border-radius: 4px; box-shadow: 0 1px 5px rgba(0,0,0,0.4); cursor: pointer; margin-top: 5px; }}
         .leaflet-control-zoom-all:hover {{ background: #f4f4f4; }}
         .leaflet-control-zoom-all i {{ display: block; width: 30px; height: 30px; line-height: 30px; text-align: center; font-weight: bold; color: #333; font-size: 20px; }}
+        
+        /* CLASE EXTRA PARA ASEGURAR TRANSPARENCIA EN EL CONTENIDO DEL ICONO */
+        .composite-icon-container {{
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+        }}
     </style>
 </head>
 <body>
@@ -4568,24 +4581,40 @@ html_completo = f"""
             tipos.forEach((tipo) => {{
                 const url = getIconoUrl(tipo, enLinea);
                 if (url) {{
-                    iconsHtml += `<img src="${{url}}" style="width:${{iconSize}}px;height:${{iconSize}}px;object-fit:contain;">`;
+                    // Añadimos estilo inline para asegurar que la imagen no tenga fondo
+                    iconsHtml += `<img src="${{url}}" style="width:${{iconSize}}px;height:${{iconSize}}px;object-fit:contain;background:transparent;border:none;">`;
                 }} else {{
                     const color = (DATOS_INICIALES.tipos[tipo] || {{}}).color || '#7f8c8d';
                     iconsHtml += `<div style="width:${{iconSize}}px;height:${{iconSize}}px;background:${{color}};border-radius:50%;"></div>`;
                 }}
             }});
 
-            // CORRECCIÓN: background: transparent;
             const borderStyle = !enLinea ? `border:2px solid #e74c3c;box-shadow:0 0 0 2px rgba(231,76,60,0.3);` : '';
             
+            // CORRECCIÓN DEFINITIVA: Estilo inline agresivo para transparencia
             const htmlFinal = `
-                <div style="display:grid;grid-template-columns:${{gridTemplate}};gap:2px;align-items:center;justify-items:center;width:${{containerSize}}px;height:${{containerSize}}px;${{borderStyle}}background:transparent;border-radius:6px;padding:2px;">
+                <div class="composite-icon-container" style="
+                    display:grid;
+                    grid-template-columns:${{gridTemplate}};
+                    gap:2px;
+                    align-items:center;
+                    justify-items:center;
+                    width:${{containerSize}}px;
+                    height:${{containerSize}}px;
+                    ${{borderStyle}}
+                    background:transparent !important;
+                    border:none !important;
+                    padding:0 !important;
+                    margin:0 !important;
+                    box-shadow:none !important;
+                ">
                     ${{iconsHtml}}
                 </div>
             `;
 
             return L.divIcon({{
                 html: htmlFinal,
+                className: 'composite-icon-container', // Clase CSS externa también
                 iconSize: [containerSize, containerSize],
                 iconAnchor: [containerSize/2, containerSize/2],
                 popupAnchor: [0, -(containerSize/2)]
