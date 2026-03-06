@@ -4449,8 +4449,9 @@ datos_json_safe = json.dumps(datos, ensure_ascii=False)
 datos_json_safe = (datos_json_safe.replace('\\', '\\\\').replace("'", "\\'").replace('</', '<\\/').replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t'))
 
 # ========================================
-# HTML + JAVASCRIPT
+# HTML + JAVASCRIPT (CORREGIDO)
 # ========================================
+# Nota: Las llaves {{ }} en el JS son para escaparlas del f-string de Python.
 html_completo = f"""
 <!DOCTYPE html>
 <html lang="es">
@@ -4530,7 +4531,6 @@ html_completo = f"""
             return 0;
         }}
 
-        // NUEVA FUNCIÓN: Obtener URL del icono según tipo y estado
         function getIconoUrl(tipo, enLinea) {{
             const tipos = DATOS_INICIALES.tipos || {{}};
             const config = tipos[tipo] || tipos['generico'] || {{}};
@@ -4545,7 +4545,6 @@ html_completo = f"""
             return limpiarUrl(config.icono_url);
         }}
 
-        // NUEVA FUNCIÓN: Crear Icono Compuesto (Grid)
         function crearIconoCompuesto(estacion) {{
             const tipos = estacion.tipos_presentes || ['generico'];
             const enLinea = estacion.en_linea === 1;
@@ -4619,7 +4618,8 @@ html_completo = f"""
                     html += `<div class="var-row"><span class="var-label">${{key}}:</span><span class="var-value">${{value}}</span></div>`;
                 }}
             }}
-            html += `<hr><div class="timestamp">📅 ${new Date().toLocaleString('es-ES')}</div></div>`;
+            // CORRECCIÓN AQUÍ: Llaves escapadas correctamente para el timestamp
+            html += `<hr><div class="timestamp">📅 ${{new Date().toLocaleString('es-ES')}}</div></div>`;
             return html;
         }}
         
@@ -4631,7 +4631,6 @@ html_completo = f"""
             datos.estaciones.forEach(estacion => {{
                 total++;
                 const offline = esOffline(estacion.en_linea);
-                // Usamos tipos_presentes para contar
                 const tipos = estacion.tipos_presentes || [estacion.tipo || 'generico'];
                 const estadoTxt = estacion["Estado del Arrancador"] || "Apagado";
                 const isOn = estadoTxt === "Encendido";
