@@ -479,7 +479,7 @@
     }
   ],
   "metadata": {
-    "ultima_actualizacion": "2026-03-06T16:50:10.232493Z",
+    "ultima_actualizacion": "2026-03-06T16:51:11.728861Z",
     "fuente": "Sistema SCADA CIATEQ",
     "version": "3.0-ORDERED-FLOW",
     "descripcion": "Agrupación nativa por SQL ORDER BY. Sin diccionarios intermedios complejos.",
