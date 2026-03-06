@@ -4307,7 +4307,6 @@
 # time.sleep(60)
 # st.rerun()
 
-
 import streamlit as st
 import requests
 import json
@@ -4340,7 +4339,7 @@ def obtener_favicon_github():
 # ========================================
 favicon_data = obtener_favicon_github()
 
-if favicon_data:
+if favicon_
     st.set_page_config(page_title="SCADA CIATEQ", page_icon="🌎", layout="wide", initial_sidebar_state="collapsed")
     st.markdown(f"""
     <link rel="icon" href="{favicon_data}" type="image/x-icon">
@@ -4449,9 +4448,8 @@ datos_json_safe = json.dumps(datos, ensure_ascii=False)
 datos_json_safe = (datos_json_safe.replace('\\', '\\\\').replace("'", "\\'").replace('</', '<\\/').replace('\n', '\\n').replace('\r', '\\r').replace('\t', '\\t'))
 
 # ========================================
-# HTML + JAVASCRIPT (CORREGIDO)
+# HTML + JAVASCRIPT (CORREGIDO: FONDO TRANSPARENTE)
 # ========================================
-# Nota: Las llaves {{ }} en el JS son para escaparlas del f-string de Python.
 html_completo = f"""
 <!DOCTYPE html>
 <html lang="es">
@@ -4576,10 +4574,11 @@ html_completo = f"""
                 }}
             }});
 
+            // CORRECCIÓN AQUÍ: background: transparent; en lugar de white
             const borderStyle = !enLinea ? `border:2px solid #e74c3c;box-shadow:0 0 0 2px rgba(231,76,60,0.3);` : '';
             
             const htmlFinal = `
-                <div style="display:grid;grid-template-columns:${{gridTemplate}};gap:2px;align-items:center;justify-items:center;width:${{containerSize}}px;height:${{containerSize}}px;${{borderStyle}}background:white;border-radius:6px;padding:2px;">
+                <div style="display:grid;grid-template-columns:${{gridTemplate}};gap:2px;align-items:center;justify-items:center;width:${{containerSize}}px;height:${{containerSize}}px;${{borderStyle}}background:transparent;border-radius:6px;padding:2px;">
                     ${{iconsHtml}}
                 </div>
             `;
@@ -4618,7 +4617,6 @@ html_completo = f"""
                     html += `<div class="var-row"><span class="var-label">${{key}}:</span><span class="var-value">${{value}}</span></div>`;
                 }}
             }}
-            // CORRECCIÓN AQUÍ: Llaves escapadas correctamente para el timestamp
             html += `<hr><div class="timestamp">📅 ${{new Date().toLocaleString('es-ES')}}</div></div>`;
             return html;
         }}
