@@ -4339,7 +4339,8 @@ def obtener_favicon_github():
 # ========================================
 favicon_data = obtener_favicon_github()
 
-if favicon_
+# CORRECCIÓN AQUÍ: Se completó la condición del if
+if favicon_data:
     st.set_page_config(page_title="SCADA CIATEQ", page_icon="🌎", layout="wide", initial_sidebar_state="collapsed")
     st.markdown(f"""
     <link rel="icon" href="{favicon_data}" type="image/x-icon">
@@ -4574,7 +4575,7 @@ html_completo = f"""
                 }}
             }});
 
-            // CORRECCIÓN AQUÍ: background: transparent; en lugar de white
+            // CORRECCIÓN: background: transparent;
             const borderStyle = !enLinea ? `border:2px solid #e74c3c;box-shadow:0 0 0 2px rgba(231,76,60,0.3);` : '';
             
             const htmlFinal = `
