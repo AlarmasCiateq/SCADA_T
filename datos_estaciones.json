@@ -71,10 +71,10 @@
       "longitud": -99.597446,
       "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.52 Kg/cm²",
-      "Alarma de Alimentación del Gabinete": "Normal",
       "Estado del Arrancador": "Encendido",
+      "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma de Falla de Fase": "Normal",
-      "Alarma Intruso en Gabinete": "No Intruso"
+      "Alarma de Alimentación del Gabinete": "Normal"
     },
     {
       "nombre": "Barrio la Y",
@@ -110,10 +110,10 @@
       "longitud": -99.553693,
       "Presión de Bomba": "2.71 Kg/cm²",
       "Gasto Instanáneo": "23.14 Lts/s",
-      "Estado del Arrancador": "Encendido",
       "Alarma Intruso en Gabinete": "No Intruso",
+      "Alarma de Alimentación del Gabinete": "Normal",
       "Alarma de Falla de Fase": "Normal",
-      "Alarma de Alimentación del Gabinete": "Normal"
+      "Estado del Arrancador": "Encendido"
     },
     {
       "nombre": "El Ranchito",
@@ -137,10 +137,10 @@
       "longitud": -99.598025,
       "Presión de Bomba": "0.00 Kg/cm²",
       "Gasto Instanáneo": "12.95 Lts/s",
-      "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma de Alimentación del Gabinete": "Normal",
+      "Estado del Arrancador": "Encendido",
       "Alarma Falla de Fase Pozo": "Normal",
-      "Estado del Arrancador": "Encendido"
+      "Alarma Intruso en Gabinete": "No Intruso"
     },
     {
       "nombre": "Jicaltepec Autopan",
@@ -151,8 +151,8 @@
       "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
       "Alarma de Alimentación del Gabinete": "Normal",
-      "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Apagado",
+      "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso"
     },
     {
@@ -163,9 +163,9 @@
       "longitud": -99.676053,
       "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Alarma de Alimentación del Gabinete": "Normal",
+      "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Apagado",
-      "Alarma de Falla de Fase": "Normal"
+      "Alarma de Alimentación del Gabinete": "Normal"
     },
     {
       "nombre": "Juan Rodriguez",
@@ -201,10 +201,10 @@
       "longitud": -99.62634,
       "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Alarma de Alimentación del Gabinete": "Normal",
       "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Apagado",
-      "Alarma Intruso en Gabinete": "No Intruso"
+      "Alarma Intruso en Gabinete": "No Intruso",
+      "Alarma de Alimentación del Gabinete": "Normal"
     },
     {
       "nombre": "La Mora",
@@ -228,9 +228,9 @@
       "Gasto Instanáneo": "29.02 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
       "Alarma de Falla de Fase": "Normal",
-      "Estado del Arrancador": "Encendido",
       "Alarma Intruso en Gabinete": "Intruso",
-      "Alarma de Alimentación del Gabinete": "Normal"
+      "Alarma de Alimentación del Gabinete": "Normal",
+      "Estado del Arrancador": "Encendido"
     },
     {
       "nombre": "Loma de la Providencia",
@@ -240,8 +240,8 @@
       "longitud": -99.626137,
       "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Apagado",
+      "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma de Alimentación del Gabinete": "Normal"
     },
@@ -300,10 +300,10 @@
       "longitud": -99.621621,
       "Presión de Bomba": "0.00 Kg/cm²",
       "Gasto Instanáneo": "0.00 Lts/s",
-      "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Apagado",
       "Alarma Intruso en Gabinete": "No Intruso",
-      "Alarma de Alimentación del Gabinete": "Normal"
+      "Alarma de Alimentación del Gabinete": "Normal",
+      "Alarma de Falla de Fase": "Normal"
     },
     {
       "nombre": "Rebombeo Jesús García Lovera",
@@ -323,8 +323,8 @@
       "longitud": -99.584068,
       "Nivel Tanque Superficial": "3.18 Mts",
       "Nivel Tanque Elevado": "15.37 Mts",
-      "Estado del Arrancador Rebombeo 2": "Apagado",
-      "Estado del Arrancador Rebombeo 1": "Encendido"
+      "Estado del Arrancador Rebombeo 1": "Encendido",
+      "Estado del Arrancador Rebombeo 2": "Apagado"
     },
     {
       "nombre": "Rebombeo Olimpo",
@@ -344,10 +344,10 @@
       "longitud": -99.589031,
       "Nivel Tanque Elevado": "0.00 Mts",
       "Nivel Tanque Superficial": "0.00 Mts",
-      "Estado del Arrancador Rebombeo 2": "Apagado",
       "Alarma Falla Fase  Rebombeo Tnqe Elev.": "Normal",
       "Selector Una o Dos Rebombeos": "Una Bomba",
-      "Estado del Arrancador Rebombeo 1": "Apagado"
+      "Estado del Arrancador Rebombeo 1": "Apagado",
+      "Estado del Arrancador Rebombeo 2": "Apagado"
     },
     {
       "nombre": "San Cayetano Morelos",
@@ -368,12 +368,12 @@
       "en_linea": 1,
       "latitud": 19.309274,
       "longitud": -99.611217,
-      "Gasto Instanáneo": "30.31 Lts/s",
       "Presión de Bomba": "1.46 Kg/cm²",
-      "Alarma de Alimentación del Gabinete": "Normal",
+      "Gasto Instanáneo": "30.31 Lts/s",
       "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Encendido",
-      "Alarma Intruso en Gabinete": "No Intruso"
+      "Alarma Intruso en Gabinete": "No Intruso",
+      "Alarma de Alimentación del Gabinete": "Normal"
     },
     {
       "nombre": "San Nicolas Tolentino ",
@@ -383,8 +383,8 @@
       "longitud": -99.58347099999999,
       "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Apagado",
+      "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma de Alimentación del Gabinete": "Normal"
     },
@@ -395,8 +395,8 @@
       "latitud": 19.34326,
       "longitud": -99.582971,
       "Nivel Tanque Elevado": "0.00 Mts",
-      "Alarma de Nivel Máximo Tanque": "Normal",
-      "Alarma de Nivel Mínimo Tanque": "Normal"
+      "Alarma de Nivel Mínimo Tanque": "Normal",
+      "Alarma de Nivel Máximo Tanque": "Normal"
     },
     {
       "nombre": "San Salvador Huichochitlán",
@@ -407,8 +407,8 @@
       "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
       "Estado del Arrancador": "Apagado",
-      "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
+      "Alarma de Falla de Fase": "Normal",
       "Alarma de Alimentación del Gabinete": "Normal"
     },
     {
@@ -433,10 +433,10 @@
       "longitud": -99.635709,
       "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Alarma de Alimentación del Gabinete": "Normal",
       "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Apagado",
-      "Alarma Intruso en Gabinete": "No Intruso"
+      "Alarma Intruso en Gabinete": "No Intruso",
+      "Alarma de Alimentación del Gabinete": "Normal"
     },
     {
       "nombre": "Sn Cristóbal Huichochitlán Centro",
@@ -444,8 +444,8 @@
       "en_linea": 0,
       "latitud": 19.336818,
       "longitud": -99.635487,
-      "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
+      "Gasto Instanáneo": "0.00 Lts/s",
       "Estado del Arrancador": "Apagado",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma de Falla de Fase": "Normal"
@@ -465,7 +465,7 @@
     }
   ],
   "metadata": {
-    "ultima_actualizacion": "2026-03-05T22:32:59.395549Z",
+    "ultima_actualizacion": "2026-03-06T16:26:28.867857Z",
     "fuente": "Sistema SCADA CIATEQ",
     "version": "2.2",
     "descripcion": "Offset horizontal exclusivo para múltiples iconos"
