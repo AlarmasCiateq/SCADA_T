@@ -57,13 +57,13 @@
       "en_linea": 1,
       "latitud": 19.323792,
       "longitud": -99.637276,
+      "Gasto Instanáneo": "13.44 Lts/s",
       "Presión de Bomba": "1.21 Kg/cm²",
       "Gasto Total Acumulado": "4685665.00 M³",
-      "Gasto Instanáneo": "13.44 Lts/s",
-      "Alarma Intruso en Caseta": "No Intruso",
-      "Alarma Intruso en Gabinete": "Intruso",
       "Alarma de Falla de Fase": "Normal",
-      "Automático/Manual Pozo": "Manual"
+      "Alarma Intruso en Gabinete": "Intruso",
+      "Automático/Manual Pozo": "Manual",
+      "Alarma Intruso en Caseta": "No Intruso"
     },
     {
       "nombre": "San Isidro",
@@ -71,14 +71,14 @@
       "en_linea": 1,
       "latitud": 19.309274,
       "longitud": -99.611217,
-      "Gasto Instanáneo": "27.59 Lts/s",
+      "Gasto Instanáneo": "27.80 Lts/s",
+      "Presión de Bomba": "1.59 Kg/cm²",
       "Gasto Total Acumulado": "1.00 M³",
-      "Presión de Bomba": "1.60 Kg/cm²",
+      "Alarma Intruso en Caseta": "Intruso",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Automático/Manual Pozo": "Manual",
       "Alarma de Falla de Fase": "Normal",
-      "Estado del Arrancador": "Encendido",
-      "Alarma Intruso en Caseta": "Intruso"
+      "Estado del Arrancador": "Encendido"
     },
     {
       "nombre": "Barrio Canaleja Otzacatipan",
@@ -87,13 +87,13 @@
       "latitud": 19.328375,
       "longitud": -99.597446,
       "Gasto Instanáneo": "0.00 Lts/s",
-      "Gasto Total Acumulado": "1212647.00 M³",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Estado del Arrancador": "Encendido",
-      "Alarma Intruso en Caseta": "No Intruso",
-      "Alarma de Falla de Fase": "Normal",
+      "Gasto Total Acumulado": "1212647.00 M³",
+      "Automático/Manual Pozo": "Manual",
       "Alarma Intruso en Gabinete": "No Intruso",
-      "Automático/Manual Pozo": "Manual"
+      "Alarma de Falla de Fase": "Normal",
+      "Estado del Arrancador": "Encendido",
+      "Alarma Intruso en Caseta": "No Intruso"
     },
     {
       "nombre": "Jicaltepec Tepeltitlán",
@@ -103,8 +103,8 @@
       "longitud": -99.676053,
       "Presión de Bomba": "0.00 Kg/cm²",
       "Gasto Instanáneo": "0.00 Lts/s",
-      "Alarma de Alimentación del Gabinete": "Normal",
       "Estado del Arrancador": "Apagado",
+      "Alarma de Alimentación del Gabinete": "Normal",
       "Alarma de Falla de Fase": "Normal"
     },
     {
@@ -113,7 +113,7 @@
       "en_linea": 1,
       "latitud": 19.298538,
       "longitud": -99.589731,
-      "Gasto Instantáneo de Red": "0.00 Lts/s",
+      "Gasto Instantáneo de Red": "0.84 Lts/s",
       "Alarma Falla de Fase Pozo": "Falla Fase",
       "Estado del Arrancador": "Encendido"
     },
@@ -123,9 +123,9 @@
       "en_linea": 1,
       "latitud": 19.299438,
       "longitud": -99.588831,
+      "Alarma Falla Fase  Rebombeo Tnqe Elev.": "Falla Fase",
       "Estado del Arrancador Rebombeo 1": "Apagado",
-      "Selector Una o Dos Rebombeos": "Dos Bombas",
-      "Alarma Falla Fase  Rebombeo Tnqe Elev.": "Falla Fase"
+      "Selector Una o Dos Rebombeos": "Dos Bombas"
     },
     {
       "nombre": "Rebombeo Olimpo",
@@ -141,7 +141,7 @@
       "en_linea": 1,
       "latitud": 19.299438,
       "longitud": -99.589731,
-      "Nivel Tanque Elevado": "2.03 Mts"
+      "Nivel Tanque Elevado": "2.00 Mts"
     },
     {
       "nombre": "Rebombeo Olimpo",
@@ -149,7 +149,7 @@
       "en_linea": 1,
       "latitud": 19.298538,
       "longitud": -99.589731,
-      "Nivel Tanque Superficial": "1.80 Mts"
+      "Nivel Tanque Superficial": "1.81 Mts"
     },
     {
       "nombre": "Rebombeo Jesús García Lovera",
@@ -157,8 +157,8 @@
       "en_linea": 1,
       "latitud": 19.307365,
       "longitud": -99.584768,
-      "Gasto Instanáneo": "43.14 Lts/s",
-      "Presión de Bomba": "1.67 Kg/cm²",
+      "Gasto Instanáneo": "42.84 Lts/s",
+      "Presión de Bomba": "1.58 Kg/cm²",
       "Estado del Arrancador": "Encendido"
     },
     {
@@ -183,7 +183,7 @@
       "en_linea": 1,
       "latitud": 19.308265,
       "longitud": -99.584768,
-      "Nivel Tanque Elevado": "19.28 Mts"
+      "Nivel Tanque Elevado": "18.99 Mts"
     },
     {
       "nombre": "Rebombeo Jesús García Lovera",
@@ -212,11 +212,11 @@
       "latitud": 19.351898,
       "longitud": -99.635709,
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Gasto Instanáneo": "23.78 Lts/s",
-      "Alarma Intruso en Gabinete": "No Intruso",
-      "Alarma de Falla de Fase": "Normal",
+      "Gasto Instanáneo": "23.94 Lts/s",
       "Estado del Arrancador": "Encendido",
-      "Alarma de Alimentación del Gabinete": "Normal"
+      "Alarma de Alimentación del Gabinete": "Normal",
+      "Alarma Intruso en Gabinete": "No Intruso",
+      "Alarma de Falla de Fase": "Normal"
     },
     {
       "nombre": "La Concepcion Huichochitlan",
@@ -226,10 +226,10 @@
       "longitud": -99.62634,
       "Presión de Bomba": "10.82 Kg/cm²",
       "Gasto Instanáneo": "0.00 Lts/s",
-      "Alarma Intruso en Gabinete": "No Intruso",
-      "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Encendido",
-      "Alarma de Alimentación del Gabinete": "Normal"
+      "Alarma de Alimentación del Gabinete": "Normal",
+      "Alarma Intruso en Gabinete": "No Intruso",
+      "Alarma de Falla de Fase": "Normal"
     },
     {
       "nombre": "Magdalena Otzacatipan",
@@ -237,12 +237,12 @@
       "en_linea": 0,
       "latitud": 19.336897,
       "longitud": -99.612803,
-      "Presión de Bomba": "0.00 Kg/cm²",
       "Gasto Instanáneo": "0.00 Lts/s",
+      "Presión de Bomba": "0.00 Kg/cm²",
+      "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Apagado",
-      "Alarma de Alimentación del Gabinete": "Normal",
-      "Alarma de Falla de Fase": "Normal"
+      "Alarma de Alimentación del Gabinete": "Normal"
     },
     {
       "nombre": "Constitución Totoltepec",
@@ -250,12 +250,12 @@
       "en_linea": 1,
       "latitud": 19.347579,
       "longitud": -99.553693,
+      "Presión de Bomba": "3.72 Kg/cm²",
       "Gasto Instanáneo": "0.00 Lts/s",
-      "Presión de Bomba": "3.70 Kg/cm²",
+      "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
       "Alarma de Alimentación del Gabinete": "Normal",
-      "Alarma de Falla de Fase": "Falla de Fase",
-      "Alarma Intruso en Gabinete": "No Intruso"
+      "Alarma de Falla de Fase": "Falla de Fase"
     },
     {
       "nombre": "Jicaltepec Autopan",
@@ -263,12 +263,12 @@
       "en_linea": 1,
       "latitud": 19.371947,
       "longitud": -99.641861,
-      "Presión de Bomba": "0.00 Kg/cm²",
       "Gasto Instanáneo": "22.41 Lts/s",
+      "Presión de Bomba": "0.00 Kg/cm²",
+      "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Encendido",
       "Alarma de Alimentación del Gabinete": "Normal",
-      "Alarma Intruso en Gabinete": "No Intruso",
-      "Alarma de Falla de Fase": "Normal"
+      "Alarma Intruso en Gabinete": "No Intruso"
     },
     {
       "nombre": "La Soledad",
@@ -276,12 +276,12 @@
       "en_linea": 1,
       "latitud": 19.247785,
       "longitud": -99.679847,
-      "Gasto Instanáneo": "26.12 Lts/s",
+      "Gasto Instanáneo": "26.14 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
+      "Alarma Intruso en Gabinete": "Intruso",
       "Alarma de Falla de Fase": "Falla de Fase",
       "Estado del Arrancador": "Encendido",
-      "Alarma de Alimentación del Gabinete": "Normal",
-      "Alarma Intruso en Gabinete": "Intruso"
+      "Alarma de Alimentación del Gabinete": "Normal"
     },
     {
       "nombre": "San Nicolas Tolentino",
@@ -289,12 +289,12 @@
       "en_linea": 0,
       "latitud": 19.34281,
       "longitud": -99.583671,
-      "Presión de Bomba": "0.00 Kg/cm²",
       "Gasto Instanáneo": "0.00 Lts/s",
-      "Alarma Intruso en Gabinete": "No Intruso",
-      "Alarma de Falla de Fase": "Normal",
+      "Presión de Bomba": "0.00 Kg/cm²",
       "Estado del Arrancador": "Apagado",
-      "Alarma de Alimentación del Gabinete": "Normal"
+      "Alarma de Alimentación del Gabinete": "Normal",
+      "Alarma Intruso en Gabinete": "No Intruso",
+      "Alarma de Falla de Fase": "Normal"
     },
     {
       "nombre": "San Nicolas Tolentino",
@@ -314,9 +314,9 @@
       "longitud": -99.598025,
       "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
+      "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Apagado",
       "Alarma de Alimentación del Gabinete": "Normal",
-      "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma Falla de Fase Pozo": "Normal"
     },
     {
@@ -325,10 +325,10 @@
       "en_linea": 0,
       "latitud": 19.395392,
       "longitud": -99.626337,
-      "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Alarma de Alimentación del Gabinete": "Normal",
+      "Gasto Instanáneo": "0.00 Lts/s",
       "Alarma de Falla de Fase": "Normal",
+      "Alarma de Alimentación del Gabinete": "Normal",
       "Estado del Arrancador": "Apagado",
       "Alarma Intruso en Gabinete": "No Intruso"
     },
@@ -346,12 +346,12 @@
       "en_linea": 1,
       "latitud": 19.373622,
       "longitud": -99.621621,
-      "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.51 Kg/cm²",
-      "Alarma Intruso en Gabinete": "Intruso",
-      "Alarma de Falla de Fase": "Normal",
+      "Gasto Instanáneo": "0.00 Lts/s",
       "Estado del Arrancador": "Encendido",
-      "Alarma de Alimentación del Gabinete": "Normal"
+      "Alarma de Alimentación del Gabinete": "Normal",
+      "Alarma Intruso en Gabinete": "Intruso",
+      "Alarma de Falla de Fase": "Normal"
     },
     {
       "nombre": "Barrio la Y",
@@ -359,8 +359,8 @@
       "en_linea": 1,
       "latitud": 19.380299,
       "longitud": -99.600496,
-      "Presión de Bomba": "0.00 Kg/cm²",
       "Gasto Instanáneo": "0.00 Lts/s",
+      "Presión de Bomba": "0.00 Kg/cm²",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Apagado",
@@ -372,13 +372,13 @@
       "en_linea": 1,
       "latitud": 19.321172,
       "longitud": -99.625836,
-      "Gasto Instanáneo": "16.22 Lts/s",
-      "Presión de Bomba": "1.46 Kg/cm²",
-      "Alarma Intruso en Gabinete": "Intruso",
+      "Presión de Bomba": "1.43 Kg/cm²",
+      "Gasto Instanáneo": "15.20 Lts/s",
       "Alarma de Alimentación del Gabinete": "A Batería",
       "Estado del Arrancador": "Encendido",
       "Alarma Intruso en Caseta": "Intruso",
-      "Alarma de Falla de Fase": "Normal"
+      "Alarma de Falla de Fase": "Normal",
+      "Alarma Intruso en Gabinete": "Intruso"
     },
     {
       "nombre": "Moderna de la Cruz",
@@ -386,12 +386,12 @@
       "en_linea": 1,
       "latitud": 19.265423,
       "longitud": -99.65629,
-      "Gasto Instanáneo": "27.84 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Alarma de Falla de Fase": "Normal",
-      "Alarma Intruso en Gabinete": "Intruso",
+      "Gasto Instanáneo": "28.37 Lts/s",
       "Alarma de Alimentación del Gabinete": "Normal",
-      "Estado del Arrancador": "Encendido"
+      "Estado del Arrancador": "Encendido",
+      "Alarma de Falla de Fase": "Normal",
+      "Alarma Intruso en Gabinete": "Intruso"
     },
     {
       "nombre": "Pablo Sidar",
@@ -399,7 +399,7 @@
       "en_linea": 1,
       "latitud": 19.277536,
       "longitud": -99.653216,
-      "Presión de Bomba": "3.08 Kg/cm²",
+      "Presión de Bomba": "3.06 Kg/cm²",
       "Gasto Instanáneo": "20.04 Lts/s",
       "Alarma de Alimentación del Gabinete": "Normal",
       "Estado del Arrancador": "Encendido",
@@ -412,21 +412,21 @@
       "en_linea": 0,
       "latitud": 19.275795,
       "longitud": -99.658216,
-      "Presión de Bomba": "0.00 Kg/cm²",
       "Gasto Instanáneo": "0.00 Lts/s",
-      "Alarma de Alimentación del Gabinete": "Normal",
-      "Estado del Arrancador": "Apagado",
+      "Presión de Bomba": "0.00 Kg/cm²",
       "Alarma de Falla de Fase": "Normal",
-      "Alarma Intruso en Gabinete": "No Intruso"
+      "Alarma Intruso en Gabinete": "No Intruso",
+      "Alarma de Alimentación del Gabinete": "Normal",
+      "Estado del Arrancador": "Apagado"
     },
     {
       "nombre": "El Rastro",
       "tipo": "bomba",
-      "en_linea": 1,
+      "en_linea": 0,
       "latitud": 19.316811,
       "longitud": -99.631672,
+      "Gasto Instanáneo": "29.27 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Gasto Instanáneo": "29.18 Lts/s",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Encendido",
@@ -438,12 +438,12 @@
       "en_linea": 1,
       "latitud": 19.248571,
       "longitud": -99.62621,
-      "Gasto Instanáneo": "43.03 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Estado del Arrancador": "Encendido",
+      "Gasto Instanáneo": "43.09 Lts/s",
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
-      "Alarma Intruso en Caseta": "No Intruso"
+      "Alarma Intruso en Caseta": "No Intruso",
+      "Estado del Arrancador": "Encendido"
     },
     {
       "nombre": "Palma Toltepec",
@@ -451,12 +451,12 @@
       "en_linea": 0,
       "latitud": 19.340968,
       "longitud": -99.701471,
-      "Gasto Instanáneo": "0.00 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²",
-      "Alarma de Falla de Fase": "Normal",
-      "Alarma Intruso en Gabinete": "No Intruso",
+      "Gasto Instanáneo": "0.00 Lts/s",
       "Alarma Intruso en Caseta": "No Intruso",
-      "Estado del Arrancador": "Apagado"
+      "Estado del Arrancador": "Apagado",
+      "Alarma de Falla de Fase": "Normal",
+      "Alarma Intruso en Gabinete": "No Intruso"
     },
     {
       "nombre": "Santiago Tlaxacomulco",
@@ -466,10 +466,10 @@
       "longitud": -99.670151,
       "Presión de Bomba": "0.00 Kg/cm²",
       "Gasto Instanáneo": "0.00 Lts/s",
-      "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma Intruso en Caseta": "No Intruso",
       "Estado del Arrancador": "Apagado",
-      "Alarma de Falla de Fase": "Normal"
+      "Alarma de Falla de Fase": "Normal",
+      "Alarma Intruso en Gabinete": "No Intruso"
     },
     {
       "nombre": "La Pila",
@@ -479,10 +479,10 @@
       "longitud": -99.704005,
       "Presión de Bomba": "0.00 Kg/cm²",
       "Gasto Instanáneo": "5.91 Lts/s",
-      "Estado del Arrancador": "Encendido",
-      "Alarma Intruso en Caseta": "No Intruso",
       "Alarma Intruso en Gabinete": "No Intruso",
-      "Alarma de Falla de Fase": "Falla de Fase"
+      "Alarma de Falla de Fase": "Falla de Fase",
+      "Estado del Arrancador": "Encendido",
+      "Alarma Intruso en Caseta": "No Intruso"
     },
     {
       "nombre": "Sor Juana",
@@ -490,12 +490,12 @@
       "en_linea": 1,
       "latitud": 19.315026,
       "longitud": -99.563188,
+      "Gasto Instanáneo": "36.58 Lts/s",
       "Presión de Bomba": "2.33 Kg/cm²",
-      "Gasto Instanáneo": "36.62 Lts/s",
-      "Alarma Intruso en Caseta": "Intruso",
-      "Estado del Arrancador": "Encendido",
       "Alarma de Falla de Fase": "Normal",
-      "Alarma Intruso en Gabinete": "Intruso"
+      "Alarma Intruso en Gabinete": "Intruso",
+      "Alarma Intruso en Caseta": "No Intruso",
+      "Estado del Arrancador": "Encendido"
     },
     {
       "nombre": "Sta. María de las Rosas",
@@ -516,12 +516,12 @@
       "en_linea": 1,
       "latitud": 19.303316,
       "longitud": -99.646848,
+      "Presión de Bomba": "6.41 Kg/cm²",
       "Gasto Instanáneo": "21.43 Lts/s",
-      "Presión de Bomba": "6.38 Kg/cm²",
-      "Alarma Intruso en Gabinete": "No Intruso",
-      "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Encendido",
-      "Alarma Intruso en Caseta": "No Intruso"
+      "Alarma Intruso en Caseta": "No Intruso",
+      "Alarma Intruso en Gabinete": "No Intruso",
+      "Alarma de Falla de Fase": "Normal"
     },
     {
       "nombre": "Seminario II",
@@ -529,13 +529,13 @@
       "en_linea": 1,
       "latitud": 19.27059,
       "longitud": -99.672493,
-      "Presión de Bomba": "2.18 Kg/cm²",
-      "Gasto Instanáneo": "43.73 Lts/s",
-      "Arranque Bomba": "---",
+      "Gasto Instanáneo": "43.59 Lts/s",
+      "Presión de Bomba": "2.10 Kg/cm²",
       "Estado del Arrancador": "Encendido",
       "Alarma Intruso en Caseta": "No Intruso",
       "Alarma de Falla de Fase": "Normal",
-      "Alarma Intruso en Gabinete": "No Intruso"
+      "Alarma Intruso en Gabinete": "No Intruso",
+      "Arranque Bomba": "---"
     },
     {
       "nombre": "Bomberos",
@@ -559,11 +559,11 @@
       "Presión de Bomba": "0.00 Kg/cm²",
       "Gasto Total Acumulado": "0.00 M³",
       "Gasto Instanáneo": "0.00 Lts/s",
+      "Automático/Manual Pozo": "Automático",
       "Estado del Arrancador": "Apagado",
       "Alarma Intruso en Caseta": "No Intruso",
       "Alarma de Falla de Fase": "Normal",
-      "Alarma Intruso en Gabinete": "No Intruso",
-      "Automático/Manual Pozo": "Automático"
+      "Alarma Intruso en Gabinete": "No Intruso"
     },
     {
       "nombre": "Mercado Juárez",
@@ -597,9 +597,9 @@
       "en_linea": 1,
       "latitud": 19.25482,
       "longitud": -99.619868,
-      "Gasto Total Acumulado": "891912.00 M³",
-      "Presión de Bomba": "3.30 Kg/cm²",
-      "Gasto Instanáneo": "55.20 Lts/s",
+      "Gasto Total Acumulado": "891917.00 M³",
+      "Presión de Bomba": "3.29 Kg/cm²",
+      "Gasto Instanáneo": "55.39 Lts/s",
       "Alarma Intruso en Caseta": "No Intruso",
       "Estado del Arrancador": "Encendido",
       "Alarma de Falla de Fase": "Normal",
@@ -611,9 +611,9 @@
       "en_linea": 1,
       "latitud": 19.275809,
       "longitud": -99.63651,
-      "Gasto Instanáneo": "31.36 Lts/s",
-      "Gasto Total Acumulado": "484184.00 M³",
-      "Presión de Bomba": "1.71 Kg/cm²",
+      "Gasto Instanáneo": "31.49 Lts/s",
+      "Gasto Total Acumulado": "484187.00 M³",
+      "Presión de Bomba": "1.70 Kg/cm²",
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "Intruso",
       "Alarma de Alimentación del Gabinete": "A Batería",
@@ -625,14 +625,14 @@
       "en_linea": 1,
       "latitud": 19.286713,
       "longitud": -99.695208,
-      "Presión de Bomba": "0.78 Kg/cm²",
-      "Gasto Total Acumulado": "253140.00 M³",
-      "Gasto Instanáneo": "23.92 Lts/s",
+      "Presión de Bomba": "0.77 Kg/cm²",
+      "Gasto Total Acumulado": "253141.00 M³",
+      "Gasto Instanáneo": "23.83 Lts/s",
+      "Automático/Manual Pozo": "Manual",
       "Estado del Arrancador": "Encendido",
       "Alarma Intruso en Caseta": "No Intruso",
       "Alarma de Falla de Fase": "Normal",
-      "Alarma Intruso en Gabinete": "Intruso",
-      "Automático/Manual Pozo": "Manual"
+      "Alarma Intruso en Gabinete": "Intruso"
     },
     {
       "nombre": "Sierra Morelos",
@@ -640,9 +640,9 @@
       "en_linea": 1,
       "latitud": 19.295005,
       "longitud": -99.694051,
-      "Gasto Instanáneo": "30.00 Lts/s",
-      "Gasto Total Acumulado": "252525.00 M³",
-      "Presión de Bomba": "1.43 Kg/cm²",
+      "Gasto Instanáneo": "29.84 Lts/s",
+      "Gasto Total Acumulado": "252527.00 M³",
+      "Presión de Bomba": "1.45 Kg/cm²",
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "Intruso",
       "Alarma Intruso en Caseta": "No Intruso",
@@ -655,8 +655,8 @@
       "latitud": 19.279877,
       "longitud": -99.633663,
       "Presión de Bomba": "1.04 Kg/cm²",
-      "Gasto Instanáneo": "17.03 Lts/s",
-      "Gasto Total Acumulado": "46766.00 M³",
+      "Gasto Instanáneo": "17.05 Lts/s",
+      "Gasto Total Acumulado": "46767.00 M³",
       "Alarma Intruso en Caseta": "No Intruso",
       "Estado del Arrancador": "Encendido",
       "Alarma de Falla de Fase": "Normal",
@@ -668,9 +668,9 @@
       "en_linea": 1,
       "latitud": 19.349602,
       "longitud": -99.602516,
-      "Gasto Instanáneo": "40.18 Lts/s",
-      "Gasto Total Acumulado": "67769.00 M³",
-      "Presión de Bomba": "5.34 Kg/cm²",
+      "Gasto Instanáneo": "40.29 Lts/s",
+      "Gasto Total Acumulado": "67772.00 M³",
+      "Presión de Bomba": "5.37 Kg/cm²",
       "Local/Remoto Pozo": "Remoto",
       "Alarma Intruso en Caseta": "No Intruso",
       "Estado del Arrancador": "Encendido",
@@ -683,8 +683,8 @@
       "en_linea": 1,
       "latitud": 19.326789,
       "longitud": -99.659889,
-      "Gasto Total Acumulado": "115645.00 M³",
-      "Gasto Instanáneo": "18.74 Lts/s",
+      "Gasto Total Acumulado": "115646.00 M³",
+      "Gasto Instanáneo": "18.79 Lts/s",
       "Alarma de Falla de Fase": "Falla de Fase",
       "Automático/Manual Pozo": "Manual",
       "Alarma Intruso en Gabinete": "No Intruso",
@@ -698,9 +698,9 @@
       "en_linea": 1,
       "latitud": 19.275823,
       "longitud": -99.668889,
-      "Gasto Total Acumulado": "67769.00 M³",
-      "Presión de Bomba": "5.35 Kg/cm²",
-      "Gasto Instanáneo": "40.18 Lts/s",
+      "Gasto Instanáneo": "40.32 Lts/s",
+      "Gasto Total Acumulado": "67772.00 M³",
+      "Presión de Bomba": "5.38 Kg/cm²",
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Caseta": "No Intruso",
       "Estado del Arrancador": "Encendido",
@@ -728,7 +728,7 @@
       "en_linea": 1,
       "latitud": 19.257955,
       "longitud": -99.643826,
-      "Gasto Instanáneo": "20.17 Lts/s",
+      "Gasto Instanáneo": "20.57 Lts/s",
       "Gasto Total Acumulado": "133.00 M³",
       "Presión de Bomba": "2.58 Kg/cm²",
       "Alarma de Falla de Fase": "Normal",
@@ -742,7 +742,7 @@
       "en_linea": 1,
       "latitud": 19.269072,
       "longitud": -99.671841,
-      "Gasto Total Acumulado": "27248.00 M³",
+      "Gasto Total Acumulado": "27250.00 M³",
       "Presión de Bomba": "1.03 Kg/cm²",
       "Gasto Instanáneo": "31.93 Lts/s",
       "Automático/Manual Pozo": "Manual",
@@ -758,8 +758,8 @@
       "latitud": 19.367585,
       "longitud": -99.6057,
       "Gasto Instanáneo": "31.95 Lts/s",
-      "Gasto Total Acumulado": "27248.00 M³",
-      "Presión de Bomba": "1.02 Kg/cm²",
+      "Gasto Total Acumulado": "27250.00 M³",
+      "Presión de Bomba": "1.03 Kg/cm²",
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "Intruso",
       "Alarma Intruso en Caseta": "No Intruso",
