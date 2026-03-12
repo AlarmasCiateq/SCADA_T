@@ -49,7 +49,8 @@
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma de Alimentación del Gabinete": "Normal",
-      "Estado del Arrancador": "Apagado"
+      "Estado del Arrancador": "Apagado",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "San Salvador Huichochitlán",
@@ -294,7 +295,8 @@
       "Estado del Arrancador": "Apagado",
       "Alarma de Alimentación del Gabinete": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
-      "Alarma de Falla de Fase": "Normal"
+      "Alarma de Falla de Fase": "Normal",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "San Nicolas Tolentino",
@@ -317,10 +319,11 @@
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma Falla de Fase Pozo": "Normal",
       "Estado del Arrancador": "Apagado",
-      "Alarma de Alimentación del Gabinete": "Normal"
+      "Alarma de Alimentación del Gabinete": "Normal",
+      "Alarma": "Alarma"
     },
     {
-      "nombre": "Loma de la Providencia",
+      "nombre": " de la Providencia",
       "tipo": "bomba",
       "en_linea": 0,
       "latitud": 19.395392,
@@ -333,7 +336,7 @@
       "Alarma Intruso en Gabinete": "No Intruso"
     },
     {
-      "nombre": "Loma de la Providencia",
+      "nombre": " de la Providencia",
       "tipo": "tanque",
       "en_linea": 0,
       "latitud": 19.396292,
@@ -430,7 +433,8 @@
       "Estado del Arrancador": "Encendido",
       "Alarma de Alimentación del Gabinete": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
-      "Alarma de Falla de Fase": "Normal"
+      "Alarma de Falla de Fase": "Normal",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "La Chacra",
@@ -787,4 +791,5 @@
     "estaciones_unicas": 49,
     "fuente": "MySQL Database Directa"
   }
+
 }
