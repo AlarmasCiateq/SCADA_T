@@ -79,7 +79,8 @@
       "Alarma Intruso en Gabinete": "No Intruso",
       "Automático/Manual Pozo": "Manual",
       "Alarma de Falla de Fase": "Normal",
-      "Estado del Arrancador": "Encendido"
+      "Estado del Arrancador": "Encendido",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "Barrio Canaleja Otzacatipan",
@@ -126,7 +127,8 @@
       "longitud": -99.588831,
       "Alarma Falla Fase  Rebombeo Tnqe Elev.": "Falla Fase",
       "Estado del Arrancador Rebombeo 1": "Encendido",
-      "Selector Una o Dos Rebombeos": "Dos Bombas"
+      "Selector Una o Dos Rebombeos": "Dos Bombas",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "Rebombeo Olimpo",
@@ -192,7 +194,8 @@
       "en_linea": 1,
       "latitud": 19.307365,
       "longitud": -99.584768,
-      "Nivel Tanque Superficial": "3.18 Mts"
+      "Nivel Tanque Superficial": "3.18 Mts",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "Sn Cristóbal Huichochitlán Centro",
@@ -367,7 +370,8 @@
       "Estado del Arrancador": "Apagado",
       "Alarma de Alimentación del Gabinete": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
-      "Alarma de Falla de Fase": "Normal"
+      "Alarma de Falla de Fase": "Normal",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "El Ranchito",
@@ -460,7 +464,8 @@
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma Intruso en Caseta": "No Intruso",
-      "Estado del Arrancador": "Apagado"
+      "Estado del Arrancador": "Apagado",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "Santiago Tlaxacomulco",
@@ -525,7 +530,8 @@
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Apagado",
-      "Alarma Intruso en Caseta": "No Intruso"
+      "Alarma Intruso en Caseta": "No Intruso",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "Seminario II",
@@ -593,7 +599,8 @@
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma de Falla de Fase": "Normal",
       "Estado del Arrancador": "Encendido",
-      "Alarma Intruso en Caseta": "No Intruso"
+      "Alarma Intruso en Caseta": "No Intruso",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "Vialidad Metepec",
@@ -664,7 +671,8 @@
       "Alarma Intruso en Caseta": "No Intruso",
       "Estado del Arrancador": "Encendido",
       "Alarma de Falla de Fase": "Normal",
-      "Alarma Intruso en Gabinete": "No Intruso"
+      "Alarma Intruso en Gabinete": "No Intruso",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "San José Guadalupe Otzacatipan",
@@ -738,7 +746,8 @@
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Alarma Intruso en Caseta": "No Intruso",
-      "Estado del Arrancador": "Encendido"
+      "Estado del Arrancador": "Encendido",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "Seminario V",
@@ -793,3 +802,4 @@
   }
 
 }
+
