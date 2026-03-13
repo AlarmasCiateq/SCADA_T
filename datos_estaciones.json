@@ -112,7 +112,7 @@
     {
       "nombre": "Rebombeo Olimpo",
       "tipo": "bomba",
-      "en_linea": 1,
+      "en_linea": 0,
       "latitud": 19.298538,
       "longitud": -99.589731,
       "Gasto Instantáneo de Red": "12.52 Lts/s",
@@ -122,7 +122,7 @@
     {
       "nombre": "Rebombeo Olimpo",
       "tipo": "rebombeo",
-      "en_linea": 1,
+      "en_linea": 0,
       "latitud": 19.299438,
       "longitud": -99.588831,
       "Alarma Falla Fase  Rebombeo Tnqe Elev.": "Falla Fase",
@@ -141,7 +141,7 @@
     {
       "nombre": "Rebombeo Olimpo",
       "tipo": "tanque",
-      "en_linea": 1,
+      "en_linea": 0,
       "latitud": 19.299438,
       "longitud": -99.589731,
       "Nivel Tanque Elevado": "60.56 Mts"
@@ -149,7 +149,7 @@
     {
       "nombre": "Rebombeo Olimpo",
       "tipo": "tanque",
-      "en_linea": 1,
+      "en_linea": 0,
       "latitud": 19.298538,
       "longitud": -99.589731,
       "Nivel Tanque Superficial": "20.97 Mts",
@@ -805,6 +805,7 @@
   }
 
 }
+
 
 
 
