@@ -329,7 +329,7 @@
     {
       "nombre": " de la Providencia",
       "tipo": "bomba",
-      "en_linea": 0,
+      "en_linea": 1,
       "latitud": 19.395392,
       "longitud": -99.626337,
       "Gasto Instanáneo": "0.00 Lts/s",
@@ -342,7 +342,7 @@
     {
       "nombre": " de la Providencia",
       "tipo": "tanque",
-      "en_linea": 0,
+      "en_linea": 1,
       "latitud": 19.396292,
       "longitud": -99.625437,
       "Nivel Tanque Elevado": "28.9.00 Mts",
@@ -805,6 +805,7 @@
   }
 
 }
+
 
 
 
