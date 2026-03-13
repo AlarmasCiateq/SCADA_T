@@ -152,7 +152,8 @@
       "en_linea": 1,
       "latitud": 19.298538,
       "longitud": -99.589731,
-      "Nivel Tanque Superficial": "20.97 Mts"
+      "Nivel Tanque Superficial": "20.97 Mts",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "Rebombeo Jesús García Lovera",
@@ -344,7 +345,8 @@
       "en_linea": 0,
       "latitud": 19.396292,
       "longitud": -99.625437,
-      "Nivel Tanque Elevado": "28.9.00 Mts"
+      "Nivel Tanque Elevado": "28.9.00 Mts",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "Panteón Cuexcontitlán",
@@ -357,7 +359,8 @@
       "Estado del Arrancador": "Encendido",
       "Alarma de Alimentación del Gabinete": "Normal",
       "Alarma Intruso en Gabinete": "Intruso",
-      "Alarma de Falla de Fase": "Normal"
+      "Alarma de Falla de Fase": "Normal",
+      "Alarma": "Alarma"
     },
     {
       "nombre": "Barrio la Y",
@@ -802,5 +805,6 @@
   }
 
 }
+
 
 
