@@ -5566,7 +5566,7 @@ html_completo = """
             border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 5px;
             padding: 0px 0px;
-            font-size: 6px;
+            font-size: 8px;
             font-weight: bold;
             color: #666666;
             white-space: wrap;
