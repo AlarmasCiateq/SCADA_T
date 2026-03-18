@@ -5566,9 +5566,9 @@ html_completo = """
             border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 5px;
             padding: 0px 0px;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: bold;
-            color: #666666;
+            color: #333333;
             white-space: wrap;
             /* overflow: hidden; */
             text-overflow: ellipsis;
