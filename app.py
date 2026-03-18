@@ -6377,7 +6377,7 @@ html_completo = """
             text-align: center;
         }
         .stat-label {
-            font-size: 8px;
+            font-size: 10px;
             color: #7f8c8d;
             text-align: center;
             white-space: nowrap;
