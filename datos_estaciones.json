@@ -79,7 +79,7 @@
       "Estado del Arrancador": "Encendido",
       "Gasto Instanáneo": "27.70 Lts/s",
       "Gasto Total Acumulado": "1.00 M³",
-      "Presión de Bomba": "1.46 Kg/cm²"
+      "Presión de Bomba": "1.45 Kg/cm²"
     },
     {
       "nombre": "Barrio Canaleja Otzacatipan",
@@ -117,7 +117,7 @@
       "Alarma": "Alarma",
       "Alarma Falla de Fase Pozo": "Falla Fase",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instantáneo de Red": "0.00 Lts/s"
+      "Gasto Instantáneo de Red": "18.75 Lts/s"
     },
     {
       "nombre": "Rebombeo Olimpo",
@@ -151,7 +151,7 @@
       "en_linea": 1,
       "latitud": 19.298538,
       "longitud": -99.589731,
-      "Nivel Tanque Elevado": "1.33 Mts"
+      "Nivel Tanque Elevado": "1.30 Mts"
     },
     {
       "nombre": "Rebombeo Olimpo",
@@ -159,7 +159,7 @@
       "en_linea": 1,
       "latitud": 19.299438,
       "longitud": -99.588831,
-      "Nivel Tanque Superficial": "3.05 Mts"
+      "Nivel Tanque Superficial": "3.06 Mts"
     },
     {
       "nombre": "Rebombeo Jesús García Lovera",
@@ -168,7 +168,7 @@
       "latitud": 19.307365,
       "longitud": -99.584768,
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "42.82 Lts/s",
+      "Gasto Instanáneo": "42.61 Lts/s",
       "Presión de Bomba": "1.39 Kg/cm²"
     },
     {
@@ -193,7 +193,7 @@
       "en_linea": 1,
       "latitud": 19.308265,
       "longitud": -99.584768,
-      "Nivel Tanque Elevado": "17.91 Mts"
+      "Nivel Tanque Elevado": "16.41 Mts"
     },
     {
       "nombre": "Rebombeo Jesús García Lovera",
@@ -225,7 +225,7 @@
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "28.40 Lts/s",
+      "Gasto Instanáneo": "28.61 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²"
     },
     {
@@ -239,7 +239,7 @@
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
       "Gasto Instanáneo": "0.00 Lts/s",
-      "Presión de Bomba": "2.84 Kg/cm²"
+      "Presión de Bomba": "2.66 Kg/cm²"
     },
     {
       "nombre": "Magdalena Otzacatipan",
@@ -266,7 +266,7 @@
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
       "Gasto Instanáneo": "0.00 Lts/s",
-      "Presión de Bomba": "3.66 Kg/cm²"
+      "Presión de Bomba": "3.65 Kg/cm²"
     },
     {
       "nombre": "Jicaltepec Autopan",
@@ -278,7 +278,7 @@
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "22.30 Lts/s",
+      "Gasto Instanáneo": "22.57 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²"
     },
     {
@@ -388,8 +388,8 @@
       "Alarma Intruso en Caseta": "Intruso",
       "Alarma Intruso en Gabinete": "Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "15.12 Lts/s",
-      "Presión de Bomba": "1.74 Kg/cm²"
+      "Gasto Instanáneo": "13.30 Lts/s",
+      "Presión de Bomba": "1.77 Kg/cm²"
     },
     {
       "nombre": "Moderna de la Cruz",
@@ -401,7 +401,7 @@
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "27.98 Lts/s",
+      "Gasto Instanáneo": "27.91 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²"
     },
     {
@@ -441,7 +441,7 @@
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "28.95 Lts/s",
+      "Gasto Instanáneo": "28.94 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²"
     },
     {
@@ -455,7 +455,7 @@
       "Alarma Intruso en Caseta": "No Intruso",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "43.48 Lts/s",
+      "Gasto Instanáneo": "43.56 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²"
     },
     {
@@ -507,8 +507,8 @@
       "Alarma Intruso en Caseta": "No Intruso",
       "Alarma Intruso en Gabinete": "Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "35.94 Lts/s",
-      "Presión de Bomba": "2.41 Kg/cm²"
+      "Gasto Instanáneo": "35.93 Lts/s",
+      "Presión de Bomba": "2.42 Kg/cm²"
     },
     {
       "nombre": "Sta. María de las Rosas",
@@ -535,7 +535,7 @@
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
       "Gasto Instanáneo": "21.45 Lts/s",
-      "Presión de Bomba": "6.41 Kg/cm²"
+      "Presión de Bomba": "6.42 Kg/cm²"
     },
     {
       "nombre": "Seminario II",
@@ -548,8 +548,8 @@
       "Alarma Intruso en Gabinete": "No Intruso",
       "Arranque Bomba": "Arranque",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "43.47 Lts/s",
-      "Presión de Bomba": "2.06 Kg/cm²"
+      "Gasto Instanáneo": "43.73 Lts/s",
+      "Presión de Bomba": "2.08 Kg/cm²"
     },
     {
       "nombre": "Bomberos",
@@ -589,7 +589,7 @@
       "Alarma Intruso en Caseta": "No Intruso",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "29.05 Lts/s",
+      "Gasto Instanáneo": "29.17 Lts/s",
       "Presión de Bomba": "0.25 Kg/cm²"
     },
     {
@@ -602,7 +602,7 @@
       "Alarma Intruso en Caseta": "No Intruso",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "6.40 Lts/s",
+      "Gasto Instanáneo": "6.44 Lts/s",
       "Presión de Bomba": "0.00 Kg/cm²"
     },
     {
@@ -615,9 +615,9 @@
       "Alarma Intruso en Caseta": "No Intruso",
       "Alarma Intruso en Gabinete": "Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "54.51 Lts/s",
-      "Gasto Total Acumulado": "952464.00 M³",
-      "Presión de Bomba": "3.27 Kg/cm²"
+      "Gasto Instanáneo": "54.48 Lts/s",
+      "Gasto Total Acumulado": "952468.00 M³",
+      "Presión de Bomba": "3.25 Kg/cm²"
     },
     {
       "nombre": "Valle Don Camilo",
@@ -629,9 +629,9 @@
       "Alarma de Falla de Fase": "Normal",
       "Alarma Intruso en Gabinete": "Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "30.56 Lts/s",
-      "Gasto Total Acumulado": "518520.00 M³",
-      "Presión de Bomba": "1.68 Kg/cm²"
+      "Gasto Instanáneo": "30.63 Lts/s",
+      "Gasto Total Acumulado": "518523.00 M³",
+      "Presión de Bomba": "1.70 Kg/cm²"
     },
     {
       "nombre": "Lodo Prieto 5",
@@ -644,9 +644,9 @@
       "Alarma Intruso en Gabinete": "No Intruso",
       "Automático/Manual Pozo": "Manual",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "23.64 Lts/s",
-      "Gasto Total Acumulado": "279895.00 M³",
-      "Presión de Bomba": "0.98 Kg/cm²"
+      "Gasto Instanáneo": "23.54 Lts/s",
+      "Gasto Total Acumulado": "279896.00 M³",
+      "Presión de Bomba": "0.95 Kg/cm²"
     },
     {
       "nombre": "Sierra Morelos",
@@ -658,14 +658,14 @@
       "Alarma Intruso en Caseta": "No Intruso",
       "Alarma Intruso en Gabinete": "Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "29.80 Lts/s",
-      "Gasto Total Acumulado": "285892.00 M³",
-      "Presión de Bomba": "1.45 Kg/cm²"
+      "Gasto Instanáneo": "29.60 Lts/s",
+      "Gasto Total Acumulado": "285894.00 M³",
+      "Presión de Bomba": "1.42 Kg/cm²"
     },
     {
       "nombre": "Urawa",
       "tipo": "bomba",
-      "en_linea": 1,
+      "en_linea": 0,
       "latitud": 19.279877,
       "longitud": -99.633663,
       "Alarma": "Alarma",
@@ -673,8 +673,8 @@
       "Alarma Intruso en Caseta": "No Intruso",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "17.00 Lts/s",
-      "Gasto Total Acumulado": "55996.00 M³",
+      "Gasto Instanáneo": "17.03 Lts/s",
+      "Gasto Total Acumulado": "55997.00 M³",
       "Presión de Bomba": "1.11 Kg/cm²"
     },
     {
@@ -687,10 +687,10 @@
       "Alarma Intruso en Gabinete": "Intruso",
       "Automático/Manual Pozo": "Manual",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "40.51 Lts/s",
-      "Gasto Total Acumulado": "89142.00 M³",
+      "Gasto Instanáneo": "40.52 Lts/s",
+      "Gasto Total Acumulado": "89145.00 M³",
       "Local/Remoto Pozo": "Remoto",
-      "Presión de Bomba": "5.32 Kg/cm²"
+      "Presión de Bomba": "5.30 Kg/cm²"
     },
     {
       "nombre": "Corredor Industrial",
@@ -704,8 +704,8 @@
       "Alarma Intruso en Gabinete": "No Intruso",
       "Automático/Manual Pozo": "Manual",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "18.51 Lts/s",
-      "Gasto Total Acumulado": "137860.00 M³",
+      "Gasto Instanáneo": "18.50 Lts/s",
+      "Gasto Total Acumulado": "137861.00 M³",
       "Local/Remoto Pozo": "Remoto"
     },
     {
@@ -719,9 +719,9 @@
       "Alarma Intruso en Gabinete": "Intruso",
       "Automático/Manual Pozo": "Manual",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "40.51 Lts/s",
-      "Gasto Total Acumulado": "89142.00 M³",
-      "Presión de Bomba": "5.32 Kg/cm²"
+      "Gasto Instanáneo": "40.52 Lts/s",
+      "Gasto Total Acumulado": "89145.00 M³",
+      "Presión de Bomba": "5.30 Kg/cm²"
     },
     {
       "nombre": "La Crespa INFONAVIT",
@@ -750,9 +750,9 @@
       "Alarma Intruso en Caseta": "No Intruso",
       "Alarma Intruso en Gabinete": "No Intruso",
       "Estado del Arrancador": "Encendido",
-      "Gasto Instanáneo": "21.10 Lts/s",
+      "Gasto Instanáneo": "20.50 Lts/s",
       "Gasto Total Acumulado": "133.00 M³",
-      "Presión de Bomba": "2.67 Kg/cm²"
+      "Presión de Bomba": "2.70 Kg/cm²"
     },
     {
       "nombre": "Seminario V",
@@ -766,7 +766,7 @@
       "Automático/Manual Pozo": "Manual",
       "Estado del Arrancador": "Encendido",
       "Gasto Instanáneo": "31.77 Lts/s",
-      "Gasto Total Acumulado": "38561.00 M³",
+      "Gasto Total Acumulado": "38563.00 M³",
       "Presión de Bomba": "0.96 Kg/cm²"
     },
     {
@@ -780,7 +780,7 @@
       "Alarma Intruso en Gabinete": "Intruso",
       "Estado del Arrancador": "Encendido",
       "Gasto Instanáneo": "31.77 Lts/s",
-      "Gasto Total Acumulado": "38561.00 M³",
+      "Gasto Total Acumulado": "38563.00 M³",
       "Presión de Bomba": "0.96 Kg/cm²"
     },
     {
